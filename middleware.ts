@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
     (pathname.startsWith("/login") || pathname.startsWith("/create-account")) &&
     session
   ) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/user", req.url));
   }
 
   return NextResponse.next(); //통과

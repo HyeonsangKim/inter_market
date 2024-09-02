@@ -1,7 +1,6 @@
 "use client";
 import { checkAddress, fetchAddress, insertAddress } from "@/lib/location";
 import { useState, useEffect } from "react";
-
 interface LocationProps {
   latitude: number;
   longitude: number;
@@ -24,7 +23,7 @@ interface Address {
   fullAdress?: string | null;
 }
 
-export default function Address({ address, userId }: AddressProps) {
+export default function AddressInfo({ address, userId }: AddressProps) {
   const [location, setLocation] = useState<LocationProps | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState<Address | null>(address);
@@ -50,8 +49,13 @@ export default function Address({ address, userId }: AddressProps) {
 
         try {
           const fetchedAddress = await fetchAddress(latitude, longitude);
-          setNewAddress(fetchedAddress);
-          insertAddress({ fetchedAddress, userId });
+          if (fetchedAddress) {
+            setNewAddress(fetchedAddress);
+            insertAddress({ fetchedAddress, userId });
+          } else {
+            console.error("Fetched address is null");
+            // null에 대한 추가 처리 로직
+          }
         } catch (err) {
           setError("Unable to retrieve address");
         }
@@ -63,32 +67,26 @@ export default function Address({ address, userId }: AddressProps) {
   };
 
   return (
-    <div className='flex flex-col gap-10 py-8 px-6'>
+    <div className='flex flex-row gap-10 py-4 px-6'>
       {newAddress?.dong === null ? (
-        <div>Loading</div>
+        <div>Loading...</div>
       ) : (
         <>
           {newAddress ? (
-            <div>
-              <h3>Address Details:</h3>
-              <p>Si: {newAddress.si}</p>
-              <p>Gu: {newAddress.gu}</p>
-              <p>Dong: {newAddress.dong}</p>
-              <p>Full Address: {newAddress.fullAdress}</p>
+            <div className='flex text-xs'>
+              <p>
+                Address:&nbsp;{newAddress.si}&nbsp;
+                {newAddress.gu}
+              </p>
             </div>
           ) : (
-            <div>
-              {error ? (
-                <div>{error}</div>
-              ) : (
-                <button onClick={handleFetchAddress} className='btn-primary'>
-                  Get Address
-                </button>
-              )}
-            </div>
+            <div>Error : {error && <p>{error}</p>}</div>
           )}
         </>
       )}
+      <button onClick={handleFetchAddress} className='btn-primary text-xs'>
+        Get new Address
+      </button>
     </div>
   );
 }

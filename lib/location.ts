@@ -2,24 +2,12 @@
 import { db } from "./db";
 import getCurrentUser from "./getCurrentUser";
 
-interface Location {
-  latitude: number;
-  longitude: number;
-}
-
 interface Address {
   si?: string;
   gu?: string;
   dong?: string;
   fullAdress?: string;
 }
-
-interface LocationResult {
-  location: Location | null;
-  address: Address | null;
-  error: string | null;
-}
-
 export const insertAddress = async ({
   fetchedAddress,
   userId,
@@ -27,11 +15,6 @@ export const insertAddress = async ({
   fetchedAddress: Address;
   userId: string;
 }) => {
-  console.log("-----");
-
-  console.log(userId);
-  console.log(fetchedAddress);
-
   if (userId) {
     const result = await db.user.update({
       where: {
