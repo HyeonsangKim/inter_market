@@ -6,6 +6,21 @@ export async function getSession() {
   return await getServerSession(authOptions);
 }
 
+export async function getCurrentUserId() {
+  try {
+    const session = await getSession();
+
+    if (!session?.user?.email) {
+      return null; // 로그인하지 않은 경우
+    }
+
+    return session.user; // 로그인된 사용자 정보 반환
+  } catch (error) {
+    console.error("Error getting current user:", error);
+    return null; // 에러 발생 시 null 반환
+  }
+}
+
 export default async function getCurrentUser() {
   try {
     const session = await getSession();

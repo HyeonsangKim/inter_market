@@ -71,7 +71,7 @@ model Product {
   title String
   price Float
   description String
-  photo Image[]
+  photos Image[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   user User @relation(fields: [userId],references: [id],onDelete: Cascade) 

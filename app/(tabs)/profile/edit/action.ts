@@ -1,8 +1,6 @@
 "use server";
 
 import fs from "fs/promises";
-import { getSession } from "@/lib/session";
-import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 
 export async function editProfile(_: any, formData: FormData) {

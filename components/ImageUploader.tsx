@@ -5,6 +5,7 @@ import ImagePreview from "./ImagePreview";
 interface Image {
   id: number;
   url: string;
+  file: File;
 }
 
 interface ImageUploaderProps {
@@ -26,6 +27,7 @@ function ImageUploader({ onImageChange }: ImageUploaderProps) {
       const newImages: Image[] = fileArray.map((file, index) => ({
         id: Date.now() + index,
         url: URL.createObjectURL(file),
+        file,
       }));
       const updatedImages = [...images, ...newImages].slice(0, 10);
       setImages(updatedImages);
@@ -43,14 +45,14 @@ function ImageUploader({ onImageChange }: ImageUploaderProps) {
     <div className='mb-4'>
       <label className='block text-sm font-medium text-gray-700'>
         Images (up to 10): {images.length} / 10
+        <input
+          type='file'
+          accept='image/*'
+          multiple
+          onChange={handleImageChange}
+          className='mt-1 block w-full text-sm text-gray-500'
+        />
       </label>
-      <input
-        type='file'
-        accept='image/*'
-        multiple
-        onChange={handleImageChange}
-        className='mt-1 block w-full text-sm text-gray-500'
-      />
       <div className='flex flex-wrap gap-4 mt-4'>
         {images.map((image) => (
           <ImagePreview

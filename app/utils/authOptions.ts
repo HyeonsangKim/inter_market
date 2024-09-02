@@ -71,11 +71,13 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update" && session !== null) {
         const data = {
+          id: session.id as string,
           image: session.image as any,
           name: session.name as string,
           email: session.email as string,
         };
         // editProfile2(data);
+        token.id = session.id;
         token.name = session.name;
         token.image = session.image;
       }
