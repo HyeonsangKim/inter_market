@@ -4,6 +4,7 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import { InitialProducts } from "@/app/user/marketplace/page";
 import { formatToTimeAgo } from "@/app/utils/utils";
+import Link from "next/link";
 
 const PRODUCTS_PER_PAGE = 9; // 한 페이지당 표시할 제품 수
 interface ProductListProps {
@@ -12,7 +13,10 @@ interface ProductListProps {
 const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
   product,
 }) => (
-  <div className='bg-white rounded-lg shadow-sm overflow-hidden transition-transform duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer'>
+  <Link
+    href={`/user/marketplace/products/${product.id}`}
+    className='bg-white rounded-lg shadow-sm overflow-hidden transition-transform duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer'
+  >
     <div className='relative h-40'>
       {product.photos[0] && (
         <Image
@@ -24,13 +28,18 @@ const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
       )}
     </div>
     <div className='p-3'>
-      <h2 className='text-sm font-semibold mb-1 truncate'>{product.title}</h2>
-      <p className='text-lg font-bold text-indigo-600'>{product.price}</p>
+      <h2 className='text-lg font-semibold text-black mb-1 truncate'>
+        {product.title}
+      </h2>
+      <p className='text-sm text-black'>{product.price} 원</p>
+      <p className='text-sm text-black'>
+        {product.user.si}&nbsp;{product.user.gu}
+      </p>
       <p className='text-xs text-gray-500 mt-1'>
         {formatToTimeAgo(product.created_at.toString())}
       </p>
     </div>
-  </div>
+  </Link>
 );
 
 export default function ProductList({ initialProducts }: ProductListProps) {

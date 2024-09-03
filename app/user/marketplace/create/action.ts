@@ -27,12 +27,11 @@ export async function uploadProduct(_: any, formData: FormData) {
 
   data.photos = photoPaths; // 파일 경로들을 배열로 저장합니다.
   const result = productSchema.safeParse(data);
-  console.log(data);
-
   if (!result.success) {
     return result.error.flatten();
   } else {
     const session = await getCurrentUserId();
+    console.log(session);
 
     if (session!.id) {
       const product = await db.product.create({

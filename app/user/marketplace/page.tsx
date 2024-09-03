@@ -18,6 +18,16 @@ async function getInitialProducts() {
         take: 1,
       },
       id: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          si: true,
+          gu: true,
+          dong: true,
+        },
+      },
     },
     orderBy: {
       created_at: "desc",
