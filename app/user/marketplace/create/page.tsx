@@ -28,7 +28,6 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // FormData를 사용하여 데이터 전송
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
@@ -37,10 +36,6 @@ export default function Page() {
     images.forEach((image) => {
       console.log(image);
 
-      // 이미지 URL을 Blob으로 변환하여 추가
-      // 실제로는 Blob을 서버로 전송해야 하므로, Blob 데이터로 변경해야 합니다.
-      // 여기서는 URL을 사용하므로 실제 파일 객체가 필요합니다.
-      // 예를 들어, 파일이 필요하다면 파일 선택 시 Blob을 저장해야 합니다.
       formData.append("photos", image.file); // 실제로는 Blob 또는 File 객체여야 함
     });
 
