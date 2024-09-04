@@ -1,48 +1,60 @@
-// components/LikeShareButtons.tsx
 "use client";
+import { HandThumbUpIcon } from "@heroicons/react/24/solid";
+import { HandThumbUpIcon as OutLineHandThumbUpIcon } from "@heroicons/react/24/outline";
+import { useOptimistic } from "react";
+import {
+  dislikePost,
+  likePost,
+} from "@/app/user/marketplace/products/[id]/action";
 
-import React, { useState } from "react";
-import { HeartIcon, ShareIcon } from "lucide-react";
+interface LikeButtonProps {
+  isLiked: boolean;
+  likeCount: number;
+  postId: number;
+}
 
-export default function LikeShareButtons({
+export default function LikeButton({
+  isLiked,
+  likeCount,
   postId,
-  initialLikes,
-}: {
-  postId: string;
-  initialLikes: number;
-}) {
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(initialLikes);
-
-  const handleLike = async () => {
-    setLiked(!liked);
-    setLikes(liked ? likes - 1 : likes + 1);
-    // TODO: API 호출하여 좋아요 상태 업데이트
+}: LikeButtonProps) {
+  const [state, reducerFn] = useOptimistic(
+    { isLiked, likeCount },
+    (previousState, payload) => ({
+      isLiked: !previousState.isLiked,
+      likeCount: previousState.isLiked
+        ? previousState.likeCount - 1
+        : previousState.likeCount + 1,
+    })
+  );
+  const onClick = async () => {
+    reducerFn(undefined);
+    if (isLiked) {
+      await dislikePost(postId);
+    } else {
+      await likePost(postId);
+    }
   };
-
-  const handleShare = () => {
-    // TODO: 공유 기능 구현
-    alert("공유 기능이 클릭되었습니다.");
-  };
-
   return (
-    <div className='flex items-center space-x-4 mb-4'>
-      <button
-        onClick={handleLike}
-        className={`flex items-center space-x-1 ${
-          liked ? "text-red-500" : "text-gray-500"
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 text-neutral-400 text-sm border border-neutral-400 rounded-full p-2 transition-colors
+        ${
+          state.isLiked
+            ? "bg-orange-500 text-white border-orange-500"
+            : "hover:bg-neutral-800 "
         }`}
-      >
-        <HeartIcon />
-        <span>{likes}</span>
-      </button>
-      <button
-        onClick={handleShare}
-        className='flex items-center space-x-1 text-gray-500'
-      >
-        <ShareIcon />
-        <span>공유하기</span>
-      </button>
-    </div>
+    >
+      {state.isLiked ? (
+        <HandThumbUpIcon className='size-5' />
+      ) : (
+        <OutLineHandThumbUpIcon className='size-5' />
+      )}
+      {state.isLiked ? (
+        <span>({state.likeCount})</span>
+      ) : (
+        <span>공감하기 ({state.likeCount})</span>
+      )}
+    </button>
   );
 }
