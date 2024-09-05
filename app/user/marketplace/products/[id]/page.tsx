@@ -4,53 +4,12 @@ import { unstable_cache as nextCahce, revalidateTag } from "next/cache";
 import ImageSlider from "@/components/ImageSlider";
 import LikeShareButtons from "@/components/LIkeShareBtn";
 import { unstable_cache as nextCache } from "next/cache";
-import { getCurrentUserId, getSession } from "@/lib/getCurrentUser";
+import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { EyeIcon } from "@heroicons/react/24/solid";
-
-async function getIsOwner(userId: string) {
-  return false;
-}
-
-async function getProduct(id: number) {
-  try {
-    const product = await db.product.update({
-      where: {
-        id,
-      },
-      data: {
-        views: {
-          increment: 1,
-        },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            si: true,
-            gu: true,
-            dong: true,
-          },
-        },
-        photos: {
-          select: {
-            id: true,
-            url: true,
-          },
-        },
-        _count: {
-          select: {
-            comments: true,
-          },
-        },
-      },
-    });
-    return product;
-  } catch (e) {
-    return null;
-  }
-}
+import { getLikeStatus, getProduct } from "./action";
+import { CommentList } from "@/components/comment/CommentList";
+import { CommentForm } from "@/components/comment/Comment";
+import { Suspense } from "react";
 
 const getCachedProduct = nextCahce(getProduct, ["product-detail"], {
   tags: ["product-detail"],
@@ -63,25 +22,6 @@ async function getCachedLikeStatus(productId: number, userId: string) {
   return cachedOperation(productId, userId);
 }
 
-async function getLikeStatus(productId: number, userId: string) {
-  const isLiked = await db.plike.findUnique({
-    where: {
-      id: {
-        productId,
-        userId: String(userId),
-      },
-    },
-  });
-  const likeCount = await db.plike.count({
-    where: {
-      productId,
-    },
-  });
-  return {
-    likeCount,
-    isLiked: Boolean(isLiked),
-  };
-}
 export default async function PostDetail({
   params,
 }: {
@@ -97,7 +37,6 @@ export default async function PostDetail({
   if (!product) {
     return notFound();
   }
-  const isOwner = await getIsOwner(product.userId);
   const { likeCount, isLiked } = await getCachedLikeStatus(id, session!.id);
 
   return (
@@ -116,9 +55,16 @@ export default async function PostDetail({
           <span>조회 {product.views}</span>
         </div>
         <LikeShareButtons isLiked={isLiked} likeCount={likeCount} postId={id} />
-      </div>
+        <Suspense fallback={<div>댓글 로딩 중...</div>}>
+          <CommentList
+            postId={product.id}
+            initialComments={product.comments}
+            category='product'
+          />
+        </Suspense>
 
-      {/* <CommentSection postId={postData.id} initialComments={comments} /> */}
+        <CommentForm postId={product.id} />
+      </div>
     </div>
   );
 }

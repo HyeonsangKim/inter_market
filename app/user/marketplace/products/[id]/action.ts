@@ -36,6 +36,80 @@ export async function dislikePost(postId: number) {
       },
     });
     // revalidatePath(`/posts/${id}`);
-    revalidateTag(`product-status-${postId}`);
+    revalidateTag(`product-like-status-${postId}`);
   } catch (e) {}
+}
+export async function getProduct(id: number) {
+  try {
+    const product = await db.product.update({
+      where: {
+        id,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            si: true,
+            gu: true,
+            dong: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            payload: true,
+            created_at: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+        photos: {
+          select: {
+            id: true,
+            url: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    });
+
+    return product;
+  } catch (e) {
+    return null;
+  }
+}
+export async function getLikeStatus(productId: number, userId: string) {
+  const isLiked = await db.plike.findUnique({
+    where: {
+      id: {
+        productId,
+        userId: String(userId),
+      },
+    },
+  });
+  const likeCount = await db.plike.count({
+    where: {
+      productId,
+    },
+  });
+  return {
+    likeCount,
+    isLiked: Boolean(isLiked),
+  };
 }
