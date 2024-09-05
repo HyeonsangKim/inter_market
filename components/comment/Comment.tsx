@@ -2,13 +2,16 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createComment } from "@/app/user/marketplace/products/[id]/action";
 
 export function CommentForm({
   postId,
   parentId,
+  category,
 }: {
   postId: string;
   parentId?: number;
+  category: string;
 }) {
   const [content, setContent] = useState("");
   const router = useRouter();
@@ -16,7 +19,7 @@ export function CommentForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // await createComment(postId, content, parentId);
+      await createComment(postId, content);
       setContent("");
       router.refresh();
     } catch (error) {

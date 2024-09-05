@@ -14,6 +14,7 @@ export function CommentList({
   category: string;
 }) {
   const [comments, setComments] = useState(initialComments);
+  console.log(comments);
 
   return (
     <div>
@@ -43,9 +44,9 @@ function CommentItem({
   return (
     <div className='border-b py-2 pl-4'>
       <p className='font-semibold'>{comment.user.name}</p>
-      <p>{comment.content}</p>
+      <p>{comment.payload}</p>
       <p className='text-sm text-gray-500'>
-        {new Date(comment.createdAt).toLocaleDateString()}
+        {new Date(comment.created_at).toLocaleDateString()}
       </p>
       <button
         onClick={() => setIsReplying(!isReplying)}
