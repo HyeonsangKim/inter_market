@@ -87,7 +87,6 @@ export async function getProduct(id: number) {
         },
       },
     });
-    console.log(product);
 
     return product;
   } catch (e) {

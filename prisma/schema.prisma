@@ -114,6 +114,13 @@ model Comment {
  
   userId String
   postId Int
+
+   // parentId is null for top-level comments
+  parentId Int?
+  parent Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
+  depth Int @default(0)
 }
 model Pcomment {
   id Int @id @default(autoincrement())
@@ -121,11 +128,17 @@ model Pcomment {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id],onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   userId String
   productId Int
 
+  // parentId is null for top-level comments
+  parentId Int?
+  parent Pcomment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Pcomment[] @relation("CommentReplies")
+
+  depth Int @default(0)
 }
 model Like {
   
