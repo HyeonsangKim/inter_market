@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { connect } from "http2";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function likePost(postId: number) {
   await new Promise((r) => setTimeout(r, 5000));
@@ -113,11 +113,33 @@ export async function getLikeStatus(productId: number, userId: string) {
   };
 }
 
-export async function createComment(productId: number, content: string) {
+export async function createComment(
+  productId: number,
+  parentId?: number,
+  content: string
+) {
   const session = await getCurrentUserId();
+  let depth = 0;
+  console.log("parenrapa");
+  console.log(parentId);
+
+  if (parentId) {
+    const parentComment = await db.pcomment.findUnique({
+      where: { id: parentId },
+      select: { depth: true },
+    });
+    console.log(parentComment);
+
+    depth = Number(parentComment?.depth) + 1;
+  }
+  console.log("asdas");
+  console.log(depth);
+
   const product = await db.pcomment.create({
     data: {
+      parentId: parentId,
       payload: content,
+      depth: depth,
       user: {
         connect: {
           id: session!.id.toString(),
@@ -133,4 +155,5 @@ export async function createComment(productId: number, content: string) {
       id: true,
     },
   });
+  revalidatePath(`/user/marketplace/products/${productId}`);
 }

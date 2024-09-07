@@ -64,7 +64,12 @@ export default async function PostDetail({
           />
         </Suspense>
 
-        <CommentForm postId={product.id} />
+        <CommentForm
+          postId={product.id}
+          parentId={null}
+          category='product'
+          depth={0}
+        />
       </div>
     </div>
   );

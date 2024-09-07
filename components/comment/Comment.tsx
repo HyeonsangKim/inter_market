@@ -9,8 +9,8 @@ export function CommentForm({
   parentId,
   category,
 }: {
-  postId: string;
-  parentId?: number;
+  postId: number;
+  parentId?: number | null;
   category: string;
 }) {
   const [content, setContent] = useState("");
@@ -19,9 +19,21 @@ export function CommentForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createComment(postId, content);
-      setContent("");
-      router.refresh();
+      if (parentId) {
+        if (category === "product") {
+          await createComment(postId, parentId, content);
+          setContent("");
+          router.refresh();
+        } else {
+        }
+      } else {
+        if (category === "product") {
+          await createComment(postId, parentId, content);
+          setContent("");
+          router.refresh();
+        } else {
+        }
+      }
     } catch (error) {
       console.error("댓글 작성 중 오류 발생:", error);
     }

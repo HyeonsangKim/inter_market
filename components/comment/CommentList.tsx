@@ -24,6 +24,7 @@ export function CommentList({
           comment={comment}
           postId={postId}
           category={category}
+          depth={0}
         />
       ))}
     </div>
@@ -52,9 +53,11 @@ function CommentItem({
         onClick={() => setIsReplying(!isReplying)}
         className='text-blue-500 text-sm mt-1'
       >
-        답글
+        {isReplying ? "취소" : "답글"}
       </button>
-      {isReplying && <CommentForm postId={postId} parentId={comment.id} />}
+      {isReplying && (
+        <CommentForm postId={postId} parentId={comment.id} category='product' />
+      )}
       {comment.replies && comment.replies.length > 0 && (
         <div className='ml-4 mt-2'>
           {comment.replies.map((reply) => (
