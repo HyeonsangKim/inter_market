@@ -1,20 +1,24 @@
-import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import { unstable_cache as nextCahce, revalidateTag } from "next/cache";
+import { unstable_cache as nextCahce } from "next/cache";
 import ImageSlider from "@/components/ImageSlider";
 import LikeShareButtons from "@/components/LIkeShareBtn";
 import { unstable_cache as nextCache } from "next/cache";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { EyeIcon } from "@heroicons/react/24/solid";
-import { getLikeStatus, getProduct } from "./action";
-import { CommentList } from "@/components/comment/CommentList";
-import { CommentForm } from "@/components/comment/Comment";
+import { getComments, getLikeStatus, getProduct } from "./action";
+import { CommentItem, CommentList } from "@/components/comment/CommentList";
+import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
+
+export type InitialProductsComments = Prisma.PromiseReturnType<
+  typeof getComments
+>;
 
 const getCachedProduct = nextCahce(getProduct, ["product-detail"], {
   tags: ["product-detail"],
   revalidate: 60,
 });
+
 async function getCachedLikeStatus(productId: number, userId: string) {
   const cachedOperation = nextCache(getLikeStatus, ["product-like-stauts"], {
     tags: [`product-like-status-${productId}`],
@@ -22,6 +26,12 @@ async function getCachedLikeStatus(productId: number, userId: string) {
   return cachedOperation(productId, userId);
 }
 
+async function getCachedCommentList(productId: number) {
+  const cachedOperation = nextCache(getComments, ["product-comments"], {
+    tags: [`product-comments-${productId}`],
+  });
+  return cachedOperation(productId);
+}
 export default async function PostDetail({
   params,
 }: {
@@ -29,16 +39,17 @@ export default async function PostDetail({
 }) {
   const id = Number(params.id);
   const session = await getCurrentUserId();
-
   if (isNaN(id)) {
     return notFound();
   }
   const product = await getCachedProduct(id);
+
   if (!product) {
     return notFound();
   }
   const { likeCount, isLiked } = await getCachedLikeStatus(id, session!.id);
-  console.log(product);
+
+  const comments = await getCachedCommentList(id);
 
   return (
     <div className='max-w-4xl mx-auto p-4'>
@@ -57,19 +68,22 @@ export default async function PostDetail({
         </div>
         <LikeShareButtons isLiked={isLiked} likeCount={likeCount} postId={id} />
         <Suspense fallback={<div>댓글 로딩 중...</div>}>
+          {comments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              postId={product.id}
+              category={"product"}
+              currentUser={session?.id}
+            />
+          ))}
           <CommentList
             postId={product.id}
-            initialComments={product.comments}
+            initialComments={comments}
             category='product'
+            currentUser={session?.id}
           />
         </Suspense>
-
-        <CommentForm
-          postId={product.id}
-          parentId={null}
-          category='product'
-          depth={0}
-        />
       </div>
     </div>
   );

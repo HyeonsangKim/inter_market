@@ -3,47 +3,56 @@
 import React, { useState } from "react";
 import { CommentForm } from "./Comment";
 import { Comment } from "./types";
+import { InitialProductsComments } from "@/app/user/marketplace/products/[id]/page";
+import { useRouter } from "next/navigation";
 
+interface ProductListProps {
+  initialProducts: InitialProductsComments;
+}
 export function CommentList({
   postId,
   initialComments,
   category,
+  currentUser,
 }: {
   postId: string;
-  initialComments: Comment[];
+  initialComments: ProductListProps;
   category: string;
+  currentUser: string;
 }) {
-  const [comments, setComments] = useState(initialComments);
-  console.log(comments);
-
   return (
     <div>
-      {comments.map((comment) => (
-        <CommentItem
-          key={comment.id}
-          comment={comment}
-          postId={postId}
-          category={category}
-          depth={0}
-        />
-      ))}
+      <CommentForm
+        postId={Number(postId)}
+        parentId={null}
+        category={category}
+      />
     </div>
   );
 }
 
-function CommentItem({
+export function CommentItem({
   comment,
   postId,
   category,
+  currentUser,
 }: {
   comment: Comment;
   postId: string;
   category: string;
+  currentUser: string;
 }) {
   const [isReplying, setIsReplying] = useState(false);
+  const [replies, setReplies] = useState(comment.replies || []);
+  console.log(comment);
+
+  const handleNewReply = (newReply: Comment) => {
+    setReplies([...replies, newReply]);
+    setIsReplying(false);
+  };
 
   return (
-    <div className='border-b py-2 pl-4'>
+    <div className='border-t py-4'>
       <p className='font-semibold'>{comment.user.name}</p>
       <p>{comment.payload}</p>
       <p className='text-sm text-gray-500'>
@@ -51,22 +60,45 @@ function CommentItem({
       </p>
       <button
         onClick={() => setIsReplying(!isReplying)}
-        className='text-blue-500 text-sm mt-1'
+        className='text-blue-500 text-sm mt-1 mr-2'
       >
         {isReplying ? "취소" : "답글"}
       </button>
-      {isReplying && (
-        <CommentForm postId={postId} parentId={comment.id} category='product' />
+      {currentUser === comment.user.id && (
+        <button
+          onClick={() => onDelete(comment.id)}
+          className='text-red-500 text-sm mt-1'
+        >
+          삭제
+        </button>
       )}
-      {comment.replies && comment.replies.length > 0 && (
-        <div className='ml-4 mt-2'>
+
+      {isReplying && (
+        <CommentForm
+          postId={Number(postId)}
+          parentId={comment.id}
+          category={category}
+          onCommentAdded={handleNewReply}
+        />
+      )}
+      {comment.replies.length > 0 && (
+        <div className='ml-8 mt-4'>
           {comment.replies.map((reply) => (
-            <CommentItem
-              key={reply.id}
-              comment={reply}
-              postId={postId}
-              category={category}
-            />
+            <div key={reply.id} className='border-l-2 pl-4 py-2 mb-2'>
+              <p className='font-semibold'>{reply.user.name}</p>
+              <p>{reply.payload}</p>
+              <p className='text-sm text-gray-500'>
+                {new Date(reply.created_at).toLocaleDateString()}
+              </p>
+              {currentUser === comment.user.id && (
+                <button
+                  onClick={() => onDelete(comment.id)}
+                  className='text-red-500 text-sm mt-1'
+                >
+                  삭제
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}

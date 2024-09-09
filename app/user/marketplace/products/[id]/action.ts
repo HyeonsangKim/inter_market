@@ -2,7 +2,6 @@
 
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
-import { connect } from "http2";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function likePost(postId: number) {
@@ -60,20 +59,6 @@ export async function getProduct(id: number) {
             dong: true,
           },
         },
-        comments: {
-          select: {
-            id: true,
-            payload: true,
-            created_at: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
         photos: {
           select: {
             id: true,
@@ -91,6 +76,52 @@ export async function getProduct(id: number) {
     return product;
   } catch (e) {
     return null;
+  }
+}
+export async function getComments(productId: number) {
+  try {
+    const comments = await db.pcomment.findMany({
+      where: {
+        productId,
+        parentId: null, // Only fetch top-level comments
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          orderBy: { created_at: "asc" },
+        },
+      },
+      orderBy: { created_at: "asc" },
+    });
+    return comments;
+  } catch (e) {
+    return null;
+  }
+}
+export async function deleteComment(commentId: number, productId: number) {
+  try {
+    await db.pcomment.delete({
+      where: { id: commentId },
+    });
+
+    revalidatePath(`/products/${productId}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete comment:", error);
+    return { success: false, error: "Failed to delete comment" };
   }
 }
 export async function getLikeStatus(productId: number, userId: string) {
@@ -112,48 +143,29 @@ export async function getLikeStatus(productId: number, userId: string) {
     isLiked: Boolean(isLiked),
   };
 }
-
 export async function createComment(
   productId: number,
-  parentId?: number,
+  parentId: number | null,
   content: string
 ) {
-  const session = await getCurrentUserId();
-  let depth = 0;
-  console.log("parenrapa");
-  console.log(parentId);
+  try {
+    const session = await getCurrentUserId();
 
-  if (parentId) {
-    const parentComment = await db.pcomment.findUnique({
-      where: { id: parentId },
-      select: { depth: true },
+    const comment = await db.pcomment.create({
+      data: {
+        payload: content,
+        user: { connect: { id: session!.id.toString() } },
+        product: { connect: { id: productId } },
+        parent: parentId ? { connect: { id: parentId } } : undefined,
+      },
+      include: {
+        user: { select: { id: true, name: true } },
+      },
     });
-    console.log(parentComment);
 
-    depth = Number(parentComment?.depth) + 1;
+    revalidateTag(`product-comments-${productId}`);
+    return comment;
+  } catch (e) {
+    return null;
   }
-  console.log("asdas");
-  console.log(depth);
-
-  const product = await db.pcomment.create({
-    data: {
-      parentId: parentId,
-      payload: content,
-      depth: depth,
-      user: {
-        connect: {
-          id: session!.id.toString(),
-        },
-      },
-      product: {
-        connect: {
-          id: productId,
-        },
-      },
-    },
-    select: {
-      id: true,
-    },
-  });
-  revalidatePath(`/user/marketplace/products/${productId}`);
 }

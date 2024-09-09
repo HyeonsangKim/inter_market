@@ -54,7 +54,7 @@ export async function uploadProduct(_: any, formData: FormData) {
           id: true,
         },
       });
-      redirect(`/user/marketplace/create`);
+      redirect(`/user/marketplace/`);
     }
   }
 }

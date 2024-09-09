@@ -8,34 +8,31 @@ export function CommentForm({
   postId,
   parentId,
   category,
+  onCommentAdded,
 }: {
   postId: number;
   parentId?: number | null;
   category: string;
+  onCommentAdded?: (newComment: Comment) => void;
 }) {
   const [content, setContent] = useState("");
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createProductComments = async () => {};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (parentId) {
-        if (category === "product") {
-          await createComment(postId, parentId, content);
-          setContent("");
-          router.refresh();
-        } else {
-        }
-      } else {
-        if (category === "product") {
-          await createComment(postId, parentId, content);
-          setContent("");
-          router.refresh();
-        } else {
-        }
-      }
+      const newComment = await createComment(postId, parentId || null, content);
+      // onCommentAdded(newComment);
+      onCommentAdded();
+      setContent("");
+      router.refresh();
     } catch (error) {
       console.error("댓글 작성 중 오류 발생:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -51,7 +48,7 @@ export function CommentForm({
         type='submit'
         className='mt-2 px-4 py-2 bg-blue-500 text-white rounded'
       >
-        댓글 작성
+        {isSubmitting ? "작성 중..." : "댓글 작성"}
       </button>
     </form>
   );

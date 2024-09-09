@@ -1,7 +1,7 @@
 export interface Comment {
   id: number;
-  content: string;
-  createdAt: string;
+  payload: string;
+  created_at: string;
   user: {
     id: string;
     name: string;
