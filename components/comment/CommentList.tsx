@@ -3,22 +3,15 @@
 import React, { useState } from "react";
 import { CommentForm } from "./Comment";
 import { Comment } from "./types";
-import { InitialProductsComments } from "@/app/user/marketplace/products/[id]/page";
+import { deleteComment } from "@/app/user/marketplace/products/[id]/action";
 import { useRouter } from "next/navigation";
 
-interface ProductListProps {
-  initialProducts: InitialProductsComments;
-}
 export function CommentList({
   postId,
-  initialComments,
   category,
-  currentUser,
 }: {
   postId: string;
-  initialComments: ProductListProps;
   category: string;
-  currentUser: string;
 }) {
   return (
     <div>
@@ -38,17 +31,20 @@ export function CommentItem({
   currentUser,
 }: {
   comment: Comment;
-  postId: string;
+  postId: number;
   category: string;
   currentUser: string;
 }) {
   const [isReplying, setIsReplying] = useState(false);
-  const [replies, setReplies] = useState(comment.replies || []);
-  console.log(comment);
+  const router = useRouter();
 
-  const handleNewReply = (newReply: Comment) => {
-    setReplies([...replies, newReply]);
+  const handleNewReply = () => {
     setIsReplying(false);
+  };
+
+  const onDelete = async (commentId: number, postId: number) => {
+    deleteComment(commentId, postId);
+    router.refresh();
   };
 
   return (
@@ -66,7 +62,7 @@ export function CommentItem({
       </button>
       {currentUser === comment.user.id && (
         <button
-          onClick={() => onDelete(comment.id)}
+          onClick={() => onDelete(comment.id, postId)}
           className='text-red-500 text-sm mt-1'
         >
           삭제
@@ -81,9 +77,9 @@ export function CommentItem({
           onCommentAdded={handleNewReply}
         />
       )}
-      {comment.replies.length > 0 && (
+      {comment!.replies!.length > 0 && (
         <div className='ml-8 mt-4'>
-          {comment.replies.map((reply) => (
+          {comment!.replies!.map((reply) => (
             <div key={reply.id} className='border-l-2 pl-4 py-2 mb-2'>
               <p className='font-semibold'>{reply.user.name}</p>
               <p>{reply.payload}</p>
@@ -92,7 +88,7 @@ export function CommentItem({
               </p>
               {currentUser === comment.user.id && (
                 <button
-                  onClick={() => onDelete(comment.id)}
+                  onClick={() => onDelete(comment.id, postId)}
                   className='text-red-500 text-sm mt-1'
                 >
                   삭제

@@ -13,20 +13,22 @@ export function CommentForm({
   postId: number;
   parentId?: number | null;
   category: string;
-  onCommentAdded?: (newComment: Comment) => void;
+  onCommentAdded?: () => void | undefined;
 }) {
   const [content, setContent] = useState("");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const createProductComments = async () => {};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const newComment = await createComment(postId, parentId || null, content);
       // onCommentAdded(newComment);
-      onCommentAdded();
+
+      if (onCommentAdded) {
+        onCommentAdded();
+      }
+
       setContent("");
       router.refresh();
     } catch (error) {

@@ -1,10 +1,10 @@
 export interface Comment {
   id: number;
   payload: string;
-  created_at: string;
+  created_at: Date;
   user: {
     id: string;
-    name: string;
+    name?: string | null;
   };
   replies?: Comment[];
 }

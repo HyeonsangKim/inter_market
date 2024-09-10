@@ -68,21 +68,16 @@ export default async function PostDetail({
         </div>
         <LikeShareButtons isLiked={isLiked} likeCount={likeCount} postId={id} />
         <Suspense fallback={<div>댓글 로딩 중...</div>}>
-          {comments.map((comment) => (
+          {comments!.map((comment) => (
             <CommentItem
               key={comment.id}
               comment={comment}
               postId={product.id}
               category={"product"}
-              currentUser={session?.id}
+              currentUser={String(session?.id)}
             />
           ))}
-          <CommentList
-            postId={product.id}
-            initialComments={comments}
-            category='product'
-            currentUser={session?.id}
-          />
+          <CommentList postId={String(product.id)} category='product' />
         </Suspense>
       </div>
     </div>

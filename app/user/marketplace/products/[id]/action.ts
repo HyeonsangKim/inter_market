@@ -117,7 +117,7 @@ export async function deleteComment(commentId: number, productId: number) {
       where: { id: commentId },
     });
 
-    revalidatePath(`/products/${productId}`);
+    revalidatePath(`/user/marketplace/products/${productId}`);
     return { success: true };
   } catch (error) {
     console.error("Failed to delete comment:", error);
