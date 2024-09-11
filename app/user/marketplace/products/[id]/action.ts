@@ -172,6 +172,25 @@ export async function createComment(
     return null;
   }
 }
+
+export async function updateComment(
+  commentId: number,
+  postId: number,
+  newContent: string
+) {
+  try {
+    await db.pcomment.update({
+      where: { id: commentId },
+      data: { payload: newContent },
+    });
+    revalidateTag(`product-comments-${postId}`);
+    return { success: true };
+  } catch (error) {
+    console.error("댓글 수정 중 오류 발생:", error);
+    return { success: false, error: "댓글 수정에 실패했습니다." };
+  }
+}
+
 export async function deleteProduct(productId: number) {
   try {
     await db.product.delete({

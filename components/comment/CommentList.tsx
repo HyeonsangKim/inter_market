@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import { CommentForm } from "./Comment";
 import { Comment } from "./types";
-import { deleteComment } from "@/app/user/marketplace/products/[id]/action";
+import {
+  deleteComment,
+  updateComment,
+} from "@/app/user/marketplace/products/[id]/action";
 import { useRouter } from "next/navigation";
 
 export function CommentList({
@@ -36,6 +39,8 @@ export function CommentItem({
   currentUser: string;
 }) {
   const [isReplying, setIsReplying] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.payload);
   const router = useRouter();
 
   const handleNewReply = () => {
@@ -43,14 +48,39 @@ export function CommentItem({
   };
 
   const onDelete = async (commentId: number, postId: number) => {
-    deleteComment(commentId, postId);
+    await deleteComment(commentId, postId);
+    router.refresh();
+  };
+
+  const onEdit = async () => {
+    await updateComment(comment.id, postId, editedContent);
+    setIsEditing(false);
     router.refresh();
   };
 
   return (
     <div className='border-t py-4'>
       <p className='font-semibold'>{comment.user.name}</p>
-      <p>{comment.payload}</p>
+      {isEditing ? (
+        <div>
+          <textarea
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+            className='w-full p-2 border rounded text-black'
+          />
+          <button onClick={onEdit} className='text-blue-500 text-sm mt-1 mr-2'>
+            저장
+          </button>
+          <button
+            onClick={() => setIsEditing(false)}
+            className='text-gray-500 text-sm mt-1'
+          >
+            취소
+          </button>
+        </div>
+      ) : (
+        <p>{comment.payload}</p>
+      )}
       <p className='text-sm text-gray-500'>
         {new Date(comment.created_at).toLocaleDateString()}
       </p>
@@ -61,12 +91,20 @@ export function CommentItem({
         {isReplying ? "취소" : "답글"}
       </button>
       {currentUser === comment.user.id && (
-        <button
-          onClick={() => onDelete(comment.id, postId)}
-          className='text-red-500 text-sm mt-1'
-        >
-          삭제
-        </button>
+        <>
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className='text-green-500 text-sm mt-1 mr-2'
+          >
+            수정
+          </button>
+          <button
+            onClick={() => onDelete(comment.id, postId)}
+            className='text-red-500 text-sm mt-1'
+          >
+            삭제
+          </button>
+        </>
       )}
 
       {isReplying && (
@@ -77,24 +115,16 @@ export function CommentItem({
           onCommentAdded={handleNewReply}
         />
       )}
-      {comment!.replies!.length > 0 && (
+      {comment!.replies! && (
         <div className='ml-8 mt-4'>
           {comment!.replies!.map((reply) => (
-            <div key={reply.id} className='border-l-2 pl-4 py-2 mb-2'>
-              <p className='font-semibold'>{reply.user.name}</p>
-              <p>{reply.payload}</p>
-              <p className='text-sm text-gray-500'>
-                {new Date(reply.created_at).toLocaleDateString()}
-              </p>
-              {currentUser === comment.user.id && (
-                <button
-                  onClick={() => onDelete(comment.id, postId)}
-                  className='text-red-500 text-sm mt-1'
-                >
-                  삭제
-                </button>
-              )}
-            </div>
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              postId={postId}
+              category={category}
+              currentUser={currentUser}
+            />
           ))}
         </div>
       )}

@@ -12,12 +12,20 @@ interface Image {
   file?: File;
 }
 
-export default function EditForm({
-  productId,
-  product,
-}: {
+export interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  photos: { url: string }[];
+}
+
+interface EditFormProps {
   productId: number;
-}) {
+  product: Product | null;
+}
+
+export default function EditForm({ productId, product }: EditFormProps) {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
