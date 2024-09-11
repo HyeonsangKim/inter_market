@@ -1,19 +1,30 @@
-// components/ImageUploader.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ImagePreview from "./ImagePreview";
 
 interface Image {
   id: number;
   url: string;
-  file: File;
+  file?: File;
+  isExisting?: boolean;
 }
 
 interface ImageUploaderProps {
-  onImageChange: (images: Image[]) => void; // 이미지 배열을 인자로 받는 함수 타입
+  onImageChange: (images: Image[]) => void;
+  initialImages?: Image[];
 }
 
-function ImageUploader({ onImageChange }: ImageUploaderProps) {
-  const [images, setImages] = useState<Image[]>([]); // 상태의 타입을 Image[]로 설정
+function ImageUploader({ onImageChange, initialImages }: ImageUploaderProps) {
+  const [images, setImages] = useState<Image[]>([]);
+
+  useEffect(() => {
+    if (initialImages && initialImages.length > 0) {
+      const processedInitialImages = initialImages.map((img) => ({
+        ...img,
+        isExisting: true,
+      }));
+      setImages(processedInitialImages);
+    }
+  }, [initialImages]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -28,6 +39,7 @@ function ImageUploader({ onImageChange }: ImageUploaderProps) {
         id: Date.now() + index,
         url: URL.createObjectURL(file),
         file,
+        isExisting: false,
       }));
       const updatedImages = [...images, ...newImages].slice(0, 10);
       setImages(updatedImages);

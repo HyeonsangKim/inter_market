@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function likePost(postId: number) {
   await new Promise((r) => setTimeout(r, 5000));
@@ -166,6 +167,19 @@ export async function createComment(
     revalidateTag(`product-comments-${productId}`);
     return comment;
   } catch (e) {
+    console.log(e);
+
     return null;
+  }
+}
+export async function deleteProduct(productId: number) {
+  try {
+    await db.product.delete({
+      where: { id: productId },
+    });
+    redirect(`/user/marketplace/`);
+  } catch (error) {
+    console.error("Failed to delete product:", error);
+    return { success: false, error: "Failed to delete product" };
   }
 }

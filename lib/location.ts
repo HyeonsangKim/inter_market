@@ -70,6 +70,7 @@ export const fetchAddress = async (
 
     const data = await response.json();
     const addressComponents = data.results[0]?.address_components || [];
+    console.log(addressComponents);
 
     const si = addressComponents.find((comp: any) =>
       comp.types.includes("administrative_area_level_1")
@@ -78,7 +79,7 @@ export const fetchAddress = async (
       comp.types.includes("sublocality_level_1")
     )?.long_name;
     const dong = addressComponents.find((comp: any) =>
-      comp.types.includes("sublocality_level_4")
+      comp.types.includes("sublocality_level_2")
     )?.long_name;
     const fullAdress = si + " " + " " + gu + " " + dong;
     return { si, gu, dong, fullAdress };

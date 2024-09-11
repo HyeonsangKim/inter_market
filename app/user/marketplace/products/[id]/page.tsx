@@ -5,10 +5,17 @@ import LikeShareButtons from "@/components/LIkeShareBtn";
 import { unstable_cache as nextCache } from "next/cache";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { EyeIcon } from "@heroicons/react/24/solid";
-import { getComments, getLikeStatus, getProduct } from "./action";
+import {
+  deleteProduct,
+  getComments,
+  getLikeStatus,
+  getProduct,
+} from "./action";
 import { CommentItem, CommentList } from "@/components/comment/CommentList";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
+import DeleteButton from "@/components/delete-button";
+import Link from "next/link";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -67,6 +74,19 @@ export default async function PostDetail({
           <span>조회 {product.views}</span>
         </div>
         <LikeShareButtons isLiked={isLiked} likeCount={likeCount} postId={id} />
+        {session!.id === product.user.id && (
+          <div className='flex gap-4 *:cursor-pointer'>
+            <Link href={`/user/marketplace/edit/${id}`}>
+              <button className='text-white'>수정</button>
+            </Link>
+            <DeleteButton
+              color='red-600'
+              text='삭제'
+              action={deleteProduct}
+              elementId={id}
+            />
+          </div>
+        )}
         <Suspense fallback={<div>댓글 로딩 중...</div>}>
           {comments!.map((comment) => (
             <CommentItem

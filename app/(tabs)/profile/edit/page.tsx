@@ -41,51 +41,51 @@ export default function Page() {
   const [state, action] = useFormState(editProfile, null);
 
   return (
-    <div className="p-5">
-      <form action={action} className="flex gap-10">
-        <label htmlFor="image">
+    <div className='p-5'>
+      <form action={action} className='flex gap-10'>
+        <label htmlFor='image'>
           <Image
             width={64}
             height={64}
-            className="size-20 md:size-28 rounded-full"
+            className='size-20 md:size-28 rounded-full'
             src={preview || image || ""}
             alt={userData.name!}
           />
         </label>
         <input
           onChange={onImageChange}
-          type="file"
-          id="image"
-          name="image"
-          accept="image/*"
-          className="hidden"
+          type='file'
+          id='image'
+          name='image'
+          accept='image/*'
+          className='hidden'
         />
-        <div className="flex flex-col gap-4 w-36">
+        <div className='flex flex-col gap-4 w-36'>
           <Input
-            name="email"
+            name='email'
             value={userData.email || undefined}
-            type="text"
+            type='text'
             required
             readOnly
           />
           <div>이름</div>
           <div>
             <Input
-              name="name"
+              name='name'
               value={name || undefined}
-              type="text"
+              type='text'
               required
               onChange={onNameChange}
             />
           </div>
           <div
             onClick={() => {
-              update({ image, name, email: userData.email });
+              update({ id: userData.id, image, name, email: userData.email });
               // using update() called from the useSession hook
               // handleSubmit();
             }}
           >
-            <Button text="edit" />
+            <Button text='edit' />
           </div>
         </div>
       </form>
