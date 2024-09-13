@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 interface ButtonProps {
   text: string;
   color: string;
@@ -13,8 +15,12 @@ export default function DeleteButton({
   action,
   elementId,
 }: ButtonProps) {
+  const router = useRouter();
   const actionFuntion = async () => {
-    action(elementId);
+    const success = await action(elementId);
+    if (success) {
+      router.push("/user/marketplace");
+    }
   };
 
   return (

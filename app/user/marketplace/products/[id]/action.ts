@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function likePost(postId: number) {
   await new Promise((r) => setTimeout(r, 5000));
@@ -40,15 +39,8 @@ export async function dislikePost(postId: number) {
 }
 export async function getProduct(id: number) {
   try {
-    const product = await db.product.update({
-      where: {
-        id,
-      },
-      data: {
-        views: {
-          increment: 1,
-        },
-      },
+    const product = await db.product.findUnique({
+      where: { id },
       include: {
         user: {
           select: {
@@ -76,7 +68,24 @@ export async function getProduct(id: number) {
 
     return product;
   } catch (e) {
+    console.error("Error fetching product:", e);
     return null;
+  }
+}
+
+// 조회수만 증가시키는 함수
+export async function incrementProductViews(id: number) {
+  try {
+    await db.product.update({
+      where: { id },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+  } catch (e) {
+    console.error("Error incrementing product views:", e);
   }
 }
 export async function getComments(productId: number) {
@@ -196,7 +205,8 @@ export async function deleteProduct(productId: number) {
     await db.product.delete({
       where: { id: productId },
     });
-    redirect(`/user/marketplace/`);
+
+    return true;
   } catch (error) {
     console.error("Failed to delete product:", error);
     return { success: false, error: "Failed to delete product" };

@@ -10,6 +10,7 @@ import {
   getComments,
   getLikeStatus,
   getProduct,
+  incrementProductViews,
 } from "./action";
 import { CommentItem, CommentList } from "@/components/comment/CommentList";
 import { Prisma } from "@prisma/client";
@@ -39,6 +40,9 @@ async function getCachedCommentList(productId: number) {
   });
   return cachedOperation(productId);
 }
+function isClientSideRendering() {
+  return typeof window !== "undefined";
+}
 export default async function PostDetail({
   params,
 }: {
@@ -58,6 +62,9 @@ export default async function PostDetail({
 
   const comments = await getCachedCommentList(id);
 
+  if (product && !isClientSideRendering()) {
+    await incrementProductViews(id);
+  }
   return (
     <div className='max-w-4xl mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-4'>{product.title}</h1>
