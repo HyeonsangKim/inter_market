@@ -72,7 +72,6 @@ export async function getProduct(id: number) {
     return null;
   }
 }
-
 // 조회수만 증가시키는 함수
 export async function incrementProductViews(id: number) {
   try {
@@ -181,7 +180,6 @@ export async function createComment(
     return null;
   }
 }
-
 export async function updateComment(
   commentId: number,
   postId: number,
@@ -199,7 +197,6 @@ export async function updateComment(
     return { success: false, error: "댓글 수정에 실패했습니다." };
   }
 }
-
 export async function deleteProduct(productId: number) {
   try {
     await db.product.delete({

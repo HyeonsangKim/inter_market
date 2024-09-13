@@ -1,15 +1,19 @@
 "use client";
 import Link from "next/link";
 import React, { useRef, useEffect } from "react";
-import { Logout } from "./ClientButton";
+import { Logout } from "./client-button";
+import { User } from "@/app/types/user";
+import Image from "next/image";
 
 interface ProfileSidebarProps {
+  user: User;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function ProfileSidebar({ isOpen, onClose }: ProfileSidebarProps) {
+function ProfileSidebar({ user, isOpen, onClose }: ProfileSidebarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const currentUser = user.user;
 
   // Detect clicks outside the sidebar to close it
   useEffect(() => {
@@ -43,14 +47,16 @@ function ProfileSidebar({ isOpen, onClose }: ProfileSidebarProps) {
       </button>
       <div className='pt-4'>
         <div className='flex items-center mb-4 p-4'>
-          <img
-            src='https://via.placeholder.com/50'
-            alt='Profile'
+          <Image
             className='w-12 h-12 rounded-full mr-4'
+            src={currentUser.image}
+            width={64}
+            height={64}
+            alt='profile'
           />
           <div>
-            <h2 className='text-lg font-semibold'>John Doe</h2>
-            <p className='text-sm text-gray-400'>john.doe@example.com</p>
+            <h2 className='text-lg font-semibold'>{currentUser.name}</h2>
+            <p className='text-sm text-gray-400'>{currentUser.email}</p>
           </div>
         </div>
         <nav>

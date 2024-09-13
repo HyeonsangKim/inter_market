@@ -5,6 +5,7 @@ import Image from "next/image";
 import { InitialProducts } from "@/app/user/marketplace/page";
 import { formatToTimeAgo } from "@/app/utils/utils";
 import Link from "next/link";
+import { RegionFilter, SearchBar } from "./search";
 
 const PRODUCTS_PER_PAGE = 9; // 한 페이지당 표시할 제품 수
 interface ProductListProps {
@@ -46,15 +47,26 @@ export default function ProductList({ initialProducts }: ProductListProps) {
   const [products, setProducts] = useState<InitialProducts>(
     initialProducts.slice(0, PRODUCTS_PER_PAGE)
   );
+  const [filteredProducts, setFilteredProducts] =
+    useState<InitialProducts>(initialProducts);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { ref, inView } = useInView();
+
+  const regions = [
+    {
+      city: "Seoul",
+      districts: ["Gangnam-gu", "Seocho-gu", "Songpa-gu", "Mapo-gu"],
+    },
+    { city: "Busan", districts: ["Haeundae-gu", "Suyeong-gu", "Nam-gu"] },
+    // Add other regions
+  ];
 
   const loadMoreProducts = useCallback(() => {
     const nextPage = page + 1;
     const startIndex = (nextPage - 1) * PRODUCTS_PER_PAGE;
     const endIndex = startIndex + PRODUCTS_PER_PAGE;
-    const newProducts = initialProducts.slice(startIndex, endIndex);
+    const newProducts = filteredProducts.slice(startIndex, endIndex);
 
     if (newProducts.length > 0) {
       setProducts((prevProducts) => [...prevProducts, ...newProducts]);
@@ -62,7 +74,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
     } else {
       setHasMore(false);
     }
-  }, [page, initialProducts]);
+  }, [page, filteredProducts]);
 
   useEffect(() => {
     if (inView && hasMore) {
@@ -70,8 +82,35 @@ export default function ProductList({ initialProducts }: ProductListProps) {
     }
   }, [inView, hasMore, loadMoreProducts]);
 
+  const handleSearch = (query: string) => {
+    const filtered = initialProducts.filter((product) =>
+      product.title.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+    setProducts(filtered.slice(0, PRODUCTS_PER_PAGE));
+    setPage(1);
+    setHasMore(true);
+  };
+
+  const handleFilterChange = (city: string, district: string) => {
+    const filtered = initialProducts.filter((product) => {
+      if (city && district) {
+        return product.user.si === city && product.user.gu === district;
+      } else if (city) {
+        return product.user.si === city;
+      }
+      return true;
+    });
+    setFilteredProducts(filtered);
+    setProducts(filtered.slice(0, PRODUCTS_PER_PAGE));
+    setPage(1);
+    setHasMore(true);
+  };
+
   return (
     <div className='container mx-auto px-4 py-8'>
+      <SearchBar onSearch={handleSearch} />
+      <RegionFilter regions={regions} onFilterChange={handleFilterChange} />
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4'>
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

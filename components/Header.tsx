@@ -1,7 +1,9 @@
 import Link from "next/link";
-import HamburgerButton from "./Hamberger";
+import HamburgerButton from "./hamberger";
+import getCurrentUser from "@/lib/getCurrentUser";
 
-export default function Header() {
+export default async function Header() {
+  const user = await getCurrentUser();
   return (
     <div className='bg-white shadow-sm  w-full'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -32,7 +34,7 @@ export default function Header() {
             </Link>
           </nav>
           <div>
-            <HamburgerButton />
+            <HamburgerButton user={user} />
           </div>
         </div>
       </div>
