@@ -83,7 +83,7 @@ export default async function PostDetail({
         <LikeShareButtons isLiked={isLiked} likeCount={likeCount} postId={id} />
         {session!.id === product.user.id && (
           <div className='flex gap-4 *:cursor-pointer'>
-            <Link href={`/user/marketplace/edit/${id}`}>
+            <Link href={`/user/marketplace/products/edit/${id}`}>
               <button className='text-white'>수정</button>
             </Link>
             <DeleteButton

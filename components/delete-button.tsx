@@ -19,7 +19,7 @@ export default function DeleteButton({
   const actionFuntion = async () => {
     const success = await action(elementId);
     if (success) {
-      router.push("/user/marketplace");
+      router.push("/user/marketplace/products");
     }
   };
 

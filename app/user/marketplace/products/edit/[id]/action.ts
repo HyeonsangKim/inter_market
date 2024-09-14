@@ -58,7 +58,7 @@ export async function updateProduct(_: any, formData: FormData) {
           },
         },
       });
-      redirect(`/user/marketplace/`);
+      redirect(`/user/marketplace/products`);
     }
   }
 }

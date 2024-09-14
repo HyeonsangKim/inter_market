@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
-import { InitialProducts } from "@/app/user/marketplace/page";
+import { InitialProducts } from "@/app/user/marketplace/products/page";
 import { formatToTimeAgo } from "@/app/utils/utils";
 import Link from "next/link";
 import { RegionFilter, SearchBar } from "./search";

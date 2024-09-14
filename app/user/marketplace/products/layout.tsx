@@ -4,15 +4,14 @@ import { checkAddress } from "@/lib/location";
 
 export default async function UserLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
-  const addressExit = await checkAddress();
-  const userData = await getCurrentUser();
-
   return (
     <div>
-      <AddressInfo address={addressExit} userId={userData!.id} />
+      {modal}
       {children}
     </div>
   );

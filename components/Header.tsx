@@ -27,7 +27,7 @@ export default async function Header() {
               Community
             </Link>
             <Link
-              href='/user/marketplace'
+              href='/user/marketplace/products/products'
               className='text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium'
             >
               Marketplace

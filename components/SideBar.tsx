@@ -45,43 +45,51 @@ function ProfileSidebar({ user, isOpen, onClose }: ProfileSidebarProps) {
       <button className='absolute top-4 right-4 text-2xl' onClick={onClose}>
         &times;
       </button>
-      <div className='pt-4'>
-        <div className='flex items-center mb-4 p-4'>
-          <Image
-            className='w-12 h-12 rounded-full mr-4'
-            src={currentUser.image}
-            width={64}
-            height={64}
-            alt='profile'
-          />
-          <div>
-            <h2 className='text-lg font-semibold'>{currentUser.name}</h2>
-            <p className='text-sm text-gray-400'>{currentUser.email}</p>
-          </div>
+      {currentUser === null ? (
+        <div>
+          로그인 하세요<div className=''></div>
         </div>
-        <nav>
-          <ul className=''>
-            <li
-              className='py-2 hover:bg-gray-700 px-4 hover:text-white'
-              onClick={onClose}
-            >
-              <Link href='/profile'>Profile</Link>
-            </li>
-            <li
-              className='py-2 hover:bg-gray-700 px-4 hover:text-white'
-              onClick={onClose}
-            >
-              Settings
-            </li>
-            <li
-              className='py-2 hover:bg-gray-700 px-4 hover:text-white'
-              onClick={onClose}
-            >
-              <Logout />
-            </li>
-          </ul>
-        </nav>
-      </div>
+      ) : (
+        <>
+          <div className='pt-4'>
+            <div className='flex items-center mb-4 p-4'>
+              <Image
+                className='w-12 h-12 rounded-full mr-4'
+                src={currentUser.image}
+                width={64}
+                height={64}
+                alt='profile'
+              />
+              <div>
+                <h2 className='text-lg font-semibold'>{currentUser.name}</h2>
+                <p className='text-sm text-gray-400'>{currentUser.email}</p>
+              </div>
+            </div>
+            <nav>
+              <ul className=''>
+                <li
+                  className='py-2 hover:bg-gray-700 px-4 hover:text-white'
+                  onClick={onClose}
+                >
+                  <Link href='/profile'>Profile</Link>
+                </li>
+                <li
+                  className='py-2 hover:bg-gray-700 px-4 hover:text-white'
+                  onClick={onClose}
+                >
+                  Settings
+                </li>
+                <li
+                  className='py-2 hover:bg-gray-700 px-4 hover:text-white'
+                  onClick={onClose}
+                >
+                  <Logout />
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </>
+      )}
     </div>
   );
 }

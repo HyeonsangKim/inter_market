@@ -53,7 +53,7 @@ export async function uploadProduct(_: any, formData: FormData) {
           id: true,
         },
       });
-      redirect(`/user/marketplace/`);
+      redirect(`/user/marketplace/products/products`);
     }
   }
 }

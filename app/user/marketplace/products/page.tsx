@@ -48,7 +48,7 @@ export default async function Page() {
   const initialProducts = await getInitialProducts();
   return (
     <div className='container mx-auto w-full'>
-      <Link href='/user/marketplace/create'>New</Link>
+      <Link href='/user/marketplace/products/create'>New</Link>
       <div>
         <ProductList initialProducts={initialProducts} />
       </div>

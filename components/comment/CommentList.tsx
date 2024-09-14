@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import { CommentForm } from "./Comment";
 import { Comment } from "./types";
+import { useRouter } from "next/navigation";
 import {
   deleteComment,
   updateComment,
 } from "@/app/user/marketplace/products/[id]/action";
-import { useRouter } from "next/navigation";
 
 export function CommentList({
   postId,

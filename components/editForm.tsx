@@ -4,7 +4,7 @@ import ImageUploader from "@/components/ImageUploader";
 import PostForm from "@/components/postform";
 import { useState, useEffect } from "react";
 import { useFormState } from "react-dom";
-import { updateProduct } from "@/app/user/marketplace/edit/[id]/action";
+import { updateProduct } from "@/app/user/marketplace/products/edit/[id]/action";
 
 interface Image {
   id: number;
