@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
-import { InitialProducts } from "@/app/user/marketplace/products/page";
 import { formatToTimeAgo } from "@/app/utils/utils";
 import Link from "next/link";
 import { RegionFilter, SearchBar } from "./search";
+import { InitialProducts } from "@/app/user/marketplace/products/page";
 
 const PRODUCTS_PER_PAGE = 9; // 한 페이지당 표시할 제품 수
 interface ProductListProps {

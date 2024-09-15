@@ -39,7 +39,7 @@ function ProfileSidebar({ user, isOpen, onClose }: ProfileSidebarProps) {
     <div
       className={`fixed top-0 right-0 h-full w-64 bg-white text-black transform ${
         isOpen ? "translate-x-0" : "translate-x-full"
-      } transition-transform duration-300 ease-in-out`}
+      } transition-transform duration-300 ease-in-out z-10`}
       ref={sidebarRef}
     >
       <button className='absolute top-4 right-4 text-2xl' onClick={onClose}>

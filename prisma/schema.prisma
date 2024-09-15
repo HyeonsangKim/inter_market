@@ -78,6 +78,8 @@ model Product {
   updated_at DateTime @updatedAt
   user User @relation(fields: [userId],references: [id],onDelete: Cascade) 
   userId String
+  soldout Boolean?
+  
   comments Pcomment[]
   likes Plike[]
   views Int @default(0)
