@@ -1,20 +1,29 @@
 "use client";
 
+import { ButtonHTMLAttributes } from "react";
 import { useFormStatus } from "react-dom";
 
 interface ButtonProps {
-  text: string;
+  children: any;
+  variant: string;
 }
 
-export default function Button({ text }: ButtonProps) {
+export default function Button({
+  children,
+  variant = "primary",
+  ...props
+}: ButtonProps & ButtonHTMLAttributes<HTMLButtonElement>) {
   const { pending } = useFormStatus();
 
   return (
     <button
+      className={`btn ${
+        variant === "primary" ? "btn-primary" : "btn-secondary"
+      } ${pending ? "opacity-50 cursor-not-allowed" : ""}`}
       disabled={pending}
-      className="primary-btn h-10 disabled:bg-neutral-400 disabled:text-neutral-300 disabled:cursor-not-allowed"
+      {...props}
     >
-      {pending ? "Loading..." : text}
+      {pending ? "Loading..." : children}
     </button>
   );
 }

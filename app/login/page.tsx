@@ -1,5 +1,5 @@
 "use client";
-import Button from "@/components/Button";
+import Button from "@/components/button";
 import Input from "@/components/Input";
 import { useFormState } from "react-dom";
 import { login } from "./actions";

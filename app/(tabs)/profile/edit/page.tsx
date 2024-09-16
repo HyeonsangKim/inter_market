@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import Button from "@/components/Button";
+import Button from "@/components/button";
 import Input from "@/components/Input";
 import { useUser } from "@/components/userContext";
 import { ChangeEvent, useState } from "react";
