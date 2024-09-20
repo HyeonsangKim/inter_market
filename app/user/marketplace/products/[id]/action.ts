@@ -16,6 +16,7 @@ export async function likePost(postId: number) {
       },
     });
     revalidateTag(`product-like-status-${postId}`);
+    revalidateTag(`product-detail-${postId}`);
   } catch (e) {
     console.log(e);
   }
@@ -34,6 +35,7 @@ export async function dislikePost(postId: number) {
       },
     });
     // revalidatePath(`/posts/${id}`);
+    revalidateTag(`product-detail-${postId}`);
     revalidateTag(`product-like-status-${postId}`);
   } catch (e) {}
 }
