@@ -67,13 +67,13 @@ export default function AddressInfo({ address, userId }: AddressProps) {
   };
 
   return (
-    <div className='flex flex-row gap-10 py-4 px-6'>
+    <div className="flex flex-row gap-10 py-4 px-6">
       {newAddress?.dong === null ? (
         <div>Loading...</div>
       ) : (
         <>
           {newAddress ? (
-            <div className='flex text-xs'>
+            <div className="flex text-xs">
               <p>
                 Address:&nbsp;{newAddress.si}&nbsp;
                 {newAddress.gu}
@@ -84,7 +84,7 @@ export default function AddressInfo({ address, userId }: AddressProps) {
           )}
         </>
       )}
-      <button onClick={handleFetchAddress} className='btn-primary text-xs'>
+      <button onClick={handleFetchAddress} className="btn-primary text-xs">
         Get new Address
       </button>
     </div>

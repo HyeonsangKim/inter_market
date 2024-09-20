@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import { redirect } from "next/navigation";
 import { productSchema } from "./shema";
 import { db } from "@/lib/db";
-import { getCurrentUserId, getSession } from "@/lib/getCurrentUser";
+import { getCurrentUserId } from "@/lib/getCurrentUser";
 
 export async function uploadProduct(_: any, formData: FormData) {
   const data = {
@@ -53,7 +53,7 @@ export async function uploadProduct(_: any, formData: FormData) {
           id: true,
         },
       });
-      redirect(`/user/marketplace/products/products`);
+      redirect(`/user/marketplace/products/`);
     }
   }
 }

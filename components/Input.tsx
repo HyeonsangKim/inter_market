@@ -18,7 +18,7 @@ export default function Input({
         name={name}
         value={value || undefined}
         className="bg-transparent 
-        rounded-md w-full h-10 p-3 focus:outline-none ring-2 focus:ring-4 transition ring-green-600 focus:ring-green-500 border-none placeholder:text-neutral-400"
+        rounded-md w-full h-10 p-3 focus:outline-none ring-2 focus:ring-4 transition ring-green-600 focus:ring-green-500 border-none placeholder:text-black"
         {...rest}
       />
       {errors.map((error, index) => (

@@ -130,7 +130,8 @@ export function ProfileForm({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
               {productsCount > 0 ? (
                 products!.map((product) => (
-                  <div key={product.id} className='bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition'>
+                  <Link key={product.id}  href={`/user/marketplace/products/${product.id}`}>
+                  <div className='bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition  cursor-pointer'>
                     <Image
                       width={300}
                       height={200}
@@ -147,6 +148,7 @@ export function ProfileForm({
                       </p>
                     </div>
                   </div>
+                  </Link>
                 ))
               ) : (
                 <p className='text-gray-500 text-center py-4 col-span-full'>No products yet.</p>

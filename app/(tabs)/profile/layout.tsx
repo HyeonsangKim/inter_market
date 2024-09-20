@@ -12,7 +12,6 @@ export default async function InfoLayout({
   return (
     <UserProvider userData={userData}>
       {children}
-      <TabBar />
     </UserProvider>
   );
 }

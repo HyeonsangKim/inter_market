@@ -8,7 +8,7 @@ import { ChangeEvent, useState } from "react";
 import { useFormState } from "react-dom";
 import { editProfile } from "./action";
 
-export default function Page() {
+export default function ProfileEdit() {
   const userData = useUser();
   const [preview, setPreview] = useState(userData.image);
   const [name, setName] = useState(userData.name);
@@ -41,51 +41,74 @@ export default function Page() {
   const [state, action] = useFormState(editProfile, null);
 
   return (
-    <div className='p-5'>
-      <form action={action} className='flex gap-10'>
-        <label htmlFor='image'>
-          <Image
-            width={64}
-            height={64}
-            className='size-20 md:size-28 rounded-full'
-            src={preview || image || ""}
-            alt={userData.name!}
-          />
-        </label>
-        <input
-          onChange={onImageChange}
-          type='file'
-          id='image'
-          name='image'
-          accept='image/*'
-          className='hidden'
-        />
-        <div className='flex flex-col gap-4 w-36'>
-          <Input
-            name='email'
-            value={userData.email || undefined}
-            type='text'
-            required
-            readOnly
-          />
-          <div>이름</div>
-          <div>
-            <Input
-              name='name'
-              value={name || undefined}
-              type='text'
-              required
-              onChange={onNameChange}
-            />
-          </div>
-          <div
-            onClick={() => {
-              update({ id: userData.id, image, name, email: userData.email });
-              // using update() called from the useSession hook
-              // handleSubmit();
-            }}
-          >
-            <Button text='edit' />
+    <div className="p-5">
+      <form action={action}>
+        <div className="card">
+          <div className="p-6">
+            <div className="mb-6 flex justify-center">
+              <div className="relative">
+                <div className="relative h-32 w-32">
+                  <label htmlFor="image">
+                    <Image
+                      width={128}
+                      height={128}
+                      className="size-20 md:size-28 rounded-full"
+                      src={preview || image || ""}
+                      alt={userData.name!}
+                    />
+                  </label>
+                  <input
+                    onChange={onImageChange}
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="name" className="label">
+                  Full Name
+                </label>
+                <Input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={userData.name || undefined}
+                  onChange={onNameChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="label">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={userData.email || undefined}
+                  readOnly
+                />
+              </div>
+
+              <div
+                className="flex justify-end"
+                onClick={() => {
+                  update({
+                    id: userData.id,
+                    image,
+                    name,
+                    email: userData.email,
+                  });
+                }}
+              >
+                <Button type="submit">Save Changes</Button>
+              </div>
+            </div>
           </div>
         </div>
       </form>
