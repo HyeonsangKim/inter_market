@@ -7,13 +7,19 @@ import { useUser } from "@/components/userContext";
 import { ChangeEvent, useState } from "react";
 import { useFormState } from "react-dom";
 import { editProfile } from "./action";
+import { notFound } from "next/navigation";
 
-export default function ProfileEdit() {
+export default function ProfileEdit({ params }: { params: { id: string } }) {
   const userData = useUser();
+  const userId = params.id;
   const [preview, setPreview] = useState(userData.image);
   const [name, setName] = useState(userData.name);
   const [image, setImage] = useState<string | null>(userData.image);
   const { update } = useSession();
+
+  if (userId !== userData.id) {
+    return notFound();
+  }
 
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;

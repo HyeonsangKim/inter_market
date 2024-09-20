@@ -1,5 +1,6 @@
 "use client";
 import { checkAddress, fetchAddress, insertAddress } from "@/lib/location";
+import { MapPin, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 interface LocationProps {
   latitude: number;
@@ -67,26 +68,27 @@ export default function AddressInfo({ address, userId }: AddressProps) {
   };
 
   return (
-    <div className="flex flex-row gap-10 py-4 px-6">
-      {newAddress?.dong === null ? (
-        <div>Loading...</div>
-      ) : (
-        <>
+    <div className="bg-white shadow-sm rounded-lg p-4 mb-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <MapPin size={20} className="text-indigo-500 mr-2" />
           {newAddress ? (
-            <div className="flex text-xs">
-              <p>
-                Address:&nbsp;{newAddress.si}&nbsp;
-                {newAddress.gu}
-              </p>
-            </div>
+            <p className="text-sm text-gray-700">
+              {newAddress.si} {newAddress.gu}
+            </p>
           ) : (
-            <div>Error : {error && <p>{error}</p>}</div>
+            <p className="text-sm text-gray-500">Address not set</p>
           )}
-        </>
-      )}
-      <button onClick={handleFetchAddress} className="btn-primary text-xs">
-        Get new Address
-      </button>
+        </div>
+        <button
+          onClick={handleFetchAddress}
+          className="flex items-center text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full hover:bg-indigo-200 transition-colors duration-200 ml-4"
+        >
+          <RefreshCw size={14} className="mr-1" />
+          Update Location
+        </button>
+      </div>
+      {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
     </div>
   );
 }

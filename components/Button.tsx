@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 
 interface ButtonProps {
   children: any;
-  variant: string;
+  variant?: string;
 }
 
 export default function Button({

@@ -20,13 +20,18 @@ export async function uploadProduct(_: any, formData: FormData) {
       const photoData = await photo.arrayBuffer();
 
       const photoPath = `/productsImg/${Date.now()}_${photo.name}`;
-      await fs.writeFile(`./public${photoPath}`, Buffer.from(photoData));
+      await fs.writeFile(
+        `./public${photoPath}`,
+        new Uint8Array(Buffer.from(photoData))
+      );
       photoPaths.push(photoPath); // 저장된 경로를 배열에 추가합니다.
     }
   }
 
   data.photos = photoPaths; // 파일 경로들을 배열로 저장합니다.
   const result = productSchema.safeParse(data);
+  console.log(result.error);
+
   if (!result.success) {
     return result.error.flatten();
   } else {
@@ -37,7 +42,7 @@ export async function uploadProduct(_: any, formData: FormData) {
         data: {
           title: result.data.title,
           description: result.data.content,
-          price: result.data.price,
+          price: Number(result.data.price),
           photos: {
             createMany: {
               data: photoPaths.map((path) => ({ url: path })),
@@ -53,6 +58,8 @@ export async function uploadProduct(_: any, formData: FormData) {
           id: true,
         },
       });
+      console.log(product);
+
       redirect(`/user/marketplace/products/`);
     }
   }

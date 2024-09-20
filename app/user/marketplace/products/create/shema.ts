@@ -7,7 +7,7 @@ export const productSchema = z.object({
   content: z.string({
     required_error: "content is required.",
   }),
-  price: z.coerce.number({
+  price: z.string({
     required_error: "Price is required.",
   }),
 });

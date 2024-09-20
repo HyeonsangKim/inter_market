@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import ProductList from "@/components/ProductList";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 // 기존에 제공된 getInitialProducts 함수와 타입 정의
 async function getInitialProducts() {
@@ -47,8 +48,7 @@ export type InitialProducts = Prisma.PromiseReturnType<
 export default async function Page() {
   const initialProducts = await getInitialProducts();
   return (
-    <div className='container mx-auto w-full'>
-      <Link href='/user/marketplace/products/create'>New</Link>
+    <div className="container mx-auto w-full">
       <div>
         <ProductList initialProducts={initialProducts} />
       </div>

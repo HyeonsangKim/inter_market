@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { productSchema } from "../../create/shema";
+import { revalidateTag } from "next/cache";
 
 export async function getProduct(id: number) {
   const product = await db.product.findUnique({
@@ -28,7 +29,10 @@ export async function updateProduct(_: any, formData: FormData) {
     if (photo instanceof File) {
       const photoData = await photo.arrayBuffer();
       const photoPath = `/productsImg/${Date.now()}_${photo.name}`;
-      await fs.writeFile(`./public${photoPath}`, Buffer.from(photoData));
+      await fs.writeFile(
+        `./public${photoPath}`,
+        new Uint8Array(Buffer.from(photoData))
+      );
       photoPaths.push(photoPath);
     } else if (typeof photo === "string") {
       // 기존 이미지 경로 유지
@@ -49,7 +53,7 @@ export async function updateProduct(_: any, formData: FormData) {
         data: {
           title: result.data.title,
           description: result.data.content,
-          price: result.data.price,
+          price: Number(result.data.price),
           photos: {
             deleteMany: {},
             createMany: {
@@ -58,6 +62,7 @@ export async function updateProduct(_: any, formData: FormData) {
           },
         },
       });
+      revalidateTag(`product-detail-${data.id}`);
       redirect(`/user/marketplace/products`);
     }
   }
