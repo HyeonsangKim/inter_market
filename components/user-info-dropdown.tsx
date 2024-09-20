@@ -9,7 +9,7 @@ interface User {
   name: string;
 }
 
-export function UserInfoDropdown(user: User) {
+export function UserInfoDropdown({ user }: User) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
