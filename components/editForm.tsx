@@ -1,7 +1,7 @@
 "use client";
 
-import ImageUploader from "@/components/ImageUploader";
-import PostForm from "@/components/postform";
+import ImageUploader from "@/components/image-uploader";
+import PostForm from "@/components/post-form";
 import { useState, useEffect } from "react";
 import { useFormState } from "react-dom";
 import { updateProduct } from "@/app/user/marketplace/products/edit/[id]/action";

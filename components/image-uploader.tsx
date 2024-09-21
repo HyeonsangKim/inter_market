@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ImagePreview from "./ImagePreview";
+import ImagePreview from "./image-preview";
 
 interface Image {
   id: number;
@@ -54,18 +54,18 @@ function ImageUploader({ onImageChange, initialImages }: ImageUploaderProps) {
   };
 
   return (
-    <div className='mb-4'>
-      <label className='block text-sm font-medium text-gray-700'>
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">
         Images (up to 10): {images.length} / 10
         <input
-          type='file'
-          accept='image/*'
+          type="file"
+          accept="image/*"
           multiple
           onChange={handleImageChange}
-          className='mt-1 block w-full text-sm text-gray-500'
+          className="mt-1 block w-full text-sm text-gray-500"
         />
       </label>
-      <div className='flex flex-wrap gap-4 mt-4'>
+      <div className="flex flex-wrap gap-4 mt-4">
         {images.map((image) => (
           <ImagePreview
             key={image.id}

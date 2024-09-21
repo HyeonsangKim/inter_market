@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import ProductList from "@/components/ProductList";
-import Link from "next/link";
-import { Plus } from "lucide-react";
+import ProductList from "@/components/product-list";
 
-// 기존에 제공된 getInitialProducts 함수와 타입 정의
 async function getInitialProducts() {
   const products = await db.product.findMany({
     select: {
@@ -45,7 +42,7 @@ export type InitialProducts = Prisma.PromiseReturnType<
   typeof getInitialProducts
 >;
 
-export default async function Page() {
+export default async function ProductListPage() {
   const initialProducts = await getInitialProducts();
   return (
     <div className="container mx-auto w-full">

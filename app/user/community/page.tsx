@@ -1,16 +1,43 @@
-import Address from "@/components/Address";
-import getCurrentUser from "@/lib/getCurrentUser";
-import { checkAddress } from "@/lib/location";
-const addressCache = new Map<string, Location>();
-export default async function Page() {
-  const addressExit = await checkAddress();
-  const userData = await getCurrentUser();
+import PostList from "@/components/post-list";
+import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
+
+async function getInitialPosts() {
+  const posts = await db.post.findMany({
+    select: {
+      title: true,
+      created_at: true,
+      id: true,
+      description: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          si: true,
+          gu: true,
+          dong: true,
+        },
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+
+  return posts;
+}
+
+export type InitialPosts = Prisma.PromiseReturnType<typeof getInitialPosts>;
+
+export default async function PostListPage() {
+  const initialPosts = await getInitialPosts();
+  console.log(initialPosts);
 
   return (
-    <div className='flex flex-col gap-10 py-8 px-6'>
-      <div className='flex flex-col gap-2 *:font-medium'>
-        <h1 className='text-2xl'>Hola!</h1>
-        <h2 className='text-xl'>Welcome.</h2>
+    <div className="container mx-auto w-full">
+      <div>
+        <PostList initialPosts={initialPosts} />
       </div>
     </div>
   );

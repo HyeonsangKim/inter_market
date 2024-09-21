@@ -1,8 +1,8 @@
 // components/HamburgerButton.tsx
 "use client";
 import React, { useState } from "react";
-import SideBar from "./sidebar";
 import { User } from "@/app/types/user";
+import ProfileSidebar from "./SideBar";
 
 function HamburgerButton(user: User) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -32,7 +32,7 @@ function HamburgerButton(user: User) {
           />
         </svg>
       </button>
-      <SideBar
+      <ProfileSidebar
         user={user}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}

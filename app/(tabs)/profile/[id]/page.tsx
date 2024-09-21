@@ -1,6 +1,6 @@
 import { ProfileForm } from "@/components/profile-form";
 import { db } from "@/lib/db";
-import getCurrentUser, { getCurrentUserId } from "@/lib/getCurrentUser";
+import { getCurrentUserId } from "@/lib/getCurrentUser";
 
 async function getMyProducts(userId: string) {
   const products = await db.product.findMany({

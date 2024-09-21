@@ -12,7 +12,7 @@ export default async function Header() {
           <div className="flex items-center">
             <Link
               href="/user"
-              className="ml-3 text-xl font-semibold text-gray-900"
+              className="ml-3 text-lg font-semibold text-gray-900 lg:text-xl"
             >
               🌏InterAgora
             </Link>

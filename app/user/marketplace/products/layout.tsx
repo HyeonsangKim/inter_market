@@ -1,4 +1,4 @@
-import AddressInfo from "@/components/Address";
+import AddressInfo from "@/components/address";
 import getCurrentUser from "@/lib/getCurrentUser";
 import { checkAddress } from "@/lib/location";
 

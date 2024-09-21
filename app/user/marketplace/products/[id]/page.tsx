@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
-import ImageSlider from "@/components/ImageSlider";
-import LikeShareButtons from "@/components/LIkeShareBtn";
+import ImageSlider from "@/components/image-slider";
+import LikeShareButtons from "@/components/lIke-share-btn";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import {
   EyeIcon,
@@ -16,12 +16,12 @@ import {
   getProduct,
   incrementProductViews,
 } from "./action";
-import { CommentItem, CommentList } from "@/components/comment/CommentList";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
 import DeleteButton from "@/components/delete-button";
 import Link from "next/link";
 import { UserInfoDropdown } from "@/components/user-info-dropdown";
+import { CommentItem, CommentList } from "@/components/comment/CommentList";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments

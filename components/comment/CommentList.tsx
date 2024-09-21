@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { CommentForm } from "./Comment";
 import { Comment } from "./types";
 import { useRouter } from "next/navigation";
 import {
   deleteComment,
   updateComment,
 } from "@/app/user/marketplace/products/[id]/action";
+import { CommentForm } from "./Comment";
 
 export function CommentList({
   postId,
@@ -59,21 +59,21 @@ export function CommentItem({
   };
 
   return (
-    <div className='border-t py-4'>
-      <p className='font-semibold'>{comment.user.name}</p>
+    <div className="border-t py-4">
+      <p className="font-semibold">{comment.user.name}</p>
       {isEditing ? (
         <div>
           <textarea
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
-            className='w-full p-2 border rounded text-black'
+            className="w-full p-2 border rounded text-black"
           />
-          <button onClick={onEdit} className='text-blue-500 text-sm mt-1 mr-2'>
+          <button onClick={onEdit} className="text-blue-500 text-sm mt-1 mr-2">
             저장
           </button>
           <button
             onClick={() => setIsEditing(false)}
-            className='text-gray-500 text-sm mt-1'
+            className="text-gray-500 text-sm mt-1"
           >
             취소
           </button>
@@ -81,12 +81,12 @@ export function CommentItem({
       ) : (
         <p>{comment.payload}</p>
       )}
-      <p className='text-sm text-gray-500'>
+      <p className="text-sm text-gray-500">
         {new Date(comment.created_at).toLocaleDateString()}
       </p>
       <button
         onClick={() => setIsReplying(!isReplying)}
-        className='text-blue-500 text-sm mt-1 mr-2'
+        className="text-blue-500 text-sm mt-1 mr-2"
       >
         {isReplying ? "취소" : "답글"}
       </button>
@@ -94,13 +94,13 @@ export function CommentItem({
         <>
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className='text-green-500 text-sm mt-1 mr-2'
+            className="text-green-500 text-sm mt-1 mr-2"
           >
             수정
           </button>
           <button
             onClick={() => onDelete(comment.id, postId)}
-            className='text-red-500 text-sm mt-1'
+            className="text-red-500 text-sm mt-1"
           >
             삭제
           </button>
@@ -116,7 +116,7 @@ export function CommentItem({
         />
       )}
       {comment!.replies! && (
-        <div className='ml-8 mt-4'>
+        <div className="ml-8 mt-4">
           {comment!.replies!.map((reply) => (
             <CommentItem
               key={reply.id}

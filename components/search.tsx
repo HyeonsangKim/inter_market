@@ -1,4 +1,5 @@
 "use client";
+import { ChevronDown, Search } from "lucide-react";
 import { useState } from "react";
 
 export const SearchBar: React.FC<{ onSearch: (query: string) => void }> = ({
@@ -12,20 +13,18 @@ export const SearchBar: React.FC<{ onSearch: (query: string) => void }> = ({
   };
 
   return (
-    <form onSubmit={handleSearch} className='mb-4'>
+    <form onSubmit={handleSearch} className="relative mb-6">
       <input
-        type='text'
+        type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder='Enter search term'
-        className='p-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black'
+        placeholder="Search products..."
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
       />
-      <button
-        type='submit'
-        className='bg-blue-500 text-white p-2 rounded-r-md hover:bg-blue-600'
-      >
-        Search
-      </button>
+      <Search
+        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+        size={20}
+      />
     </form>
   );
 };
@@ -48,34 +47,46 @@ export const RegionFilter: React.FC<{
   };
 
   return (
-    <div className='mb-4'>
-      <select
-        value={selectedCity}
-        onChange={(e) => handleCityChange(e.target.value)}
-        className='mr-2 p-2 border rounded-md text-black'
-      >
-        <option value=''>All Cities</option>
-        {regions.map((region) => (
-          <option key={region.city} value={region.city}>
-            {region.city}
-          </option>
-        ))}
-      </select>
-      {selectedCity && (
+    <div className="flex space-x-4 mb-6">
+      <div className="relative">
         <select
-          value={selectedDistrict}
-          onChange={(e) => handleDistrictChange(e.target.value)}
-          className='p-2 border rounded-md text-black'
+          value={selectedCity}
+          onChange={(e) => handleCityChange(e.target.value)}
+          className="appearance-none bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         >
-          <option value=''>All Districts</option>
-          {regions
-            .find((region) => region.city === selectedCity)
-            ?.districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
+          <option value="">All cities</option>
+          {regions.map((region) => (
+            <option key={region.city} value={region.city}>
+              {region.city}
+            </option>
+          ))}
         </select>
+        <ChevronDown
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={20}
+        />
+      </div>
+      {selectedCity && (
+        <div className="relative">
+          <select
+            value={selectedDistrict}
+            onChange={(e) => handleDistrictChange(e.target.value)}
+            className="appearance-none bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+            <option value="">All districts</option>
+            {regions
+              .find((region) => region.city === selectedCity)
+              ?.districts.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+          </select>
+          <ChevronDown
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
+        </div>
       )}
     </div>
   );
