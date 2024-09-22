@@ -116,7 +116,7 @@ export async function getComments(postId: number) {
     return null;
   }
 }
-export async function deleteComment(commentId: number, postId: number) {
+export async function deletePostComment(commentId: number, postId: number) {
   try {
     await db.comment.delete({
       where: { id: commentId },
@@ -148,7 +148,7 @@ export async function getLikeStatus(postId: number, userId: string) {
     isLiked: Boolean(isLiked),
   };
 }
-export async function createComment(
+export async function createPostComment(
   postId: number,
   parentId: number | null,
   content: string
@@ -176,7 +176,7 @@ export async function createComment(
     return null;
   }
 }
-export async function updateComment(
+export async function updatePostComment(
   commentId: number,
   postId: number,
   newContent: string

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createComment } from "@/app/user/marketplace/products/[id]/action";
+import { createPostComment } from "@/app/user/community/[id]/action";
 
 export function CommentForm({
   postId,
@@ -22,8 +23,19 @@ export function CommentForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const newComment = await createComment(postId, parentId || null, content);
-      // onCommentAdded(newComment);
+      if (category === "product") {
+        const newComment = await createComment(
+          postId,
+          parentId || null,
+          content
+        );
+      } else {
+        const newComment = await createPostComment(
+          postId,
+          parentId || null,
+          content
+        );
+      }
 
       if (onCommentAdded) {
         onCommentAdded();
@@ -39,16 +51,16 @@ export function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className='mt-4'>
+    <form onSubmit={handleSubmit} className="mt-4">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className='w-full p-2 border rounded text-black'
-        placeholder='댓글을 입력하세요...'
+        className="w-full p-2 border rounded text-black"
+        placeholder="댓글을 입력하세요..."
       />
       <button
-        type='submit'
-        className='mt-2 px-4 py-2 bg-blue-500 text-white rounded'
+        type="submit"
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
       >
         {isSubmitting ? "작성 중..." : "댓글 작성"}
       </button>

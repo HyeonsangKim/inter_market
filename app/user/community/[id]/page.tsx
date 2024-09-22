@@ -20,6 +20,7 @@ import {
   getPost,
   incrementPostViews,
 } from "./action";
+import { CommentItem, CommentList } from "@/components/comment/commentList";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -37,6 +38,13 @@ async function getCachedLikeStatus(productId: number, userId: string) {
     tags: [`post-like-status-${productId}`],
   });
   return cachedOperation(productId, userId);
+}
+
+async function getCachedCommentList(postId: number) {
+  const cachedOperation = nextCache(getComments, ["post-comments"], {
+    tags: [`post-comments-${postId}`],
+  });
+  return cachedOperation(postId);
 }
 
 function isClientSideRendering() {
@@ -59,7 +67,7 @@ export default async function PostDetail({
     return notFound();
   }
   const { likeCount, isLiked } = await getCachedLikeStatus(id, session!.id);
-
+  const comments = await getCachedCommentList(id);
   if (post && !isClientSideRendering()) {
     await incrementPostViews(id);
   }
@@ -114,6 +122,21 @@ export default async function PostDetail({
               />
             </div>
           )}
+          <h2 className="text-2xl font-semibold mb-4">댓글</h2>
+          <Suspense
+            fallback={<div className="text-center py-4">댓글 로딩 중...</div>}
+          >
+            {comments!.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                postId={post.id}
+                category={"post"}
+                currentUser={String(session?.id)}
+              />
+            ))}
+            <CommentList postId={String(post.id)} category="post" />
+          </Suspense>
         </div>
       </div>
     </div>

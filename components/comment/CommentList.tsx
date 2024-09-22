@@ -8,6 +8,10 @@ import {
   updateComment,
 } from "@/app/user/marketplace/products/[id]/action";
 import { CommentForm } from "./Comment";
+import {
+  deletePostComment,
+  updatePostComment,
+} from "@/app/user/community/[id]/action";
 
 export function CommentList({
   postId,
@@ -48,12 +52,21 @@ export function CommentItem({
   };
 
   const onDelete = async (commentId: number, postId: number) => {
-    await deleteComment(commentId, postId);
+    if (category === "product") {
+      await deleteComment(commentId, postId);
+    } else {
+      await deletePostComment(commentId, postId);
+    }
+
     router.refresh();
   };
 
   const onEdit = async () => {
-    await updateComment(comment.id, postId, editedContent);
+    if (category === "product") {
+      await updateComment(comment.id, postId, editedContent);
+    } else {
+      await updatePostComment(comment.id, postId, editedContent);
+    }
     setIsEditing(false);
     router.refresh();
   };
