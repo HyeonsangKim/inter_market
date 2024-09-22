@@ -32,8 +32,6 @@ export type InitialPosts = Prisma.PromiseReturnType<typeof getInitialPosts>;
 
 export default async function PostListPage() {
   const initialPosts = await getInitialPosts();
-  console.log(initialPosts);
-
   return (
     <div className="container mx-auto w-full">
       <div>

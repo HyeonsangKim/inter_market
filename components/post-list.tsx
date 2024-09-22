@@ -97,7 +97,7 @@ export default function PostList({ initialPosts }: PostListProps) {
         {posts.map((post) => (
           <div key={post.id} className="border p-4 rounded">
             <Link
-              href={`/posts/${post.id}`}
+              href={`/user/community/${post.id}`}
               className="text-xl font-semibold hover:underline"
             >
               {post.title}
