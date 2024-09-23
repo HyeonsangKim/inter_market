@@ -1,15 +1,45 @@
-import getCurrentUser from "@/lib/getCurrentUser";
-import { checkAddress } from "@/lib/location";
-export default async function Page() {
-  return (
-    <div className='flex flex-col gap-10 py-8 px-6'>
-      {/* <Address address={addressExit} userId={userData!.id} /> */}
-      <h1>주소</h1>
+import PopularItems from "@/components/popular-items";
+import { fetchPopularPosts, fetchPopularProducts } from "./actions";
 
-      <div className='flex flex-col gap-2 *:font-medium'>
-        <h1 className='text-2xl'>Hola!</h1>
-        <h2 className='text-xl'>Welcome.</h2>
-      </div>
+export default async function Page() {
+  const popularProducts = await fetchPopularProducts();
+  const popularPosts = await fetchPopularPosts();
+  console.log(popularProducts);
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">
+        Welcome to Our Community
+      </h1>
+
+      <PopularItems
+        title="Popular Products"
+        items={popularProducts.map((p) => ({
+          id: p.id,
+          title: p.title,
+          likes: p._count.likes,
+          user: { name: p.user.name },
+          type: "product",
+          price: p.price,
+          photos: p.photos,
+          address: p.user.si + ", " + p.user.gu,
+        }))}
+        type="product"
+      />
+
+      <PopularItems
+        title="Popular Posts"
+        items={popularPosts.map((p) => ({
+          id: p.id,
+          title: p.title,
+          likes: p._count.likes,
+          user: { name: p.user.name },
+          type: "post",
+          content: p.content,
+          commentCount: p._count.comments,
+        }))}
+        type="post"
+      />
     </div>
   );
 }
