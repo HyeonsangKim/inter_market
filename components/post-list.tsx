@@ -95,21 +95,23 @@ export default function PostList({ initialPosts }: PostListProps) {
 
       <div className="space-y-4">
         {posts.map((post) => (
-          <div key={post.id} className="border p-4 rounded">
-            <Link
-              href={`/user/community/${post.id}`}
-              className="text-xl font-semibold hover:underline"
-            >
+          <Link
+            key={post.id}
+            href={`/user/community/${post.id}`}
+            className="text-xl font-semibold hover:shadow-lg transition"
+          >
+            <div className="border p-4 rounded">
               {post.title}
-            </Link>
-            <p className="text-gray-600">
-              {post.description!.substring(0, 100)}...
-            </p>
-            <p className="text-sm text-gray-500 mt-2">
-              작성자: {post.user.name} | 작성일:{" "}
-              {new Date(post.created_at).toLocaleDateString()}
-            </p>
-          </div>
+
+              <p className="text-gray-600">
+                {post.description!.substring(0, 100)}...
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                작성자: {post.user.name} | 작성일:{" "}
+                {new Date(post.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          </Link>
         ))}
       </div>
 
