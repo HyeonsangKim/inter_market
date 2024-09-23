@@ -31,6 +31,8 @@ model User {
   Plikes Plike[]
   accounts   Account[]
   sessions      Session[]
+  chat_rooms ChatRoom[]
+  messages Message[]
 
   @@map("user")
 }
@@ -160,4 +162,27 @@ model Plike {
   userId String
   productId Int
   @@id(name: "id",[userId,productId])
+}
+
+model ChatRoom {
+  id String @id @default(cuid())
+  users User[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  messages Message[]
+}
+
+model Message{
+  id Int @id @default(autoincrement())
+  payload String
+ 
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  room ChatRoom @relation(fields: [chatRoomId],references: [id])
+  user User @relation(fields: [userId], references: [id])
+  chatRoomId String
+  userId String
 }
