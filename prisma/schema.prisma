@@ -80,7 +80,7 @@ model Product {
   updated_at DateTime @updatedAt
   user User @relation(fields: [userId],references: [id],onDelete: Cascade) 
   userId String
-  soldout Boolean?
+  soldout Boolean? @default(false)
   
   comments Pcomment[]
   likes Plike[]

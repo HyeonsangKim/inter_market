@@ -14,6 +14,7 @@ interface ItemProps {
   content?: string;
   commentCount?: number;
   address?: string;
+  soldout?: boolean;
 }
 
 const ItemCard: React.FC<ItemProps> = ({
@@ -27,6 +28,7 @@ const ItemCard: React.FC<ItemProps> = ({
   content,
   commentCount,
   address,
+  soldout,
 }) => {
   let url = "";
   if (type === "product") {
@@ -44,7 +46,16 @@ const ItemCard: React.FC<ItemProps> = ({
               alt={title}
               layout="fill"
               objectFit="cover"
+              className={` ${soldout ? "filter blur-[2px]" : ""}`}
             />
+            {soldout && (
+              <Image
+                fill
+                src={"/img/soldout.png"}
+                alt={title}
+                className="object-contain"
+              />
+            )}
           </div>
         )}
         <div className="p-4">

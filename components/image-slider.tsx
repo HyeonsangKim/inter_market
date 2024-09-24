@@ -11,8 +11,9 @@ interface ImageType {
 
 interface ImageSliderProps {
   images: ImageType[];
+  soldout?: boolean;
 }
-export default function ImageSlider({ images }: ImageSliderProps) {
+export default function ImageSlider({ images, soldout }: ImageSliderProps) {
   const [currentImage, setCurrentImage] = useState(0);
 
   const nextImage = () => {
@@ -30,26 +31,35 @@ export default function ImageSlider({ images }: ImageSliderProps) {
   });
 
   return (
-    <div className='relative w-full h-96 mb-4' {...handlers}>
+    <div className="relative w-full h-96 mb-4" {...handlers}>
       <Image
         src={images[currentImage].url}
         alt={`Product image ${currentImage + 1}`}
-        layout='fill'
-        objectFit='contain'
+        layout="fill"
+        objectFit="contain"
       />
+      {soldout && (
+        <Image
+          fill
+          src={"/img/soldout.png"}
+          alt={"soldout"}
+          className="object-contain absolute w-full h-96 mb-4"
+        />
+      )}
+
       <button
         onClick={prevImage}
-        className='absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2'
+        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2"
       >
-        <ChevronLeftIcon color='black' />
+        <ChevronLeftIcon color="black" />
       </button>
       <button
         onClick={nextImage}
-        className='absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2'
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2"
       >
-        <ChevronRightIcon color='black' />
+        <ChevronRightIcon color="black" />
       </button>
-      <div className='absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2'>
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {images.map((_, index) => (
           <div
             key={index}

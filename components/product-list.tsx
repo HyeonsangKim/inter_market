@@ -22,15 +22,29 @@ const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
     href={`/user/marketplace/products/${product.id}`}
     className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col"
   >
-    <div className="relative h-48 w-full">
-      {product.photos[0] && (
-        <Image
-          fill
-          src={product.photos[0].url}
-          alt={product.title}
-          className="object-cover"
-        />
-      )}
+    <div className="relative">
+      <div className="relative h-48 w-full">
+        {product.photos[0] && (
+          <>
+            <Image
+              fill
+              src={product.photos[0].url}
+              alt={product.title}
+              className={`object-cover ${
+                product.soldout ? "filter blur-[2px]" : ""
+              }`}
+            />
+            {product.soldout && (
+              <Image
+                fill
+                src={"/img/soldout.png"}
+                alt={product.title}
+                className="object-contain"
+              />
+            )}
+          </>
+        )}
+      </div>
     </div>
     <div className="p-4 flex-grow flex flex-col justify-between">
       <div>

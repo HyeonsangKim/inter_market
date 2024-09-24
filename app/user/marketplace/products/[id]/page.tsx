@@ -15,6 +15,7 @@ import {
   getLikeStatus,
   getProduct,
   incrementProductViews,
+  markProductAsSoldOut,
 } from "./action";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
@@ -22,6 +23,8 @@ import DeleteButton from "@/components/delete-button";
 import Link from "next/link";
 import { UserInfoDropdown } from "@/components/user-info-dropdown";
 import { CommentItem, CommentList } from "@/components/comment/commentList";
+import Button from "@/components/button";
+import Image from "next/image";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -97,7 +100,7 @@ export default async function PostDetail({
         </div>
       </div>
 
-      <ImageSlider images={product.photos} />
+      <ImageSlider images={product.photos} soldout={product!.soldout} />
 
       <div className="mt-8 gap-8">
         <div className="md:col-span-2">
@@ -129,9 +132,12 @@ export default async function PostDetail({
                 action={deleteProduct}
                 elementId={id}
               />
-              <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-200">
-                판매완료 처리
-              </button>
+
+              <Button
+                action={markProductAsSoldOut(product.id, product.soldout)}
+              >
+                {product.soldout ? <>판매중 처리</> : <>판매완료 처리</>}
+              </Button>
             </div>
           )}
 

@@ -211,3 +211,26 @@ export async function deleteProduct(productId: number) {
     return { success: false, error: "Failed to delete product" };
   }
 }
+
+export async function markProductAsSoldOut(
+  productId: number,
+  soldout: boolean
+) {
+  try {
+    const updatedProduct = await db.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        soldout: !soldout,
+      },
+    });
+
+    revalidateTag(`product-detail-${productId}`);
+    revalidatePath(`/user/marketplace/products/${productId}`);
+    return updatedProduct;
+  } catch (error) {
+    console.error("Error marking product as sold out:", error);
+    throw error;
+  }
+}

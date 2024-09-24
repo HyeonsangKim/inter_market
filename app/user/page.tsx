@@ -23,6 +23,7 @@ export default async function Page() {
           price: p.price,
           photos: p.photos,
           address: p.user.si + ", " + p.user.gu,
+          soldout: p.soldout,
         }))}
         type="product"
       />

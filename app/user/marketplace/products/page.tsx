@@ -9,6 +9,7 @@ async function getInitialProducts() {
       title: true,
       price: true,
       created_at: true,
+      soldout: true,
       photos: {
         select: {
           url: true,
@@ -44,6 +45,7 @@ export type InitialProducts = Prisma.PromiseReturnType<
 
 export default async function ProductListPage() {
   const initialProducts = await getInitialProducts();
+
   return (
     <div className="container mx-auto w-full">
       <div>
