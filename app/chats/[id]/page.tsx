@@ -1,6 +1,6 @@
 import ChatMessagesList from "@/components/chat-messages-list";
 import { db } from "@/lib/db";
-import { getSession } from "@/lib/session";
+import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { Prisma } from "@prisma/client";
 import { notFound } from "next/navigation";
 
@@ -18,7 +18,7 @@ async function getRoom(id: string) {
     },
   });
   if (room) {
-    const session = await getSession();
+    const session = await getCurrentUserId();
     const canSee = Boolean(room.users.find((user) => user.id === session.id!));
 
     if (!canSee) {
@@ -40,8 +40,8 @@ async function getMessages(chatRoomId: string) {
       userId: true,
       user: {
         select: {
-          avatar: true,
-          username: true,
+          image: true,
+          name: true,
         },
       },
     },
@@ -50,14 +50,14 @@ async function getMessages(chatRoomId: string) {
 }
 
 async function getUserProfile() {
-  const session = await getSession();
+  const session = await getCurrentUserId();
   const user = await db.user.findUnique({
     where: {
-      id: session.id!,
+      id: session!.id!,
     },
     select: {
-      username: true,
-      avatar: true,
+      name: true,
+      image: true,
     },
   });
   return user;
@@ -71,15 +71,15 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
     return notFound();
   }
   const initialMessages = await getMessages(params.id);
-  const session = await getSession();
+  const session = await getCurrentUserId();
   const user = await getUserProfile();
   if (!user) return notFound();
   return (
     <ChatMessagesList
       chatRoomId={params.id}
-      userId={session.id!}
-      username={user.username}
-      avatar={user.avatar!}
+      userId={session!.id!}
+      username={user.name}
+      avatar={user.image!}
       initialMessages={initialMessages}
     />
   );

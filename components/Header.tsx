@@ -26,11 +26,18 @@ export default async function Header() {
             >
               Community
             </Link>
+
             <Link
               href="/user/marketplace/products/"
               className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
             >
               Marketplace
+            </Link>
+            <Link
+              href={`/chats/${user?.id}`}
+              className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              Chats
             </Link>
           </nav>
           <div>

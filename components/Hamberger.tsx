@@ -2,9 +2,9 @@
 "use client";
 import React, { useState } from "react";
 import { User } from "@/app/types/user";
-import ProfileSidebar from "./SideBar";
+import ProfileSidebar from "./sidebar";
 
-function HamburgerButton(user: User) {
+function HamburgerButton({ user }: User) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   const toggleSidebar = () => {

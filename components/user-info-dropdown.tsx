@@ -1,4 +1,5 @@
 "use client";
+import { createChatRoom } from "@/lib/chat";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -35,7 +36,10 @@ export function UserInfoDropdown({ user }: User) {
           >
             프로필 보기
           </Link>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          <button
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => createChatRoom(user.id)}
+          >
             채팅하기
           </button>
         </div>

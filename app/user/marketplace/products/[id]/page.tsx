@@ -23,8 +23,7 @@ import DeleteButton from "@/components/delete-button";
 import Link from "next/link";
 import { UserInfoDropdown } from "@/components/user-info-dropdown";
 import { CommentItem, CommentList } from "@/components/comment/commentList";
-import Button from "@/components/button";
-import Image from "next/image";
+import SoldOutButton from "@/components/soldout-button";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -132,12 +131,13 @@ export default async function PostDetail({
                 action={deleteProduct}
                 elementId={id}
               />
-
-              <Button
-                action={markProductAsSoldOut(product.id, product.soldout)}
+              <SoldOutButton
+                productId={id}
+                isSoldOut={product.soldout}
+                onToggle={markProductAsSoldOut}
               >
-                {product.soldout ? <>판매중 처리</> : <>판매완료 처리</>}
-              </Button>
+                {product.soldout ? "판매중 처리" : "판매완료 처리"}
+              </SoldOutButton>
             </div>
           )}
 

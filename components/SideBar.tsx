@@ -13,7 +13,7 @@ interface ProfileSidebarProps {
 
 function ProfileSidebar({ user, isOpen, onClose }: ProfileSidebarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const currentUser = user.user;
+  const currentUser = user;
 
   // Detect clicks outside the sidebar to close it
   useEffect(() => {
