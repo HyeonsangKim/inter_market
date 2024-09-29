@@ -58,6 +58,7 @@ async function getUserProfile(id: string) {
       id: id,
     },
     select: {
+      id: true,
       name: true,
       image: true,
     },
@@ -78,14 +79,14 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const initialMessages = await getMessages(params.id);
   const session = await getCurrentUserId();
   const chatList = await getMessageRooms(session!.id);
-  console.log(room);
 
   const user = await getUserProfile(room!.users[0].id);
   if (!user) return notFound();
+
   return (
     <ChatMessagesList
       chatRoomId={params.id}
-      userId={session!.id!}
+      user={user}
       username={room.users[1].name}
       image={room.users[1].image}
       chatList={chatList}

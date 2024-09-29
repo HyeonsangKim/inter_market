@@ -9,7 +9,7 @@ import { saveMessage } from "@/app/chats/actions";
 
 interface ChatMessagesListProps {
   initialMessages: InitialChatMessages;
-  userId: string;
+  user: any;
   chatRoomId: string;
   username: string;
   chatList: Array<{
@@ -22,7 +22,7 @@ interface ChatMessagesListProps {
 
 export default function ChatMessagesList({
   chatRoomId,
-  userId,
+  user,
   username,
   image,
   chatList,
@@ -31,7 +31,7 @@ export default function ChatMessagesList({
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
   const channel = useRef<RealtimeChannel>();
-  console.log(initialMessages);
+  console.log(user.id);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -47,10 +47,10 @@ export default function ChatMessagesList({
         id: Date.now(),
         payload: message,
         created_at: new Date(),
-        userId,
+        userId: user.id,
         user: {
-          username: "string",
-          image: "xxx",
+          username: user.name,
+          image: user.image,
         },
       },
     ]);
@@ -61,10 +61,10 @@ export default function ChatMessagesList({
         id: Date.now(),
         payload: message,
         created_at: new Date(),
-        userId,
+        userId: user.id,
         user: {
-          username,
-          avatar,
+          username: user.name,
+          image: user.image,
         },
       },
     });
@@ -148,17 +148,17 @@ export default function ChatMessagesList({
               <div
                 key={message.id}
                 className={`flex ${
-                  message.userId === userId ? "justify-end" : "justify-start"
+                  message.userId === user.id ? "justify-end" : "justify-start"
                 }`}
               >
                 <div
                   className={`flex items-end space-x-2 max-w-[70%] ${
-                    message.userId === userId
+                    message.userId === user.id
                       ? "flex-row-reverse space-x-reverse"
                       : ""
                   }`}
                 >
-                  {message.userId !== userId && (
+                  {message.userId !== user.id && (
                     <Image
                       src={message.user.image || "/default.png"}
                       alt={message.user.name}
@@ -169,12 +169,12 @@ export default function ChatMessagesList({
                   )}
                   <div
                     className={`flex flex-col ${
-                      message.userId === userId ? "items-end" : "items-start"
+                      message.userId === user.id ? "items-end" : "items-start"
                     }`}
                   >
                     <span
                       className={`px-4 py-2 rounded-3xl ${
-                        message.userId === userId
+                        message.userId === user.id
                           ? "bg-blue-500 text-white rounded-br-none"
                           : "bg-white text-gray-800 rounded-bl-none"
                       }`}
@@ -193,7 +193,7 @@ export default function ChatMessagesList({
 
         {/* 입력 영역 (항상 표시) */}
         <div className="bg-white border-t border-gray-200 p-4">
-          <form className="flex items-center">
+          <form className="flex items-center" onSubmit={onSubmit}>
             <input
               type="text"
               placeholder="메시지 보내기..."
