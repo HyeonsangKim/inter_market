@@ -12,8 +12,6 @@ export async function uploadPost(_: any, formData: FormData) {
   };
 
   const result = productSchema.safeParse(data);
-  console.log(result);
-
   if (!result.success) {
     return result.error.flatten();
   } else {

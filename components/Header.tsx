@@ -1,9 +1,10 @@
 import Link from "next/link";
 import getCurrentUser from "@/lib/getCurrentUser";
-import HamburgerButton from "./Hamberger";
+import HamburgerButton from "./hamberger";
 
 export default async function Header() {
   const user = await getCurrentUser();
+
   return (
     <div className="bg-white shadow-sm  w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +35,7 @@ export default async function Header() {
               Marketplace
             </Link>
             <Link
-              href={`/chats/${user?.id}`}
+              href={`/chats`}
               className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
             >
               Chats

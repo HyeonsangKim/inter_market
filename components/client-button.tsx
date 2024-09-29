@@ -1,8 +1,5 @@
 "use client";
-import { markProductAsSoldOut } from "@/app/user/marketplace/products/[id]/action";
 import { signIn, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
 
 export function GoogleLogin() {
   return (

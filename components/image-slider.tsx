@@ -11,7 +11,7 @@ interface ImageType {
 
 interface ImageSliderProps {
   images: ImageType[];
-  soldout?: boolean;
+  soldout?: boolean | null | undefined;
 }
 export default function ImageSlider({ images, soldout }: ImageSliderProps) {
   const [currentImage, setCurrentImage] = useState(0);

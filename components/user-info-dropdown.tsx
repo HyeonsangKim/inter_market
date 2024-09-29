@@ -6,11 +6,15 @@ import { useState } from "react";
 
 interface User {
   id: string;
-  image: string;
-  name: string;
+  image: string | null;
+  name: string | null;
 }
 
-export function UserInfoDropdown({ user }: User) {
+interface UserInfoDropdownType {
+  user: User;
+}
+
+export function UserInfoDropdown({ user }: UserInfoDropdownType) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -21,7 +25,7 @@ export function UserInfoDropdown({ user }: User) {
       >
         <Image
           src={user.image || "/default-avatar.png"}
-          alt={user.name}
+          alt={"profile Image"}
           width={40}
           height={40}
           className="rounded-full object-cover"

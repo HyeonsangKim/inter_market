@@ -1,10 +1,10 @@
 // components/HamburgerButton.tsx
 "use client";
 import React, { useState } from "react";
-import { User } from "@/app/types/user";
+import { User, UserInfoDropdownType } from "@/app/types/user";
 import ProfileSidebar from "./sidebar";
 
-function HamburgerButton({ user }: User) {
+function HamburgerButton({ user }: UserInfoDropdownType) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   const toggleSidebar = () => {

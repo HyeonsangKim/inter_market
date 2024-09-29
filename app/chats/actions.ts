@@ -15,3 +15,20 @@ export async function saveMessage(payload: string, chatRoomId: string) {
     select: { id: true },
   });
 }
+
+export async function getMessageRooms(currentId: string) {
+  const messageList = await db.chatRoom.findMany({
+    where: {
+      users: {
+        some: {
+          id: currentId,
+        },
+      },
+    },
+    include: {
+      users: true,
+      messages: true,
+    },
+  });
+  return messageList;
+}

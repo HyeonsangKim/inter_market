@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { Prisma } from "@prisma/client";
 import { notFound } from "next/navigation";
+import { getMessageRooms } from "../actions";
 
 async function getRoom(id: string) {
   const room = await db.chatRoom.findUnique({
@@ -13,13 +14,15 @@ async function getRoom(id: string) {
       users: {
         select: {
           id: true,
+          name: true,
+          image: true,
         },
       },
     },
   });
   if (room) {
     const session = await getCurrentUserId();
-    const canSee = Boolean(room.users.find((user) => user.id === session.id!));
+    const canSee = Boolean(room.users.find((user) => user.id === session!.id!));
 
     if (!canSee) {
       return null;
@@ -49,37 +52,43 @@ async function getMessages(chatRoomId: string) {
   return messages;
 }
 
-async function getUserProfile() {
-  const session = await getCurrentUserId();
+async function getUserProfile(id: string) {
   const user = await db.user.findUnique({
     where: {
-      id: session!.id!,
+      id: id,
     },
     select: {
       name: true,
       image: true,
     },
   });
+
   return user;
 }
 
 export type InitialChatMessages = Prisma.PromiseReturnType<typeof getMessages>;
+export type InitialChatList = Prisma.PromiseReturnType<typeof getRoom>;
 
 export default async function ChatRoom({ params }: { params: { id: string } }) {
   const room = await getRoom(params.id);
   if (!room) {
     return notFound();
   }
+
   const initialMessages = await getMessages(params.id);
   const session = await getCurrentUserId();
-  const user = await getUserProfile();
+  const chatList = await getMessageRooms(session!.id);
+  console.log(room);
+
+  const user = await getUserProfile(room!.users[0].id);
   if (!user) return notFound();
   return (
     <ChatMessagesList
       chatRoomId={params.id}
       userId={session!.id!}
-      username={user.name}
-      avatar={user.image!}
+      username={room.users[1].name}
+      image={room.users[1].image}
+      chatList={chatList}
       initialMessages={initialMessages}
     />
   );

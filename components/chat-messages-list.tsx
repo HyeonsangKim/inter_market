@@ -1,84 +1,91 @@
 "use client";
-import { InitialChatMessages } from "@/app/chats/[id]/page";
-import { saveMessage } from "@/app/chats/actions";
+import { InitialChatList, InitialChatMessages } from "@/app/chats/[id]/page";
 import { formatToTimeAgo } from "@/app/utils/utils";
-import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
-import { RealtimeChannel, createClient } from "@supabase/supabase-js";
 import { ArrowUpCircle, Info, Phone, Video } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { RealtimeChannel, createClient } from "@supabase/supabase-js";
+import { saveMessage } from "@/app/chats/actions";
 
-const SUPABASE_PUBLIC_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpa3JhenBjYW52eWN4dmxka3NtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1Mjk0MDksImV4cCI6MjAyOTEwNTQwOX0.c-8n5fYNkJN0AFLJQbvJbHlM-qPtACJbvWzvY7W8kLY";
-const SUPABASE_URL = "https://tikrazpcanvycxvldksm.supabase.co";
 interface ChatMessagesListProps {
   initialMessages: InitialChatMessages;
   userId: string;
   chatRoomId: string;
   username: string;
-  avatar: string;
+  chatList: Array<{
+    id: string;
+    users: Array<{ id: string; name: string; image: string }>;
+    messages: Array<{ id: string; payload: string; created_at: string }>;
+  }>;
+  image: string;
 }
 
 export default function ChatMessagesList({
-  initialMessages,
-  userId,
   chatRoomId,
+  userId,
   username,
-  avatar,
+  image,
+  chatList,
+  initialMessages,
 }: ChatMessagesListProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
-  // const channel = useRef<RealtimeChannel>();
+  const channel = useRef<RealtimeChannel>();
+  console.log(initialMessages);
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { value },
     } = event;
     setMessage(value);
   };
-  // const onSubmit = async (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   setMessages((prevMsgs) => [
-  //     ...prevMsgs,
-  //     {
-  //       id: Date.now(),
-  //       payload: message,
-  //       created_at: new Date(),
-  //       userId,
-  //       user: {
-  //         username: "string",
-  //         avatar: "xxx",
-  //       },
-  //     },
-  //   ]);
-  //   channel.current?.send({
-  //     type: "broadcast",
-  //     event: "message",
-  //     payload: {
-  //       id: Date.now(),
-  //       payload: message,
-  //       created_at: new Date(),
-  //       userId,
-  //       user: {
-  //         username,
-  //         avatar,
-  //       },
-  //     },
-  //   });
-  //   await saveMessage(message, chatRoomId);
-  //   setMessage("");
-  // };
-  // useEffect(() => {
-  //   const client = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
-  //   channel.current = client.channel(`room-${chatRoomId}`);
-  //   channel.current
-  //     .on("broadcast", { event: "message" }, (payload) => {
-  //       setMessages((prev) => [...prev, payload.payload]);
-  //     })
-  //     .subscribe();
-  //   return () => {
-  //     channel.current?.unsubscribe();
-  //   };
-  // }, [chatRoomId]);
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setMessages((prevMsgs) => [
+      ...prevMsgs,
+      {
+        id: Date.now(),
+        payload: message,
+        created_at: new Date(),
+        userId,
+        user: {
+          username: "string",
+          image: "xxx",
+        },
+      },
+    ]);
+    channel.current?.send({
+      type: "broadcast",
+      event: "message",
+      payload: {
+        id: Date.now(),
+        payload: message,
+        created_at: new Date(),
+        userId,
+        user: {
+          username,
+          avatar,
+        },
+      },
+    });
+    await saveMessage(message, chatRoomId);
+    setMessage("");
+  };
+  useEffect(() => {
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
+    );
+    channel.current = client.channel(`room-${chatRoomId}`);
+    channel.current
+      .on("broadcast", { event: "message" }, (payload) => {
+        setMessages((prev) => [...prev, payload.payload]);
+      })
+      .subscribe();
+    return () => {
+      channel.current?.unsubscribe();
+    };
+  }, [chatRoomId]);
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
@@ -89,21 +96,24 @@ export default function ChatMessagesList({
         </div>
         <div className="overflow-y-auto flex-grow">
           {/* 채팅 목록 아이템들 */}
-          {[1, 2, 3, 4, 5].map((item) => (
+          {chatList.map((item) => (
             <div
-              key={item}
+              key={item.id}
               className="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
             >
               <Image
-                src={`/user${item}.jpg`}
-                alt={`User ${item}`}
+                src={item.users[1]?.image || "/img/default.jpg"}
+                alt={item.users[1]?.name || "User"}
                 width={48}
                 height={48}
                 className="rounded-full"
               />
               <div className="ml-3">
-                <p className="font-semibold">사용자 {item}</p>
-                <p className="text-sm text-gray-500">최근 메시지...</p>
+                <p className="font-semibold">{item.users[1]?.name || "User"}</p>
+                <p className="text-sm text-gray-500">
+                  {item.messages[item.messages.length - 1]?.payload ||
+                    "No messages yet"}
+                </p>
               </div>
             </div>
           ))}
@@ -116,13 +126,13 @@ export default function ChatMessagesList({
         <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="flex items-center">
             <Image
-              src="/user2.jpg"
-              alt="채팅 상대"
+              src={`${image}` || "/img/default.jpg"}
+              alt={`${image}`}
               width={40}
               height={40}
               className="rounded-full"
             />
-            <h2 className="text-xl font-semibold ml-3">채팅 상대 이름</h2>
+            <h2 className="text-xl font-semibold ml-3">{username}</h2>
           </div>
           <div className="flex space-x-4">
             <Phone className="w-6 h-6 text-gray-600 cursor-pointer" />

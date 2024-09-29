@@ -226,7 +226,6 @@ export async function markProductAsSoldOut(
         soldout: !soldout,
       },
     });
-    console.log("iopopopopopopopo");
 
     revalidateTag(`product-detail-${productId}`);
     revalidatePath(`/user/marketplace/products/${productId}`);

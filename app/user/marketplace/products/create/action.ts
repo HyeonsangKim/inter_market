@@ -57,7 +57,6 @@ export async function uploadProduct(_: any, formData: FormData) {
           id: true,
         },
       });
-      console.log(product);
 
       redirect(`/user/marketplace/products/`);
     }
