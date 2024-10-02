@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { RealtimeChannel, createClient } from "@supabase/supabase-js";
 import { saveMessage } from "@/app/chats/actions";
+import Link from "next/link";
 
 interface ChatMessagesListProps {
   initialMessages: InitialChatMessages;
@@ -90,6 +91,7 @@ export default function ChatMessagesList({
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
       {/* 채팅 목록 */}
+
       <div className="w-80 border-r border-gray-200 bg-white flex-shrink-0 overflow-y-auto hidden md:flex md:flex-col">
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold">채팅</h2>
@@ -97,25 +99,25 @@ export default function ChatMessagesList({
         <div className="overflow-y-auto flex-grow">
           {/* 채팅 목록 아이템들 */}
           {chatList.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
-            >
-              <Image
-                src={item.users[1]?.image || "/img/default.jpg"}
-                alt={item.users[1]?.name || "User"}
-                width={48}
-                height={48}
-                className="rounded-full"
-              />
-              <div className="ml-3">
-                <p className="font-semibold">{item.users[1]?.name || "User"}</p>
-                <p className="text-sm text-gray-500">
-                  {item.messages[item.messages.length - 1]?.payload ||
-                    "No messages yet"}
-                </p>
+            <Link key={item.id} href={`/chats/${item.id}`}>
+              <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
+                <Image
+                  src={item.users[1]?.image || "/img/default.jpg"}
+                  alt={item.users[1]?.name || "User"}
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                />
+                <div className="ml-3">
+                  <p className="font-semibold">
+                    {item.users[1]?.name || "User"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {item.messages[0]?.payload || "No messages yet"}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -126,7 +128,7 @@ export default function ChatMessagesList({
         <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="flex items-center">
             <Image
-              src={`${image}` || "/img/default.jpg"}
+              src={`${image === null ? "/img/default.jpg" : image}`}
               alt={`${image}`}
               width={40}
               height={40}
@@ -160,7 +162,9 @@ export default function ChatMessagesList({
                 >
                   {message.userId !== user.id && (
                     <Image
-                      src={message.user.image || "/default.png"}
+                      src={`${
+                        message.user.image === null ? "/img/default.jpg" : image
+                      }`}
                       alt={message.user.name}
                       width={32}
                       height={32}

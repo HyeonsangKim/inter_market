@@ -27,7 +27,15 @@ export async function getMessageRooms(currentId: string) {
     },
     include: {
       users: true,
-      messages: true,
+      messages: {
+        orderBy: {
+          created_at: "desc",
+        },
+        take: 1,
+      },
+    },
+    orderBy: {
+      updated_at: "desc",
     },
   });
   return messageList;

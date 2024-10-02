@@ -17,6 +17,8 @@ interface ChatListProps {
 export default async function ChatList() {
   const session = await getCurrentUserId();
   const chatList = await getMessageRooms(session!.id);
+  console.log(chatList[0].messages);
+
   return (
     <div className="w-full max-w-2xl mx-auto bg-white">
       <div className="p-4 border-b border-gray-200">
@@ -35,7 +37,9 @@ export default async function ChatList() {
               />
               <div className="ml-3">
                 <p className="font-semibold">{chat.users[1].name}</p>
-                <p className="text-sm text-gray-500">"asdas"</p>
+                <p className="text-sm text-gray-500">
+                  {chat.messages[0].payload}
+                </p>
               </div>
             </div>
           </Link>
