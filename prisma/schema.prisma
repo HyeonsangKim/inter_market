@@ -32,8 +32,8 @@ model User {
   accounts   Account[]
   sessions      Session[]
   chat_rooms ChatRoom[]
-  messages Message[]
-
+  sentMessages Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
   @@map("user")
 }
 model Account {
@@ -173,16 +173,16 @@ model ChatRoom {
   messages Message[]
 }
 
-model Message{
+model Message {
   id Int @id @default(autoincrement())
   payload String
- 
-
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  room ChatRoom @relation(fields: [chatRoomId],references: [id])
-  user User @relation(fields: [userId], references: [id])
+  sender User @relation("SentMessages", fields: [senderId], references: [id])
+  senderId String
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId String
+  isRead Boolean @default(false)
+  room ChatRoom @relation(fields: [chatRoomId], references: [id])
   chatRoomId String
-  userId String
 }

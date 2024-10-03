@@ -1,11 +1,20 @@
 import ChatMessagesList from "@/components/chat-messages-list";
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
-import { Prisma } from "@prisma/client";
+import { Message, ChatRoom, User } from "@prisma/client";
 import { notFound } from "next/navigation";
-import { getMessageRooms } from "../actions";
+import { getMessageRooms, markMessagesAsRead } from "../actions";
 
-async function getRoom(id: string) {
+type RoomWithUsers = ChatRoom & {
+  users: Pick<User, "id" | "name" | "image">[];
+};
+
+type MessageWithUser = Message & {
+  sender: Pick<User, "image" | "name">;
+  receiver: Pick<User, "image" | "name">;
+};
+
+async function getRoom(id: string): Promise<RoomWithUsers | null> {
   const room = await db.chatRoom.findUnique({
     where: {
       id,
@@ -31,8 +40,8 @@ async function getRoom(id: string) {
   return room;
 }
 
-async function getMessages(chatRoomId: string) {
-  const messages = await db.message.findMany({
+async function getMessages(chatRoomId: string): Promise<MessageWithUser[]> {
+  return await db.message.findMany({
     where: {
       chatRoomId,
     },
@@ -40,35 +49,30 @@ async function getMessages(chatRoomId: string) {
       id: true,
       payload: true,
       created_at: true,
-      userId: true,
-      user: {
+      senderId: true,
+      receiverId: true,
+      isRead: true,
+      sender: {
+        select: {
+          image: true,
+          name: true,
+        },
+      },
+      receiver: {
         select: {
           image: true,
           name: true,
         },
       },
     },
-  });
-  return messages;
-}
-
-async function getUserProfile(id: string) {
-  const user = await db.user.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
+    orderBy: {
+      created_at: "asc",
     },
   });
-
-  return user;
 }
 
-export type InitialChatMessages = Prisma.PromiseReturnType<typeof getMessages>;
-export type InitialChatList = Prisma.PromiseReturnType<typeof getRoom>;
+export type InitialChatMessages = Awaited<ReturnType<typeof getMessages>>;
+export type InitialChatList = Awaited<ReturnType<typeof getRoom>>;
 
 export default async function ChatRoom({ params }: { params: { id: string } }) {
   const room = await getRoom(params.id);
@@ -80,15 +84,16 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const session = await getCurrentUserId();
   const chatList = await getMessageRooms(session!.id);
 
-  const user = await getUserProfile(room!.users[0].id);
-  if (!user) return notFound();
+  const currentUser = room.users.find((user) => user.id === session!.id)!;
+  const otherUser = room.users.find((user) => user.id !== session!.id)!;
+
+  await markMessagesAsRead(params.id, currentUser.id);
 
   return (
     <ChatMessagesList
       chatRoomId={params.id}
-      user={user}
-      username={room.users[1].name}
-      image={room.users[1].image}
+      currentUser={currentUser}
+      otherUser={otherUser}
       chatList={chatList}
       initialMessages={initialMessages}
     />

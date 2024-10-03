@@ -2,22 +2,38 @@
 
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
-import { getSession } from "@/lib/session";
+import { Message, ChatRoom, User } from "@prisma/client";
 
-export async function saveMessage(payload: string, chatRoomId: string) {
+type ChatRoomWithUsersAndMessages = ChatRoom & {
+  users: User[];
+  messages: (Message & {
+    sender: Pick<User, "id" | "name" | "image">;
+    receiver: Pick<User, "id" | "name" | "image">;
+  })[];
+};
+
+export async function saveMessage(
+  payload: string,
+  chatRoomId: string,
+  receiverId: string
+): Promise<{ id: number }> {
   const session = await getCurrentUserId();
-  await db.message.create({
+  return await db.message.create({
     data: {
       payload,
       chatRoomId,
-      userId: session!.id!,
+      senderId: session!.id!,
+      receiverId,
+      isRead: false,
     },
     select: { id: true },
   });
 }
 
-export async function getMessageRooms(currentId: string) {
-  const messageList = await db.chatRoom.findMany({
+export async function getMessageRooms(
+  currentId: string
+): Promise<ChatRoomWithUsersAndMessages[]> {
+  return await db.chatRoom.findMany({
     where: {
       users: {
         some: {
@@ -32,11 +48,42 @@ export async function getMessageRooms(currentId: string) {
           created_at: "desc",
         },
         take: 1,
+        include: {
+          sender: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+          receiver: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
       },
     },
     orderBy: {
       updated_at: "desc",
     },
   });
-  return messageList;
+}
+
+export async function markMessagesAsRead(
+  chatRoomId: string,
+  currentUserId: string
+): Promise<void> {
+  await db.message.updateMany({
+    where: {
+      chatRoomId: chatRoomId,
+      receiverId: currentUserId,
+      isRead: false,
+    },
+    data: {
+      isRead: true,
+    },
+  });
 }
