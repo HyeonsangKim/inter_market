@@ -1,12 +1,19 @@
 import Link from "next/link";
 import getCurrentUser from "@/lib/getCurrentUser";
 import HamburgerButton from "./hamberger";
+import { getUnreadMessagesCount } from "@/app/chats/actions";
+import UnreadBadge from "./unread-count";
 
 export default async function Header() {
   const user = await getCurrentUser();
+  let unreadCount = 0;
+
+  if (user) {
+    unreadCount = await getUnreadMessagesCount(user.id);
+  }
 
   return (
-    <div className="bg-white shadow-sm  w-full">
+    <div className="bg-white shadow-sm w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Website Icon and Name */}
@@ -36,9 +43,10 @@ export default async function Header() {
             </Link>
             <Link
               href={`/chats`}
-              className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium relative"
             >
               Chats
+              <UnreadBadge count={unreadCount} />
             </Link>
           </nav>
           <div>

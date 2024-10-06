@@ -87,3 +87,13 @@ export async function markMessagesAsRead(
     },
   });
 }
+
+export async function getUnreadMessagesCount(userId: string) {
+  const unreadCount = await db.message.count({
+    where: {
+      receiverId: userId,
+      isRead: false,
+    },
+  });
+  return unreadCount;
+}
