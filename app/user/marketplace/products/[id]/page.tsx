@@ -3,12 +3,7 @@ import { unstable_cache as nextCache } from "next/cache";
 import ImageSlider from "@/components/image-slider";
 import LikeShareButtons from "@/components/lIke-share-btn";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
-import {
-  EyeIcon,
-  MapPinIcon,
-  UserIcon,
-  ClockIcon,
-} from "@heroicons/react/24/solid";
+import { EyeIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
 import {
   deleteProduct,
   getComments,

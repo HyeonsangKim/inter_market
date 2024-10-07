@@ -13,47 +13,47 @@ export default async function Header() {
   }
 
   return (
-    <div className="bg-white shadow-sm w-full">
+    <header className="bg-white shadow-lg w-full sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Website Icon and Name */}
-          <div className="flex items-center">
-            <Link
-              href="/user"
-              className="ml-3 text-lg font-semibold text-gray-900 lg:text-xl"
-            >
-              🌏InterAgora
-            </Link>
-          </div>
+          <Link
+            href="/user"
+            className="flex items-center space-x-2 text-xl font-bold text-indigo-600 hover:text-indigo-700 transition duration-300"
+          >
+            <span className="text-2xl">🌏</span>
+            <span className="hidden sm:inline">InterAgora</span>
+          </Link>
 
           {/* Navigation Links */}
-          <nav className="flex space-x-4 gap-4">
+          <nav className="flex space-x-1 sm:space-x-4">
             <Link
               href="/user/community"
-              className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              className="text-gray-700 hover:text-indigo-600 px-2 sm:px-3 py-2 rounded-md text-sm font-medium transition duration-300"
             >
               Community
             </Link>
-
             <Link
               href="/user/marketplace/products/"
-              className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              className="text-gray-700 hover:text-indigo-600 px-2 sm:px-3 py-2 rounded-md text-sm font-medium transition duration-300"
             >
-              Marketplace
+              Market
             </Link>
             <Link
               href={`/chats`}
-              className="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium relative"
+              className="text-gray-700 hover:text-indigo-600 px-2 sm:px-3 py-2 rounded-md text-sm font-medium relative transition duration-300"
             >
               Chats
               <UnreadBadge count={unreadCount} />
             </Link>
           </nav>
+
+          {/* Hamburger button - always visible */}
           <div>
             <HamburgerButton user={user} />
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

@@ -7,7 +7,6 @@ import {
 import { db } from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { saveSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 const checkPassword = ({
   password,

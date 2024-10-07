@@ -1,5 +1,5 @@
 "use client";
-import { checkAddress, fetchAddress, insertAddress } from "@/lib/location";
+import { fetchAddress, insertAddress } from "@/lib/location";
 import { MapPin, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 interface LocationProps {

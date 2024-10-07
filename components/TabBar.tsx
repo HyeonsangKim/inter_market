@@ -1,18 +1,6 @@
 "use client";
-import {
-  HomeIcon as SolidHomeIcon,
-  NewspaperIcon as SolidNewspaperIcon,
-  ChatBubbleOvalLeftEllipsisIcon as SolidChatIcon,
-  VideoCameraIcon as SolidVideoCameraIcon,
-  UserIcon as SolidUserIcon,
-} from "@heroicons/react/24/solid";
-import {
-  HomeIcon as OutlineHomeIcon,
-  NewspaperIcon as OutlineNewspaperIcon,
-  ChatBubbleOvalLeftEllipsisIcon as OutlineChatIcon,
-  VideoCameraIcon as OutlineVideoCameraIcon,
-  UserIcon as OutlineUserIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon as SolidHomeIcon } from "@heroicons/react/24/solid";
+import { HomeIcon as OutlineHomeIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 export default function TabBar() {

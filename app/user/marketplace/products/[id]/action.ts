@@ -3,7 +3,6 @@
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function likePost(postId: number) {
   await new Promise((r) => setTimeout(r, 5000));

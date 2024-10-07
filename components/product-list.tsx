@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import { formatToTimeAgo } from "@/app/utils/utils";
 import Link from "next/link";
-import { Search, MapPin, ChevronDown, Plus } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
 import { InitialProducts } from "@/app/user/marketplace/products/page";
 import { regions } from "@/app/utils/address-info";
 import { RegionFilter, SearchBar } from "./search";

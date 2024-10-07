@@ -4,11 +4,15 @@ import { updatePost } from "@/app/user/community/edit/[id]/action";
 import { useState, useEffect } from "react";
 import { useFormState } from "react-dom";
 
-export interface Post {
+export type Post = {
   id: number;
   title: string;
-  description: string;
-}
+  description: string | null;
+  views: number;
+  created_at: Date;
+  updated_at: Date;
+  userId: string;
+};
 
 interface EditFormProps {
   postId: number;
@@ -17,7 +21,7 @@ interface EditFormProps {
 
 export default function EditForm({ postId, post }: EditFormProps) {
   const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState<string | null>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export default function EditForm({ postId, post }: EditFormProps) {
     const formData = new FormData();
     formData.append("id", String(postId));
     formData.append("title", title);
-    formData.append("content", content);
+    formData.append("content", content ?? "");
 
     await action(formData);
   };
@@ -80,7 +84,7 @@ export default function EditForm({ postId, post }: EditFormProps) {
           </label>
           <textarea
             id="content"
-            value={content}
+            value={content || ""}
             onChange={(e) => handleContentChange(e.target.value)}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"

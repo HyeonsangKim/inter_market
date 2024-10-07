@@ -16,7 +16,7 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
   const [name, setName] = useState(userData.name);
   const [image, setImage] = useState<string | null>(userData.image);
   const { update } = useSession();
-
+  const [state, action] = useFormState(editProfile, null);
   if (userId !== userData.id) {
     return notFound();
   }
@@ -43,8 +43,6 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
   const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
-
-  const [state, action] = useFormState(editProfile, null);
 
   return (
     <div className="p-5">

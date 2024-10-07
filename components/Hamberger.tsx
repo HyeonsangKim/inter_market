@@ -1,7 +1,7 @@
 // components/HamburgerButton.tsx
 "use client";
 import React, { useState } from "react";
-import { User, UserInfoDropdownType } from "@/app/types/user";
+import { UserInfoDropdownType } from "@/app/types/user";
 import ProfileSidebar from "./sidebar";
 
 function HamburgerButton({ user }: UserInfoDropdownType) {

@@ -6,30 +6,30 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./button";
 
-interface User {
-  id: string | number;
-  name: string;
-  email: string;
-  image: string;
-  created_at: string | Date;
-}
+type User = {
+  image: string | null;
+  id: string;
+  name: string | null;
+  email: string | null;
+  created_at: Date;
+} | null;
 
 interface Post {
   id: string | number;
   title: string;
-  content: string;
+  content?: string;
   created_at: string | Date;
 }
 
 interface Product {
   id: string | number;
   title: string;
-  description: string;
+  description?: string;
   price: number;
-  firstPhoto: string;
+  firstPhoto: string | null;
   created_at: string | Date;
   user: {
-    name: string;
+    name: string | null;
   };
 }
 
@@ -63,20 +63,20 @@ export function ProfileForm({
             />
             <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
               <h2 className="text-2xl font-bold text-gray-900">
-                {userData.name}
+                {userData?.name}
               </h2>
               <p className="text-gray-600 flex items-center justify-center sm:justify-start mt-1">
                 <Mail size={16} className="mr-2" />
-                {userData.email}
+                {userData?.email}
               </p>
               <p className="text-gray-500 mt-1">
-                Joined: {new Date(userData.created_at).toLocaleDateString()}
+                Joined: {new Date(userData!.created_at).toLocaleDateString()}
               </p>
             </div>
           </div>
           <div className="mt-6 flex justify-end">
             {currentUser && (
-              <Link href={`/profile/edit/${userData.id}/`}>
+              <Link href={`/profile/edit/${userData?.id}/`}>
                 <Button variant="secondary">
                   <Edit size={16} className="mr-2" />
                   Edit Profile

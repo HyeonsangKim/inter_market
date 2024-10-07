@@ -1,4 +1,4 @@
-import EditForm from "@/components/editForm";
+import EditForm from "@/components/editform";
 import { getProduct } from "../../[id]/action";
 
 export default async function Page({ params }: { params: { id: string } }) {

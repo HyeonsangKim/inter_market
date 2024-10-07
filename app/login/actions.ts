@@ -2,7 +2,6 @@
 
 import { checkEmailExists } from "@/lib/check";
 import { db } from "@/lib/db";
-import { signIn } from "next-auth/react";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 interface InputData {

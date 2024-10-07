@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { RealtimeChannel, createClient } from "@supabase/supabase-js";
 import { markMessagesAsRead, saveMessage } from "@/app/chats/actions";
 import Link from "next/link";
-import { db } from "@/lib/db";
 
 interface User {
   id: string;
