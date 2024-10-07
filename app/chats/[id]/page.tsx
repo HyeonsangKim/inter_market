@@ -1,18 +1,31 @@
 import ChatMessagesList from "@/components/chat-messages-list";
 import { db } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
-import { Message, ChatRoom, User } from "@prisma/client";
+import type { ChatRoom, Message, User } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { getMessageRooms, markMessagesAsRead } from "../actions";
 
 type RoomWithUsers = ChatRoom & {
   users: Pick<User, "id" | "name" | "image">[];
+  messages?: Message[];
 };
 
-type MessageWithUser = Message & {
-  sender: Pick<User, "image" | "name">;
-  receiver: Pick<User, "image" | "name">;
-};
+interface MessageWithUser {
+  id: number;
+  payload: string;
+  created_at: Date;
+  senderId: string;
+  receiverId: string;
+  isRead: boolean;
+  sender: {
+    name: string | null;
+    image: string | null;
+  };
+  receiver: {
+    name: string | null;
+    image: string | null;
+  };
+}
 
 async function getRoom(id: string): Promise<RoomWithUsers | null> {
   const room = await db.chatRoom.findUnique({

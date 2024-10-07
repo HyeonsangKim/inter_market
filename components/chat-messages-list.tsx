@@ -11,10 +11,9 @@ import { db } from "@/lib/db";
 
 interface User {
   id: string;
-  name: string;
-  image: string;
+  name: string | null;
+  image: string | null;
 }
-
 interface Message {
   id: number;
   payload: string;
@@ -23,12 +22,12 @@ interface Message {
   receiverId: string;
   isRead: boolean;
   sender: {
-    name: string;
-    image: string;
+    name: string | null;
+    image: string | null;
   };
   receiver: {
-    name: string;
-    image: string;
+    name: string | null;
+    image: string | null;
   };
 }
 
@@ -86,8 +85,8 @@ export default function ChatMessagesList({
 
   useEffect(() => {
     const client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
+      process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY as string
     );
     channel.current = client.channel(`room-${chatRoomId}`);
     channel.current
@@ -112,21 +111,21 @@ export default function ChatMessagesList({
         </div>
         <div className="overflow-y-auto flex-grow">
           {chatList.map((item) => (
-            <Link key={item.id} href={`/chats/${item.id}`}>
+            <Link key={item?.id} href={`/chats/${item?.id}`}>
               <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
                 <Image
-                  src={item.users[1]?.image || "/img/default.jpg"}
-                  alt={item.users[1]?.name || "User"}
+                  src={item?.users[1]?.image || "/img/default.jpg"}
+                  alt={item?.users[1]?.name || "User"}
                   width={48}
                   height={48}
                   className="rounded-full"
                 />
                 <div className="ml-3">
                   <p className="font-semibold">
-                    {item.users[1]?.name || "User"}
+                    {item?.users[1]?.name || "User"}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {item.messages[0]?.payload || "No messages yet"}
+                    {item?.messages?.[0]?.payload || "No messages yet"}
                   </p>
                 </div>
               </div>
@@ -142,7 +141,7 @@ export default function ChatMessagesList({
           <div className="flex items-center">
             <Image
               src={otherUser.image || "/img/default.jpg"}
-              alt={otherUser.name}
+              alt={otherUser.name || "no"}
               width={40}
               height={40}
               className="rounded-full"
@@ -178,7 +177,7 @@ export default function ChatMessagesList({
                   {message.senderId !== currentUser.id && (
                     <Image
                       src={message.sender.image || "/img/default.jpg"}
-                      alt={message.sender.name}
+                      alt={message.sender.name || "no"}
                       width={32}
                       height={32}
                       className="rounded-full self-end"

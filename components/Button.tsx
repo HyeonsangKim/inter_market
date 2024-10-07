@@ -31,7 +31,7 @@ export default function Button({
         variant === "primary" ? "btn-primary" : "btn-secondary"
       } ${pending ? "opacity-50 cursor-not-allowed" : ""}`}
       disabled={pending}
-      onClick={handleClick()}
+      onClick={(e) => handleClick(e)}
       {...props}
     >
       {pending ? "Loading..." : children}

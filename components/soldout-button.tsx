@@ -25,7 +25,7 @@ export default function SoldOutButton({
       className={`btn btn-primary`}
       disabled={pending}
     >
-      {isSoldOut ? "판매중 처리" : "판매완료 처리"}
+      {isSoldOut ? "On sale" : "Sold out"}
     </button>
   );
 }

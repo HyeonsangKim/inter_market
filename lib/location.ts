@@ -69,6 +69,7 @@ export const fetchAddress = async (
     }
 
     const data = await response.json();
+
     const addressComponents = data.results[0]?.address_components || [];
 
     const si = addressComponents.find((comp: any) =>

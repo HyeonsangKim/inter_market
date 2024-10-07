@@ -7,11 +7,12 @@ import {
   deleteComment,
   updateComment,
 } from "@/app/user/marketplace/products/[id]/action";
-import { CommentForm } from "./Comment";
 import {
   deletePostComment,
   updatePostComment,
 } from "@/app/user/community/[id]/action";
+import { CommentForm } from "./comment";
+import { format } from "date-fns";
 
 export function CommentList({
   postId,
@@ -82,26 +83,26 @@ export function CommentItem({
             className="w-full p-2 border rounded text-black"
           />
           <button onClick={onEdit} className="text-blue-500 text-sm mt-1 mr-2">
-            저장
+            submit
           </button>
           <button
             onClick={() => setIsEditing(false)}
             className="text-gray-500 text-sm mt-1"
           >
-            취소
+            cancle
           </button>
         </div>
       ) : (
         <p>{comment.payload}</p>
       )}
       <p className="text-sm text-gray-500">
-        {new Date(comment.created_at).toLocaleDateString()}
+        {format(new Date(comment.created_at), "yyyy-MM-dd")}
       </p>
       <button
         onClick={() => setIsReplying(!isReplying)}
         className="text-blue-500 text-sm mt-1 mr-2"
       >
-        {isReplying ? "취소" : "답글"}
+        {isReplying ? "cancle" : "reply"}
       </button>
       {currentUser === comment.user.id && (
         <>
@@ -109,13 +110,13 @@ export function CommentItem({
             onClick={() => setIsEditing(!isEditing)}
             className="text-green-500 text-sm mt-1 mr-2"
           >
-            수정
+            edit
           </button>
           <button
             onClick={() => onDelete(comment.id, postId)}
             className="text-red-500 text-sm mt-1"
           >
-            삭제
+            delete
           </button>
         </>
       )}

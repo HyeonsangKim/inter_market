@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { InitialPosts } from "@/app/user/community/page";
 import { regions } from "@/app/utils/address-info";
 import { RegionFilter, SearchBar } from "./search";
-
+import { format } from "date-fns";
 const POSTS_PER_PAGE = 10;
 
 interface PostListProps {
@@ -107,8 +107,8 @@ export default function PostList({ initialPosts }: PostListProps) {
                 {post.description!.substring(0, 100)}...
               </p>
               <p className="text-sm text-gray-500 mt-2">
-                작성자: {post.user.name} | 작성일:{" "}
-                {new Date(post.created_at).toLocaleDateString()}
+                writer: {post.user.name} | date:{" "}
+                {format(new Date(post.created_at), "yyyy-MM-dd")}
               </p>
             </div>
           </Link>
@@ -122,7 +122,7 @@ export default function PostList({ initialPosts }: PostListProps) {
       )}
 
       {!hasMore && posts.length === 0 && (
-        <div className="text-center mt-8">게시글이 없습니다.</div>
+        <div className="text-center mt-8">No post.</div>
       )}
     </div>
   );

@@ -38,13 +38,13 @@ export function UserInfoDropdown({ user }: UserInfoDropdownType) {
             href={`/profile/${user.id}`}
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
-            프로필 보기
+            Profile
           </Link>
           <button
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             onClick={() => createChatRoom(user.id)}
           >
-            채팅하기
+            Chat
           </button>
         </div>
       )}

@@ -1,11 +1,11 @@
 export interface User {
   id: string;
   name: string | null;
-  email: string;
+  email: string | null;
   image: string | null;
   created_at: Date;
 }
 
 export interface UserInfoDropdownType {
-  user: User;
+  user: User | null;
 }

@@ -21,6 +21,7 @@ import {
   incrementPostViews,
 } from "./action";
 import { CommentItem, CommentList } from "@/components/comment/commentList";
+import { format } from "date-fns";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -82,11 +83,13 @@ export default async function PostDetail({
         <div>
           <p className="flex items-center text-gray-600 mb-2">
             <MapPinIcon className="h-5 w-5 mr-2" />
-            위치: {post.user.si}, {post.user.gu}
+            Location: {post.user.si}, {post.user.gu}
           </p>
           <div className="flex items-center text-gray-600">
             <ClockIcon className="h-4 w-4 mr-3" />
-            <span>{new Date(post.created_at).toLocaleDateString()}</span>
+            <span>
+              <span>{format(new Date(post.created_at), "yyyy-MM-dd")}</span>
+            </span>
           </div>
         </div>
       </div>
@@ -98,7 +101,7 @@ export default async function PostDetail({
           <div className="flex items-center gap-4 text-gray-600 text-sm mb-6">
             <div className="flex items-center">
               <EyeIcon className="h-5 w-5 mr-1" />
-              <span>조회 {post.views}</span>
+              <span>views {post.views}</span>
             </div>
             <LikeShareButtons
               isLiked={isLiked}
@@ -111,20 +114,23 @@ export default async function PostDetail({
             <div className="flex gap-4 mb-8">
               <Link href={`/user/community/edit/${id}`}>
                 <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-200">
-                  수정
+                  edit
                 </button>
               </Link>
               <DeleteButton
                 color="bg-red-100 text-red-600 hover:bg-red-200"
-                text="삭제"
+                text="delete"
                 action={deletePost}
+                route="/user/community"
                 elementId={id}
               />
             </div>
           )}
-          <h2 className="text-2xl font-semibold mb-4">댓글</h2>
+          <h2 className="text-2xl font-semibold mb-4">Comment</h2>
           <Suspense
-            fallback={<div className="text-center py-4">댓글 로딩 중...</div>}
+            fallback={
+              <div className="text-center py-4">Comment loading...</div>
+            }
           >
             {comments!.map((comment) => (
               <CommentItem

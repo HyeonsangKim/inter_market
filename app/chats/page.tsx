@@ -36,7 +36,7 @@ export default async function ChatList() {
               <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
                 <Image
                   src={otherUser.image || "/img/default.jpg"}
-                  alt={otherUser.name}
+                  alt={otherUser.name || "no"}
                   width={48}
                   height={48}
                   className="rounded-full"

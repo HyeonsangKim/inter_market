@@ -32,11 +32,13 @@ function HamburgerButton({ user }: UserInfoDropdownType) {
           />
         </svg>
       </button>
-      <ProfileSidebar
-        user={user}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      {user && (
+        <ProfileSidebar
+          user={user}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 }

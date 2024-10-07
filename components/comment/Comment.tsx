@@ -56,13 +56,13 @@ export function CommentForm({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         className="w-full p-2 border rounded text-black"
-        placeholder="댓글을 입력하세요..."
+        placeholder="write comment..."
       />
       <button
         type="submit"
         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
       >
-        {isSubmitting ? "작성 중..." : "댓글 작성"}
+        {isSubmitting ? "write..." : "submit"}
       </button>
     </form>
   );

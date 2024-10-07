@@ -24,7 +24,7 @@ import Link from "next/link";
 import { UserInfoDropdown } from "@/components/user-info-dropdown";
 import { CommentItem, CommentList } from "@/components/comment/commentList";
 import SoldOutButton from "@/components/soldout-button";
-
+import { format } from "date-fns";
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
 >;
@@ -90,11 +90,11 @@ export default async function PostDetail({
         <div>
           <p className="flex items-center text-gray-600 mb-2">
             <MapPinIcon className="h-5 w-5 mr-2" />
-            위치: {product.user.si}, {product.user.gu}
+            location: {product.user.si}, {product.user.gu}
           </p>
           <div className="flex items-center text-gray-600">
             <ClockIcon className="h-4 w-4 mr-3" />
-            <span>{new Date(product.created_at).toLocaleDateString()}</span>
+            <span>{format(new Date(product.created_at), "yyyy-MM-dd")}</span>
           </div>
         </div>
       </div>
@@ -103,13 +103,13 @@ export default async function PostDetail({
 
       <div className="mt-8 gap-8">
         <div className="md:col-span-2">
-          <h2 className="text-2xl font-semibold mb-4">상품 정보</h2>
+          <h2 className="text-2xl font-semibold mb-4">Info</h2>
           <p className="text-gray-700 mb-6">{product.description}</p>
 
           <div className="flex items-center gap-4 text-gray-600 text-sm mb-6">
             <div className="flex items-center">
               <EyeIcon className="h-5 w-5 mr-1" />
-              <span>조회 {product.views}</span>
+              <span>view {product.views}</span>
             </div>
             <LikeShareButtons
               isLiked={isLiked}
@@ -122,7 +122,7 @@ export default async function PostDetail({
             <div className="flex gap-4 mb-8">
               <Link href={`/user/marketplace/products/edit/${id}`}>
                 <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-200">
-                  수정
+                  edit
                 </button>
               </Link>
               <DeleteButton
@@ -136,14 +136,14 @@ export default async function PostDetail({
                 isSoldOut={product.soldout}
                 onToggle={markProductAsSoldOut}
               >
-                {product.soldout ? "판매중 처리" : "판매완료 처리"}
+                {product.soldout ? "On Sale" : "Sold Out"}
               </SoldOutButton>
             </div>
           )}
 
-          <h2 className="text-2xl font-semibold mb-4">댓글</h2>
+          <h2 className="text-2xl font-semibold mb-4">Comment</h2>
           <Suspense
-            fallback={<div className="text-center py-4">댓글 로딩 중...</div>}
+            fallback={<div className="text-center py-4">Loading...</div>}
           >
             {comments!.map((comment) => (
               <CommentItem

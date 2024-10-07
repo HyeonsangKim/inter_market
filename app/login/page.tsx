@@ -35,7 +35,7 @@ export default function Login() {
         />
         {/* {error && <p className="text-red-500 font-medium -mt-4">{error}</p>} */}
         <div>
-          <Button text="Login" />
+          <Button variant="secondary">Login</Button>
         </div>
         <div className="w-full h-px bg-neutral-500" />
         <div>

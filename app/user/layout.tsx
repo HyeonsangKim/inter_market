@@ -10,6 +10,8 @@ export default async function UserLayout({
   const addressExit = await checkAddress();
   const userData = await getCurrentUser();
 
+  console.log(addressExit);
+
   return (
     <div>
       <AddressInfo address={addressExit} userId={userData!.id} />
