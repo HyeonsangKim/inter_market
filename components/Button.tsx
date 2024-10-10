@@ -1,40 +1,48 @@
-"use client";
+import React from "react";
 
-import { useRouter } from "next/navigation";
-import { ButtonHTMLAttributes } from "react";
-import { useFormStatus } from "react-dom";
-
-interface ButtonProps {
-  children: any;
-  variant?: string;
-  action?: any;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary";
+  pending?: boolean;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
 }
 
-export default function Button({
-  children,
+const Button: React.FC<ButtonProps> = ({
   variant = "primary",
-  action,
+  pending = false,
+  icon,
+  children,
+  onClick,
   ...props
-}: ButtonProps & ButtonHTMLAttributes<HTMLButtonElement>) {
-  const { pending } = useFormStatus();
-  const router = useRouter();
-  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (action) {
-      e.preventDefault();
-      router.push("/user/marketplace/products");
-      router.refresh();
+}) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!pending && onClick) {
+      onClick(e);
     }
   };
+
   return (
     <button
-      className={`btn ${
-        variant === "primary" ? "btn-primary" : "btn-secondary"
-      } ${pending ? "opacity-50 cursor-not-allowed" : ""}`}
+      className={`
+        btn 
+        ${variant === "primary" ? "btn-primary" : "btn-secondary"}
+        ${pending ? "opacity-50 cursor-not-allowed" : ""}
+        flex items-center justify-center
+      `}
       disabled={pending}
-      onClick={(e) => handleClick(e)}
+      onClick={handleClick}
       {...props}
     >
-      {pending ? "Loading..." : children}
+      {pending ? (
+        "Loading..."
+      ) : (
+        <>
+          {icon && <span className="mr-2">{icon}</span>}
+          {children}
+        </>
+      )}
     </button>
   );
-}
+};
+
+export default Button;

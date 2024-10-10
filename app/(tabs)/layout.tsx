@@ -1,5 +1,5 @@
 "use client";
-import TabBar from "@/components/TabBar";
+import TabBar from "@/components/tab-bar";
 import { SessionProvider } from "next-auth/react";
 import React from "react";
 

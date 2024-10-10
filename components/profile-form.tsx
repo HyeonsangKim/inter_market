@@ -5,6 +5,7 @@ import { Edit, Mail, FileText, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "./button";
+import { Logout } from "./client-button";
 
 type User = {
   image: string | null;
@@ -74,14 +75,18 @@ export function ProfileForm({
               </p>
             </div>
           </div>
-          <div className="mt-6 flex justify-end">
+
+          <div className="mt-6 flex justify-end space-x-4">
             {currentUser && (
-              <Link href={`/profile/edit/${userData?.id}/`}>
-                <Button variant="secondary">
-                  <Edit size={16} className="mr-2" />
-                  Edit Profile
-                </Button>
-              </Link>
+              <>
+                <Logout />
+                <Link href={`/profile/edit/${userData?.id}/`}>
+                  <Button variant="secondary">
+                    <Edit size={16} className="mr-2" />
+                    Edit Profile
+                  </Button>
+                </Link>
+              </>
             )}
           </div>
         </div>

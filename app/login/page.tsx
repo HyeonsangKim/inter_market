@@ -34,9 +34,9 @@ export default function Login() {
           errors={state?.fieldErrors?.password}
         />
         {/* {error && <p className="text-red-500 font-medium -mt-4">{error}</p>} */}
-        <div>
-          <Button variant="secondary">Login</Button>
-        </div>
+
+        <Button variant="primary">Login</Button>
+
         <div className="w-full h-px bg-neutral-500" />
         <div>
           <GoogleLogin />

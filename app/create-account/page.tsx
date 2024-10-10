@@ -5,6 +5,7 @@ import Input from "@/components/input";
 import { useFormState } from "react-dom";
 import { createAccount } from "./actions";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
+import { GoogleLogin } from "@/components/client-button";
 
 export default function CreatAccount() {
   const [state, dispatch] = useFormState(createAccount, null);
@@ -47,8 +48,10 @@ export default function CreatAccount() {
           errors={state?.fieldErrors.confirmPassword}
           min={PASSWORD_MIN_LENGTH}
         />
-        <Button variant="secondary">Submit</Button>
+        <Button variant="primary">Submit</Button>
+        <GoogleLogin />
       </form>
+
       {/* <SocialLogin /> */}
     </div>
   );
