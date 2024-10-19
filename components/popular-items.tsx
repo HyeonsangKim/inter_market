@@ -3,55 +3,54 @@ import Link from "next/link";
 import Image from "next/image";
 import { Heart, MessageCircle } from "lucide-react";
 
-interface ItemProps {
+interface BaseItemProps {
   id: number;
   title: string;
   likes: number;
-  user: { name: string };
-  type: "product" | "post";
-  price?: number;
-  photos?: { url: string }[];
-  content?: string;
-  commentCount?: number;
-  address?: string;
-  soldout?: boolean;
+  user: { name: string | null };
 }
 
-const ItemCard: React.FC<ItemProps> = ({
-  id,
-  title,
-  likes,
-  user,
-  type,
-  price,
-  photos,
-  content,
-  commentCount,
-  address,
-  soldout,
-}) => {
-  let url = "";
-  if (type === "product") {
-    url = "/user/marketplace/products";
-  } else {
-    url = "/user/community";
-  }
+interface ProductItemProps extends BaseItemProps {
+  type: "product";
+  price: number;
+  photos: { url: string }[];
+  address: string;
+  soldout: boolean | null;
+}
+
+interface PostItemProps extends BaseItemProps {
+  type: "post";
+}
+
+type ItemProps = ProductItemProps | PostItemProps;
+
+interface PopularItemsProps {
+  title: string;
+  items: ItemProps[];
+  type: "product" | "post";
+}
+
+const ItemCard: React.FC<ItemProps> = (props) => {
+  const { id, title, likes, user, type } = props;
+  let url =
+    type === "product" ? "/user/marketplace/products" : "/user/community";
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
       <Link href={`${url}/${id}`}>
-        {type === "product" && photos && photos[0] && (
+        {type === "product" && props.photos && props.photos[0] && (
           <div className="relative h-40">
             <Image
-              src={photos[0].url}
+              src={props.photos[0].url}
               alt={title}
               layout="fill"
               objectFit="cover"
-              className={` ${soldout ? "filter blur-[2px]" : ""}`}
+              className={props.soldout ? "filter blur-[2px]" : ""}
             />
-            {soldout && (
+            {props.soldout && (
               <Image
                 fill
-                src={"/img/soldout.png"}
+                src="/img/soldout.png"
                 alt={title}
                 className="object-contain"
               />
@@ -60,28 +59,29 @@ const ItemCard: React.FC<ItemProps> = ({
         )}
         <div className="p-4">
           <h3 className="font-semibold text-lg mb-2 truncate">{title}</h3>
-          {type === "product" && price !== undefined && (
-            <p className="text-indigo-600 font-bold mb-2">
-              ${price.toFixed(2)}
-            </p>
+          {type === "product" && (
+            <>
+              <p className="text-indigo-600 font-bold mb-2">
+                ${props.price.toFixed(2)}
+              </p>
+              <p className="text-gray-600 font-bold mb-2">{props.address}</p>
+            </>
           )}
-          {type === "product" && price !== undefined && (
-            <p className="text-gray-600 font-bold mb-2">{address}</p>
-          )}
-          {type === "post" && content && (
-            <p className="text-gray-600 mb-2 line-clamp-2">{content}</p>
-          )}
+          {/* {type === "post" && (
+            <p className="text-gray-600 mb-2 line-clamp-2">{props.content}</p>
+          )} */}
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">{user.name}</span>
             <div className="flex items-center space-x-2">
               <span className="flex items-center text-sm text-red-500">
                 <Heart size={16} className="mr-1" /> {likes}
               </span>
-              {type === "post" && commentCount !== undefined && (
+              {/* {type === "post" && (
                 <span className="flex items-center text-sm text-blue-500">
-                  <MessageCircle size={16} className="mr-1" /> {commentCount}
+                  <MessageCircle size={16} className="mr-1" />{" "}
+                  {props.commentCount}
                 </span>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -89,12 +89,6 @@ const ItemCard: React.FC<ItemProps> = ({
     </div>
   );
 };
-
-interface PopularItemsProps {
-  title: string;
-  items: ItemProps[];
-  type: "product" | "post";
-}
 
 const PopularItems: React.FC<PopularItemsProps> = ({ title, items, type }) => (
   <div className="mb-8">
@@ -108,7 +102,7 @@ const PopularItems: React.FC<PopularItemsProps> = ({ title, items, type }) => (
         } gap-4`}
       >
         {items.map((item) => (
-          <ItemCard key={item.id} {...item} type={type} />
+          <ItemCard key={item.id} {...item} />
         ))}
       </div>
     ) : (

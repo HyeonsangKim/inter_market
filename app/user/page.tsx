@@ -35,8 +35,6 @@ export default async function Page() {
           likes: p._count.likes,
           user: { name: p.user.name },
           type: "post",
-          content: p.content,
-          commentCount: p._count.comments,
         }))}
         type="post"
       />
