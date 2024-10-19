@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useRef, useEffect } from "react";
-import { Logout } from "./client-button";
+import { Logout } from "./buttons/client-button";
 import { User } from "@/app/types/user";
 import Image from "next/image";
 

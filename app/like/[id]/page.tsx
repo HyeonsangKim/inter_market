@@ -106,7 +106,7 @@ export default async function LikedPostsPage({
         </div>
       ) : (
         <p className="text-center text-gray-500">
-          You haven't liked any posts yet.
+          You haven&apos;t liked any posts yet.
         </p>
       )}
     </div>

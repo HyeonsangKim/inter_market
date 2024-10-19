@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Comment } from "./types";
 import { useRouter } from "next/navigation";
 import {
   deleteComment,
@@ -13,6 +12,7 @@ import {
 } from "@/app/user/community/[id]/action";
 import { CommentForm } from "./comment";
 import { format } from "date-fns";
+import { Comment } from "@/app/types";
 
 export function CommentList({
   postId,

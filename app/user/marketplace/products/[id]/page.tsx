@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
-import ImageSlider from "@/components/image-slider";
-import LikeShareButtons from "@/components/lIke-share-btn";
+import LikeShareButtons from "@/components/buttons/lIke-share-btn";
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { EyeIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
 import {
@@ -14,12 +13,13 @@ import {
 } from "./action";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
-import DeleteButton from "@/components/delete-button";
+import DeleteButton from "@/components/buttons/delete-button";
 import Link from "next/link";
 import { UserInfoDropdown } from "@/components/user-info-dropdown";
 import { CommentItem, CommentList } from "@/components/comment/commentList";
-import SoldOutButton from "@/components/soldout-button";
+import SoldOutButton from "@/components/buttons/soldout-button";
 import { format } from "date-fns";
+import ImageSlider from "@/components/image-component/image-slider";
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
 >;

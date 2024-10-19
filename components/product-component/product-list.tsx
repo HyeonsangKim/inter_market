@@ -7,7 +7,7 @@ import Link from "next/link";
 import { MapPin, Plus } from "lucide-react";
 import { InitialProducts } from "@/app/user/marketplace/products/page";
 import { regions } from "@/app/utils/address-info";
-import { RegionFilter, SearchBar } from "./search";
+import { RegionFilter, SearchBar } from "../search";
 
 const PRODUCTS_PER_PAGE = 12; // 한 페이지당 표시할 제품 수 증가
 

@@ -1,4 +1,4 @@
-import PostList from "@/components/post-list";
+import PostList from "@/components/post-component/post-list";
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 

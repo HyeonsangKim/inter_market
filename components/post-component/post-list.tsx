@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { InitialPosts } from "@/app/user/community/page";
 import { regions } from "@/app/utils/address-info";
-import { RegionFilter, SearchBar } from "./search";
+import { RegionFilter, SearchBar } from "../search";
 import { format } from "date-fns";
 const POSTS_PER_PAGE = 10;
 

@@ -1,10 +1,10 @@
 "use client";
-import Button from "@/components/button";
+import Button from "@/components/buttons/button";
 import Input from "@/components/input";
 import { useFormState } from "react-dom";
 import { login } from "./actions";
 import { signIn } from "next-auth/react";
-import { GoogleLogin } from "@/components/client-button";
+import { GoogleLogin } from "@/components/buttons/client-button";
 
 export default function Login() {
   const [state, dispatch] = useFormState(login, null);

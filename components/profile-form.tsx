@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Edit, Mail, FileText, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "./button";
-import { Logout } from "./client-button";
+import Button from "./buttons/button";
+import { Logout } from "./buttons/client-button";
 
 type User = {
   image: string | null;

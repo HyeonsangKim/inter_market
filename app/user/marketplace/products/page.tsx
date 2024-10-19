@@ -1,7 +1,7 @@
 import React from "react";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import ProductList from "@/components/product-list";
+import ProductList from "@/components/product-component/product-list";
 
 async function getInitialProducts() {
   const products = await db.product.findMany({
