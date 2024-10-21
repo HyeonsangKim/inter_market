@@ -7,12 +7,15 @@ export default async function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const addressExit = await checkAddress();
   const userData = await getCurrentUser();
+  const addressExit = await checkAddress();
 
   return (
     <div>
-      <AddressInfo address={addressExit} userId={userData!.id} />
+      <AddressInfo
+        address={addressExit}
+        userId={userData ? userData!.id : ""}
+      />
       {children}
     </div>
   );

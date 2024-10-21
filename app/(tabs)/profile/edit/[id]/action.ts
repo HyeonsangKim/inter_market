@@ -1,80 +1,110 @@
 "use server";
 
-import fs from "fs/promises";
+import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+async function deleteImage(url: string) {
+  // URL에서 파일 경로 추출
+  const path = url.split("/").pop();
+  if (path) {
+    const { error } = await supabase.storage.from("profiles").remove([path]);
+    if (error) {
+      console.error("Error deleting file:", error);
+    }
+  }
+}
+
+async function uploadImage(file: File) {
+  const fileName = `${Date.now()}_${file.name}`;
+  const { data, error } = await supabase.storage
+    .from("profiles")
+    .upload(fileName, file);
+
+  if (error) {
+    console.error("Error uploading file:", error);
+    return null;
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("profiles").getPublicUrl(fileName);
+
+  return publicUrl;
+}
 
 export async function editProfile(_: any, formData: FormData) {
   const data = {
-    image: formData.get("image") as any,
+    image: formData.get("image") as File | null,
     name: formData.get("name") as string,
     email: formData.get("email") as string,
   };
 
-  if (data.image.name === "undefined") {
-    const updateData: { name?: string } = {
-      name: data?.name,
-    };
+  // 현재 사용자 정보 가져오기
+  const currentUser = await db.user.findUnique({
+    where: { email: data.email },
+    select: { image: true },
+  });
 
-    const result = await db.user.update({
-      where: {
-        email: data?.email,
-      },
-      data: updateData,
-    });
-    return result;
-  } else {
-    if (data.image instanceof File) {
-      const photoData = await data.image.arrayBuffer();
-      await fs.appendFile(
-        `./public/img/${data.image.name}`,
-        Buffer.from(photoData)
-      );
-      data.image = `/img/${data.image.name}`;
-    }
-    const updateData: { name?: string; image?: string } = {
-      name: data?.name,
-    };
+  const updateData: { name?: string; image?: string } = {
+    name: data.name,
+  };
 
-    if (data?.image) {
-      updateData.image = data.image;
+  if (data.image && data.image.size > 0) {
+    // 기존 이미지 삭제
+    if (currentUser?.image) {
+      await deleteImage(currentUser.image);
     }
-    const result = await db.user.update({
-      where: {
-        email: data?.email,
-      },
-      data: updateData,
-    });
-    return result;
+    // 새 이미지 업로드
+    const imageUrl = await uploadImage(data.image);
+    if (imageUrl) {
+      updateData.image = imageUrl;
+    }
   }
 
-  //   const result = productSchema.safeParse(data);
+  const result = await db.user.update({
+    where: { email: data.email },
+    data: updateData,
+  });
+
+  return result;
 }
-interface data {
-  image: File;
+
+interface Data {
+  image: File | null;
   name: string;
   email: string;
 }
-export async function editProfile2({ image, name, email }: data) {
-  let imgName;
 
-  if (image instanceof File) {
-    const photoData = await image.arrayBuffer();
-    await fs.appendFile(`./public/img/${image.name}`, Buffer.from(photoData));
-    imgName = `/img/${image.name}`;
-  }
-  const updateData: { name?: string; image?: string } = {
-    name: name,
-  };
+export async function editProfile2({ image, name, email }: Data) {
+  // 현재 사용자 정보 가져오기
+  const currentUser = await db.user.findUnique({
+    where: { email },
+    select: { image: true },
+  });
 
-  if (image) {
-    updateData.image = imgName;
+  const updateData: { name: string; image?: string } = { name };
+
+  if (image && image.size > 0) {
+    // 기존 이미지 삭제
+    if (currentUser?.image) {
+      await deleteImage(currentUser.image);
+    }
+    // 새 이미지 업로드
+    const imageUrl = await uploadImage(image);
+    if (imageUrl) {
+      updateData.image = imageUrl;
+    }
   }
+
   const result = await db.user.update({
-    where: {
-      email: email,
-    },
+    where: { email },
     data: updateData,
   });
+
   return result;
-  //   const result = productSchema.safeParse(data);
 }

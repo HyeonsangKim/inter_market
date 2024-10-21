@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE "user" ADD COLUMN "dong" TEXT;
-ALTER TABLE "user" ADD COLUMN "fullAdress" TEXT;
-ALTER TABLE "user" ADD COLUMN "gu" TEXT;
-ALTER TABLE "user" ADD COLUMN "si" TEXT;
