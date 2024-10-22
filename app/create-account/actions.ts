@@ -8,6 +8,13 @@ import { db } from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
+import { createClient } from "@/app/utils/supabase/server";
+import { getSupabaseErrorMessage } from "@/lib/errors";
+interface RegisterFormData {
+  email: string;
+  password: string;
+  name: string;
+}
 const checkPassword = ({
   password,
   confirmPassword,
@@ -69,18 +76,39 @@ export async function createAccount(prevState: any, formData: FormData) {
   if (!result.success) {
     return result.error.flatten();
   } else {
+    const supabase = createClient();
     const hashedPassword = await bcrypt.hash(result.data.password, 12);
+    const { email, password, name } = result.data;
 
-    const user = await db.user.create({
-      data: {
-        name: result.data.name,
-        email: result.data.email,
-        password: hashedPassword,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const { data: authData, error: supabaseError } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+        options: {
+          data: {
+            name,
+          },
+        },
+      }
+    );
+    if (supabaseError) {
+      console.log(supabaseError);
+      return {
+        formError: getSupabaseErrorMessage(supabaseError),
+      };
+    }
+    if (authData.user) {
+      await db.user.create({
+        data: {
+          name: result.data.name,
+          email: result.data.email,
+        },
+        select: {
+          id: true,
+        },
+      });
+    }
+
     // await saveSession(user.id, "profile");
     return redirect(`/login`);
   }
