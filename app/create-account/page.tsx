@@ -49,9 +49,8 @@ export default function CreatAccount() {
           min={PASSWORD_MIN_LENGTH}
         />
         <Button variant="primary">Submit</Button>
-        <GoogleLogin />
       </form>
-
+      <GoogleLogin />
       {/* <SocialLogin /> */}
     </div>
   );

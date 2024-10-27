@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import getCurrentUser from "@/lib/getCurrentUser";
 import { getUnreadMessagesCount } from "@/app/chats/actions";
 import UnreadBadge from "./unread-count";
 import {
@@ -12,12 +11,12 @@ import {
   User,
   LogIn,
 } from "lucide-react";
-import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export default async function ResponsiveHeader() {
   const user = await getCurrentUser();
-  let unreadCount = 0;
 
+  let unreadCount = 0;
   if (user) {
     unreadCount = await getUnreadMessagesCount(user.id);
   }

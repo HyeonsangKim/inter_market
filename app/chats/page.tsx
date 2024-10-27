@@ -1,8 +1,8 @@
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 import Image from "next/image";
 import Link from "next/link";
 import { getMessageRooms } from "./actions";
 import { ChatRoom, Message, User } from "@prisma/client";
+import { getCurrentUser } from "../utils/supabase/get-user";
 
 type ChatRoomWithUsersAndMessages = ChatRoom & {
   users: User[];
@@ -13,7 +13,7 @@ type ChatRoomWithUsersAndMessages = ChatRoom & {
 };
 
 export default async function ChatList() {
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
   const chatList: ChatRoomWithUsersAndMessages[] = await getMessageRooms(
     session!.id
   );

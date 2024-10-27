@@ -1,25 +1,56 @@
 "use client";
-import { useSession } from "next-auth/react";
+
+import { useEffect, useState, ChangeEvent } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/button";
 import Input from "@/components/input";
-import { useUser } from "@/components/userContext";
-import { ChangeEvent, useState } from "react";
 import { useFormState } from "react-dom";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/app/utils/supabase/client";
 import { editProfile } from "./action";
-import { notFound } from "next/navigation";
 
 export default function ProfileEdit({ params }: { params: { id: string } }) {
-  const userData = useUser();
-  const userId = params.id;
-  const [preview, setPreview] = useState(userData.image);
-  const [name, setName] = useState(userData.name);
-  const [image, setImage] = useState<string | null>(userData.image);
-  const { update } = useSession();
+  const router = useRouter();
+  const supabase = createClient();
+  const [userData, setUserData] = useState<any>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [state, action] = useFormState(editProfile, null);
-  if (userId !== userData.id) {
-    return notFound();
-  }
+
+  useEffect(() => {
+    async function loadProfile() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/login");
+        return;
+      }
+
+      if (params.id !== session.user.id) {
+        router.push("/404");
+        return;
+      }
+      console.log(session.user.id);
+
+      const { data: userProfile, error } = await supabase
+        .from("user")
+        .select("*") // 전체 필드 선택
+        .eq("id", session.user.id) // match 대신 eq 사용
+        .single();
+      console.log(userProfile);
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return;
+      }
+      if (userProfile) {
+        setUserData(userProfile);
+        setPreview(userProfile.image);
+      }
+    }
+
+    loadProfile();
+  }, [params.id, router, supabase]);
 
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -34,19 +65,24 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
       alert("파일 크기는 5MB를 초과할 수 없습니다.");
       return;
     }
-    const url = URL.createObjectURL(file);
 
-    setPreview(url);
-    setImage(file.name); // 업로드된 이미지를 상태에 저장
+    setPreview(URL.createObjectURL(file));
   };
 
-  const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+  const handleSubmit = async (formData: FormData) => {
+    const result = await action(formData);
+    if (result?.success) {
+      router.refresh();
+    }
   };
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-5">
-      <form action={action}>
+      <form action={handleSubmit}>
         <div className="card">
           <div className="p-6">
             <div className="mb-6 flex justify-center">
@@ -56,9 +92,11 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
                     <Image
                       width={128}
                       height={128}
-                      className="size-20 md:size-28 rounded-full"
-                      src={preview || image || ""}
-                      alt={userData.name!}
+                      className="size-20 md:size-28 rounded-full object-cover"
+                      src={
+                        preview || userData.avatar_url || "/default-avatar.png"
+                      }
+                      alt={userData.full_name}
                     />
                   </label>
                   <input
@@ -82,8 +120,7 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
                   type="text"
                   name="name"
                   id="name"
-                  value={userData.name || undefined}
-                  onChange={onNameChange}
+                  defaultValue={userData.full_name}
                 />
               </div>
               <div>
@@ -94,22 +131,14 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
                   type="email"
                   name="email"
                   id="email"
-                  value={userData.email || undefined}
+                  value={userData.email}
                   readOnly
                 />
               </div>
 
-              <div
-                className="flex justify-end"
-                onClick={() => {
-                  update({
-                    id: userData.id,
-                    image,
-                    name,
-                    email: userData.email,
-                  });
-                }}
-              >
+              {state?.error && <p className="text-red-500">{state.error}</p>}
+
+              <div className="flex justify-end">
                 <Button type="submit">Save Changes</Button>
               </div>
             </div>

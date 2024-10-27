@@ -1,61 +1,87 @@
 "use server";
 
-import { checkEmailExists } from "@/lib/check";
 import { db } from "@/lib/db";
+import { cookies } from "next/headers";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
-interface InputData {
-  email: string;
-  password: string;
+import { createClient } from "../utils/supabase/server";
+
+async function checkEmailExists(email: string) {
+  const user = await db.user.findUnique({
+    where: { email },
+  });
+  return !!user;
 }
 
 const formSchema = z.object({
   email: z
     .string()
-    .email()
+    .email("올바른 이메일 형식이 아닙니다.")
     .toLowerCase()
-    .refine(checkEmailExists, "An account with this email does not exist."),
+    .refine(checkEmailExists, "존재하지 않는 이메일입니다."),
   password: z.string({
-    required_error: "Password is required.",
+    required_error: "비밀번호를 입력해주세요.",
   }),
 });
-export async function login(prevState: any, formData: FormData) {
-  const data: InputData = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
-  const result = await formSchema.spa(data);
 
-  if (!result.success) {
-    return {
-      isLogin: false,
-      fieldErrors: result.error.flatten().fieldErrors,
-    };
-  } else {
-    const user = await db.user.findUnique({
-      where: {
-        email: result.data.email,
-      },
-      select: {
-        id: true,
-        password: true,
-      },
+interface State {
+  errors?: {
+    email?: string[];
+    password?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
+}
+
+export async function loginWithEmail(
+  prevState: State | null,
+  formData: FormData
+): Promise<State> {
+  try {
+    const validatedFields = await formSchema.safeParseAsync({
+      email: formData.get("email"),
+      password: formData.get("password"),
     });
-    const ok = await bcrypt.compare(result.data.password, user!.password ?? "");
-    if (ok) {
+
+    if (!validatedFields.success) {
       return {
-        isLogin: true,
-        data: result.data,
-      };
-    } else {
-      return {
-        isLogin: false,
-        fieldErrors: {
-          password: ["Wrong password."],
-          email: [],
-        },
+        errors: validatedFields.error.flatten().fieldErrors,
+        success: false,
       };
     }
-    // await signIn("credentials", result.data);
+
+    const { email, password } = validatedFields.data;
+
+    const supabase = createClient();
+    const { data, error: signInError } = await supabase.auth.signInWithPassword(
+      {
+        email,
+        password,
+      }
+    );
+    console.log(data);
+
+    if (signInError) {
+      if (signInError.message.includes("Invalid login credentials")) {
+        return {
+          message: "이메일 또는 비밀번호가 올바르지 않습니다.",
+          success: false,
+        };
+      }
+      return {
+        message: "로그인에 실패했습니다. 다시 시도해주세요.",
+        success: false,
+      };
+    }
+
+    // 로그인 성공 시 리다이렉트 대신 상태 반환
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      message: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      success: false,
+    };
   }
 }

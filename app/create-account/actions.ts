@@ -77,7 +77,6 @@ export async function createAccount(prevState: any, formData: FormData) {
     return result.error.flatten();
   } else {
     const supabase = createClient();
-    const hashedPassword = await bcrypt.hash(result.data.password, 12);
     const { email, password, name } = result.data;
 
     const { data: authData, error: supabaseError } = await supabase.auth.signUp(

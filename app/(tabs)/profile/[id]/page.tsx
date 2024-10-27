@@ -1,6 +1,6 @@
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { ProfileForm } from "@/components/profile-form";
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 
 async function getMyProducts(userId: string) {
   const products = await db.product.findMany({
@@ -60,7 +60,7 @@ export default async function Profile({ params }: { params: { id: string } }) {
   const userId = params.id;
   const user = await getProfile(userId);
   const products = await getMyProducts(user!.id);
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
   let currentUser = false;
   if (session!.id === userId) {
     currentUser = true;
