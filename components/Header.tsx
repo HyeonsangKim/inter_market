@@ -15,7 +15,6 @@ import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export default async function ResponsiveHeader() {
   const user = await getCurrentUser();
-
   let unreadCount = 0;
   if (user) {
     unreadCount = await getUnreadMessagesCount(user.id);
@@ -69,14 +68,21 @@ export default async function ResponsiveHeader() {
             </nav>
 
             {user ? (
-              <Link href={`/profile/${user.id}`}>
-                <Image
-                  src={user.image || "/default-avatar.png"}
-                  alt="User profile"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
+              <Link
+                href={`/profile/${user.id}`}
+                className="flex items-center justify-center w-12 h-12" // 크기 조정
+              >
+                <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                  {" "}
+                  {/* 컨테이너 추가 */}
+                  <Image
+                    src={user.image || "/default-avatar.png"}
+                    alt="User profile"
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </Link>
             ) : (
               <Link
