@@ -4,12 +4,6 @@ import { useState } from "react";
 import { useFormState } from "react-dom";
 import { uploadPost } from "./action";
 
-interface ProductImage {
-  id: number;
-  url: string;
-  file?: File;
-}
-
 export default function CreateProductPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -22,13 +16,6 @@ export default function CreateProductPage() {
     formData.append("content", description);
 
     await action(formData);
-  };
-
-  const formatPrice = (value: string) => {
-    // Remove non-digit characters
-    const digits = value.replace(/\D/g, "");
-    // Format with thousand separators
-    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (

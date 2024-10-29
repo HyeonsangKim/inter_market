@@ -36,18 +36,15 @@ export async function updateSession(request: NextRequest) {
   // 현재 경로
   const pathname = request.nextUrl.pathname;
 
-  // 공개 경로 정의 (로그인하지 않아도 접근 가능한 경로)
   const publicPaths = ["/", "/login", "/create-account", "/auth/callback"];
   const isPublicPath = publicPaths.includes(pathname);
 
-  // 로그인이 필요한 페이지에 접근하려 할 때
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // 이미 로그인한 사용자가 로그인/회원가입 페이지에 접근하려 할 때
   if (user && (pathname === "/login" || pathname === "/create-account")) {
     const url = request.nextUrl.clone();
     url.pathname = "/";

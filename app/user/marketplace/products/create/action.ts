@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import { redirect } from "next/navigation";
 import { productSchema } from "./shema";
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export async function uploadProduct(_: any, formData: FormData) {
   const data = {
@@ -34,7 +34,7 @@ export async function uploadProduct(_: any, formData: FormData) {
   if (!result.success) {
     return result.error.flatten();
   } else {
-    const session = await getCurrentUserId();
+    const session = await getCurrentUser();
 
     if (session!.id) {
       const product = await db.product.create({

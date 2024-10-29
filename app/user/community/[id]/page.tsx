@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
 import LikeShareButtons from "@/components/buttons/lIke-share-btn";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { EyeIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
@@ -17,6 +16,7 @@ import {
 } from "./action";
 import { CommentItem, CommentList } from "@/components/comment/commentList";
 import { format } from "date-fns";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -53,7 +53,7 @@ export default async function PostDetail({
   params: { id: string };
 }) {
   const id = Number(params.id);
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
   if (isNaN(id)) {
     return notFound();
   }

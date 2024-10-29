@@ -1,9 +1,9 @@
 import ChatMessagesList from "@/components/chat-messages-list";
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 import type { ChatRoom, Message, User } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { getMessageRooms, markMessagesAsRead } from "../actions";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 type RoomWithUsers = ChatRoom & {
   users: Pick<User, "id" | "name" | "image">[];
@@ -43,7 +43,7 @@ async function getRoom(id: string): Promise<RoomWithUsers | null> {
     },
   });
   if (room) {
-    const session = await getCurrentUserId();
+    const session = await getCurrentUser();
     const canSee = Boolean(room.users.find((user) => user.id === session!.id!));
 
     if (!canSee) {
@@ -94,7 +94,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   }
 
   const initialMessages = await getMessages(params.id);
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
   const chatList = await getMessageRooms(session!.id);
 
   const currentUser = room.users.find((user) => user.id === session!.id)!;

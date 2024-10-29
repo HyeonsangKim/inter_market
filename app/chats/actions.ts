@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { Message, ChatRoom, User } from "@prisma/client";
+import { getCurrentUser } from "../utils/supabase/get-user";
 
 type ChatRoomWithUsersAndMessages = ChatRoom & {
   users: User[];
@@ -17,7 +17,7 @@ export async function saveMessage(
   chatRoomId: string,
   receiverId: string
 ): Promise<{ id: number }> {
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
   return await db.message.create({
     data: {
       payload,

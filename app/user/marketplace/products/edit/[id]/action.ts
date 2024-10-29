@@ -3,9 +3,9 @@
 import fs from "fs/promises";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { productSchema } from "../../create/shema";
 import { revalidateTag } from "next/cache";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export async function getProduct(id: number) {
   const product = await db.product.findUnique({
@@ -45,7 +45,7 @@ export async function updateProduct(_: any, formData: FormData) {
   if (!result.success) {
     return result.error.flatten();
   } else {
-    const session = await getCurrentUserId();
+    const session = await getCurrentUser();
 
     if (session?.id) {
       await db.product.update({

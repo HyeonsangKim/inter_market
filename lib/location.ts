@@ -1,6 +1,6 @@
 "use server";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { db } from "./db";
-import getCurrentUser from "./getCurrentUser";
 
 interface Address {
   si?: string;

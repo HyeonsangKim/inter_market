@@ -1,12 +1,12 @@
 "use server";
 
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function likePost(postId: number) {
   await new Promise((r) => setTimeout(r, 5000));
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
 
   try {
     await db.plike.create({
@@ -24,7 +24,7 @@ export async function likePost(postId: number) {
 export async function dislikePost(postId: number) {
   await new Promise((r) => setTimeout(r, 5000));
 
-  const session = await getCurrentUserId();
+  const session = await getCurrentUser();
   try {
     await db.plike.delete({
       where: {
@@ -160,7 +160,7 @@ export async function createComment(
   content: string
 ) {
   try {
-    const session = await getCurrentUserId();
+    const session = await getCurrentUser();
 
     const comment = await db.pcomment.create({
       data: {

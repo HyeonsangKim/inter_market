@@ -1,8 +1,6 @@
-import getCurrentUser from "@/lib/getCurrentUser";
 import Link from "next/link";
 
 export default async function Home() {
-  const userData = await getCurrentUser();
   return (
     <div className="flex flex-col items-center justify-between min-h-screen p-6">
       <div className="my-auto flex flex-col items-center gap-2 *:font-medium">

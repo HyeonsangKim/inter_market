@@ -22,7 +22,6 @@ export default async function ResponsiveHeader() {
 
   return (
     <>
-      {/* Desktop Header */}
       <header className="bg-white shadow-lg w-full sticky top-0 z-50 hidden sm:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">

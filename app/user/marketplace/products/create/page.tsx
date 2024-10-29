@@ -5,7 +5,6 @@ import { useFormState } from "react-dom";
 import { uploadProduct } from "./action";
 import { Camera, X } from "lucide-react";
 import Image from "next/image";
-import Button from "@/components/buttons/button";
 
 interface ProductImage {
   id: number;
