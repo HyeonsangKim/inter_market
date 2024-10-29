@@ -1,6 +1,11 @@
 import { User as PrismaUser } from "@prisma/client";
 
-// Omit을 사용하여 충돌나는 필드를 제거한 후 새로 정의
+export interface CreateUserData {
+  id: string;
+  email: string;
+  name: string;
+  image: string | null;
+}
 export type SessionUser = Omit<PrismaUser, "email"> & {
   email: string | null | undefined;
   supabase_created_at?: string;

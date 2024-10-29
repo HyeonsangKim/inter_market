@@ -37,12 +37,8 @@ export async function updateSession(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // 공개 경로 정의 (로그인하지 않아도 접근 가능한 경로)
-  const publicPaths = ["/", "/login", "/create-account"];
-  const isPublicPath =
-    publicPaths.includes(pathname) ||
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname === "/create-account";
+  const publicPaths = ["/", "/login", "/create-account", "/auth/callback"];
+  const isPublicPath = publicPaths.includes(pathname);
 
   // 로그인이 필요한 페이지에 접근하려 할 때
   if (!user && !isPublicPath) {
@@ -60,7 +56,3 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
-
-export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
-};

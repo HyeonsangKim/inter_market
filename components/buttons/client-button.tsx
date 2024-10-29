@@ -14,13 +14,17 @@ export function GoogleLogin() {
 
   async function handleGoogleSignIn() {
     setIsLoading(true);
-    setError(""); // 에러 초기화
+    setError("");
 
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
         },
       });
 

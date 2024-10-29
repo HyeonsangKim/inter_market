@@ -73,7 +73,6 @@ export default async function ResponsiveHeader() {
                 className="flex items-center justify-center w-12 h-12" // 크기 조정
               >
                 <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                  {" "}
                   {/* 컨테이너 추가 */}
                   <Image
                     src={user.image || "/default-avatar.png"}

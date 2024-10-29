@@ -1,39 +1,49 @@
 import { db } from "@/lib/db";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
+import { error } from "console";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
 
-  if (code) {
-    const supabase = createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+  console.log("Auth Callback Started", { code: !!code });
 
-    // Get user data
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    console.log(user);
+  if (!code) {
+    throw new Error("No code provided");
+  }
 
-    if (user) {
-      // Check if user exists in Prisma DB
+  const supabase = createClient();
+  const {
+    data: { session },
+    error: authError,
+  } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (!authError && session?.user) {
+    try {
+      // 기존 유저 확인
       const existingUser = await db.user.findUnique({
-        where: { id: user.id },
+        where: { id: session.user.id },
       });
-      console.log(existingUser);
 
+      // 새로운 유저만 생성
       if (!existingUser) {
-        // Create new user in Prisma DB with Google profile image
         await db.user.create({
           data: {
-            id: user.id,
-            email: user.email!,
-            name: user.user_metadata.name || user.email?.split("@")[0],
-            image: user.user_metadata.avatar_url || null, // 구글 프로필 이미지 추가
+            id: session.user.id,
+            email: session.user.email!,
+            name:
+              session.user.user_metadata.name ||
+              session.user.email?.split("@")[0],
+            image: session.user.user_metadata.avatar_url || null,
           },
         });
+        console.log("New user created");
+      } else {
+        console.log("Existing user logged in");
       }
+    } catch (error) {
+      console.error("Error handling user:", error);
     }
   }
 

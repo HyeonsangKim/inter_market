@@ -4,33 +4,58 @@ import Input from "@/components/input";
 import { useFormState } from "react-dom";
 import { loginWithEmail } from "./actions";
 import { GoogleLogin } from "@/components/buttons/client-button";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
-const initialState = {
+import { LoginState } from "../types";
+
+const initialState: LoginState = {
+  success: false,
   errors: {},
-  message: null,
+  message: "",
 };
+
 export default function Login() {
-  const [state, dispatch] = useFormState(loginWithEmail, null);
+  const [state, dispatch] = useFormState<LoginState, FormData>(
+    loginWithEmail,
+    initialState
+  );
   const router = useRouter();
   const supabase = createClient();
-  if (state?.success) {
-    router.push("/");
-  }
+
   useEffect(() => {
     const checkSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      console.log(session);
+
       if (session) {
         router.push("/");
         router.refresh();
       }
     };
 
+    if (state?.success) {
+      checkSession();
+    }
+
     checkSession();
-  }, [router, supabase]);
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        router.push("/");
+        router.refresh();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [state, router, supabase]);
+
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">
@@ -52,8 +77,9 @@ export default function Login() {
           required
           errors={state?.errors?.password}
         />
-        {/* {error && <p className="text-red-500 font-medium -mt-4">{error}</p>} */}
-
+        {state?.message && (
+          <p className="text-red-500 text-sm">{state.message}</p>
+        )}
         <Button variant="primary">Login</Button>
 
         <div className="w-full h-px bg-neutral-500" />

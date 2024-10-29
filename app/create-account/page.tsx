@@ -6,9 +6,16 @@ import { useFormState } from "react-dom";
 import { createAccount } from "./actions";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 import { GoogleLogin } from "@/components/buttons/client-button";
-
+import { CreateAccountState } from "../types";
+const initialState: CreateAccountState = {
+  fieldErrors: {},
+  formError: undefined,
+};
 export default function CreatAccount() {
-  const [state, dispatch] = useFormState(createAccount, null);
+  const [state, dispatch] = useFormState<CreateAccountState, FormData>(
+    createAccount,
+    initialState
+  );
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">
@@ -21,7 +28,7 @@ export default function CreatAccount() {
           type="text"
           placeholder="name"
           required
-          errors={state?.fieldErrors.name}
+          errors={state?.fieldErrors?.name}
           minLength={3}
           maxLength={10}
         />
@@ -30,14 +37,14 @@ export default function CreatAccount() {
           type="email"
           placeholder="Email"
           required
-          errors={state?.fieldErrors.email}
+          errors={state?.fieldErrors?.email}
         />
         <Input
           name="password"
           type="password"
           placeholder="Password"
           required
-          errors={state?.fieldErrors.password}
+          errors={state?.fieldErrors?.password}
           min={PASSWORD_MIN_LENGTH}
         />
         <Input
@@ -45,13 +52,12 @@ export default function CreatAccount() {
           type="password"
           placeholder="Confirm Password"
           required
-          errors={state?.fieldErrors.confirmPassword}
+          errors={state?.fieldErrors?.confirmPassword}
           min={PASSWORD_MIN_LENGTH}
         />
         <Button variant="primary">Submit</Button>
       </form>
       <GoogleLogin />
-      {/* <SocialLogin /> */}
     </div>
   );
 }

@@ -40,3 +40,20 @@ export interface Comment {
   };
   replies?: Comment[];
 }
+export interface LoginState {
+  success?: boolean;
+  message?: string;
+  errors?: {
+    email?: string[];
+    password?: string[];
+  };
+}
+export interface CreateAccountState {
+  formError?: string;
+  fieldErrors?: {
+    name?: string[];
+    email?: string[];
+    password?: string[];
+    confirmPassword?: string[];
+  };
+}

@@ -1,64 +1,29 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { cookies } from "next/headers";
-import { z } from "zod";
 import { createClient } from "../utils/supabase/server";
+import { cookies } from "next/headers";
 
-async function checkEmailExists(email: string) {
-  const user = await db.user.findUnique({
-    where: { email },
-  });
-  return !!user;
+interface UserData {
+  id: string;
+  email: string;
+  name: string;
+  image: string | null;
 }
 
-const formSchema = z.object({
-  email: z
-    .string()
-    .email("올바른 이메일 형식이 아닙니다.")
-    .toLowerCase()
-    .refine(checkEmailExists, "존재하지 않는 이메일입니다."),
-  password: z.string({
-    required_error: "비밀번호를 입력해주세요.",
-  }),
-});
-
-interface State {
-  errors?: {
-    email?: string[];
-    password?: string[];
-  };
-  message?: string | null;
-  success?: boolean;
-}
-
-export async function loginWithEmail(
-  prevState: State | null,
-  formData: FormData
-): Promise<State> {
+export async function loginWithEmail(prevState: any, formData: FormData) {
   try {
-    const validatedFields = await formSchema.safeParseAsync({
-      email: formData.get("email"),
-      password: formData.get("password"),
-    });
-
-    if (!validatedFields.success) {
-      return {
-        errors: validatedFields.error.flatten().fieldErrors,
-        success: false,
-      };
-    }
-
-    const { email, password } = validatedFields.data;
-
     const supabase = createClient();
+
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
     const { data, error: signInError } = await supabase.auth.signInWithPassword(
       {
         email,
         password,
       }
     );
-    console.log(data);
 
     if (signInError) {
       if (signInError.message.includes("Invalid login credentials")) {
@@ -73,15 +38,58 @@ export async function loginWithEmail(
       };
     }
 
-    // 로그인 성공 시 리다이렉트 대신 상태 반환
+    // 로그인 성공 후 세션 확인
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session) {
+      // 쿠키 설정 (필요한 경우)
+      cookies().set("sb-token", session.access_token, {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      return { success: true };
+    }
+
     return {
-      success: true,
+      message: "세션 생성에 실패했습니다.",
+      success: false,
     };
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error);
     return {
       message: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
       success: false,
     };
+  }
+}
+export async function handleGoogleUser(user: UserData) {
+  try {
+    const existingUser = await db.user.findUnique({
+      where: { id: user.id },
+      select: { id: true },
+    });
+    console.log("[poasdpasuidpahspidbaipsodnpasndipn");
+
+    console.log(existingUser);
+
+    if (!existingUser) {
+      await db.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        },
+      });
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Error handling user:", error);
+    return { success: false, error: "Failed to process user" };
   }
 }
