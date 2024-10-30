@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFormState } from "react-dom";
 import { updateProduct } from "@/app/user/marketplace/products/edit/[id]/action";
-import { Camera, X } from "lucide-react";
+import { Camera, X, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Image {
   id: number;
@@ -26,11 +26,14 @@ interface EditFormProps {
 }
 
 export default function EditForm({ productId, product }: EditFormProps) {
+  const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [price, setPrice] = useState<string>("");
   const [images, setImages] = useState<Image[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsEditing(true);
@@ -59,35 +62,73 @@ export default function EditForm({ productId, product }: EditFormProps) {
     setPrice(Number(value).toLocaleString());
   };
 
-  const handleImageChange = (newImages: Image[]) => setImages(newImages);
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newImage = {
+        id: Date.now(),
+        url: URL.createObjectURL(e.target.files[0]),
+        file: e.target.files[0],
+      };
+      setImages([...images, newImage]);
+    }
+  };
 
-  const [state, action] = useFormState(updateProduct, null);
+  const removeImage = (id: number) => {
+    setImages((prevImages) => {
+      const imageToRemove = prevImages.find((img) => img.id === id);
+      if (imageToRemove?.file) {
+        URL.revokeObjectURL(imageToRemove.url);
+      }
+      return prevImages.filter((image) => image.id !== id);
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
-    const formData = new FormData();
-    formData.append("id", String(productId));
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("price", price.replace(/,/g, ""));
+    try {
+      const formData = new FormData();
+      formData.append("id", String(productId));
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("price", price.replace(/,/g, ""));
 
-    images.forEach((image) => {
-      if (image.file) {
-        formData.append("photos", image.file);
+      images.forEach((image) => {
+        if (image.file) {
+          formData.append("photos", image.file);
+        } else {
+          formData.append("photos", image.url);
+        }
+      });
+
+      const result = await updateProduct(null, formData);
+
+      if (result.success) {
+        // 이미지 URL 정리
+        images.forEach((img) => {
+          if (img.file) {
+            URL.revokeObjectURL(img.url);
+          }
+        });
+        router.push("/user/marketplace/products");
+        router.refresh();
       } else {
-        formData.append("photos", image.url);
+        setError(
+          result.error?.formErrors?.[0] || "상품 수정 중 오류가 발생했습니다."
+        );
       }
-    });
-
-    await action(formData);
+    } catch (err) {
+      setError("상품 수정 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        {isEditing ? "상품 수정" : "새 상품 등록"}
-      </h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">상품 수정</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label
@@ -103,6 +144,7 @@ export default function EditForm({ productId, product }: EditFormProps) {
             onChange={(e) => handleTitleChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
+            disabled={isSubmitting}
           />
         </div>
 
@@ -120,6 +162,7 @@ export default function EditForm({ productId, product }: EditFormProps) {
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             required
+            disabled={isSubmitting}
           ></textarea>
         </div>
 
@@ -139,6 +182,7 @@ export default function EditForm({ productId, product }: EditFormProps) {
               className="w-full pl-7 pr-12 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="0"
               required
+              disabled={isSubmitting}
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-3">
               <span className="text-gray-500 sm:text-sm">₩</span>
@@ -165,31 +209,22 @@ export default function EditForm({ productId, product }: EditFormProps) {
                 />
                 <button
                   type="button"
-                  onClick={() =>
-                    setImages(images.filter((image) => image.id !== img.id))
-                  }
+                  onClick={() => removeImage(img.id)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                  disabled={isSubmitting}
                 >
                   <X size={16} />
                 </button>
               </div>
             ))}
-            {images.length < 5 && (
+            {images.length < 5 && !isSubmitting && (
               <label className="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer h-32">
                 <input
                   type="file"
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      const newImage = {
-                        id: Date.now(),
-                        url: URL.createObjectURL(e.target.files[0]),
-                        file: e.target.files[0],
-                      };
-                      handleImageChange([...images, newImage]);
-                    }
-                  }}
+                  onChange={handleImageUpload}
                   accept="image/*"
                   className="hidden"
+                  disabled={isSubmitting}
                 />
                 <Camera size={24} className="text-gray-400" />
               </label>
@@ -200,11 +235,23 @@ export default function EditForm({ productId, product }: EditFormProps) {
           </p>
         </div>
 
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
+
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300"
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center justify-center"
+          disabled={isSubmitting}
         >
-          {isEditing ? "수정 완료" : "상품 등록하기"}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              수정 중...
+            </>
+          ) : (
+            "수정 완료"
+          )}
         </button>
       </form>
     </div>

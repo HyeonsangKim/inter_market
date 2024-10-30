@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
-import LikeShareButtons from "@/components/buttons/lIke-share-btn";
 import { EyeIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
@@ -17,6 +16,7 @@ import {
 import { CommentItem, CommentList } from "@/components/comment/commentList";
 import { format } from "date-fns";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
+import LikeButton from "@/components/buttons/lIke-share-btn";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
@@ -98,10 +98,11 @@ export default async function PostDetail({
               <EyeIcon className="h-5 w-5 mr-1" />
               <span>views {post.views}</span>
             </div>
-            <LikeShareButtons
+            <LikeButton
               isLiked={isLiked}
               likeCount={likeCount}
-              postId={id}
+              itemId={post.id}
+              type="post"
             />
           </div>
 

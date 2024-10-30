@@ -1,9 +1,7 @@
 import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
-import LikeShareButtons from "@/components/buttons/lIke-share-btn";
 import { EyeIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
 import {
-  deleteProduct,
   getComments,
   getLikeStatus,
   getProduct,
@@ -20,6 +18,9 @@ import SoldOutButton from "@/components/buttons/soldout-button";
 import { format } from "date-fns";
 import ImageSlider from "@/components/image-component/image-slider";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
+import { deleteProduct } from "../edit/[id]/action";
+import { Edit } from "lucide-react";
+import LikeButton from "@/components/buttons/lIke-share-btn";
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
 >;
@@ -106,24 +107,28 @@ export default async function PostDetail({
               <EyeIcon className="h-5 w-5 mr-1" />
               <span>view {product.views}</span>
             </div>
-            <LikeShareButtons
+            <LikeButton
               isLiked={isLiked}
               likeCount={likeCount}
-              postId={id}
+              itemId={product.id}
+              type="product"
             />
           </div>
 
           {session!.id === product.user.id && (
             <div className="flex gap-4 mb-8">
-              <Link href={`/user/marketplace/products/edit/${id}`}>
-                <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-200">
-                  edit
-                </button>
+              <Link
+                href={`/user/marketplace/products/edit/${id}`}
+                className="inline-flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors duration-200"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
               </Link>
               <DeleteButton
                 color="bg-red-100 text-red-600 hover:bg-red-200"
                 text="삭제"
                 action={deleteProduct}
+                route="/user/marketplace/products"
                 elementId={id}
               />
               <SoldOutButton

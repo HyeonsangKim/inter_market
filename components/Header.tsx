@@ -71,7 +71,7 @@ export default async function ResponsiveHeader() {
                 href={`/profile/${user.id}`}
                 className="flex items-center justify-center w-12 h-12" // 크기 조정
               >
-                <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
                   {/* 컨테이너 추가 */}
                   <Image
                     src={user.image || "/default-avatar.png"}

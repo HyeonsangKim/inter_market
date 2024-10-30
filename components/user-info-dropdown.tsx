@@ -21,16 +21,20 @@ export function UserInfoDropdown({ user }: UserInfoDropdownType) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors duration-200"
+        className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
       >
-        <Image
-          src={user.image || "/default-avatar.png"}
-          alt={"profile Image"}
-          width={40}
-          height={40}
-          className="rounded-full object-cover"
-        />
-        <span className="font-medium">{user.name}</span>
+        <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
+          <Image
+            src={user.image || "/default-avatar.png"}
+            alt={`${user.name}'s profile image`}
+            width={64}
+            height={64}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <span className="font-medium text-gray-700 truncate max-w-[100px]">
+          {user.name}
+        </span>
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">

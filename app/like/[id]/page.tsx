@@ -1,45 +1,8 @@
-import { db } from "@/lib/db";
 import Image from "next/image";
 import Link from "next/link";
 import { HeartIcon, ClockIcon, MapPinIcon } from "lucide-react";
+import { getLikedProducts } from "./action";
 
-async function getLikedProducts(userId: string) {
-  const likedProducts = await db.plike.findMany({
-    where: {
-      userId,
-    },
-    select: {
-      product: {
-        include: {
-          user: {
-            select: {
-              name: true,
-              image: true,
-              si: true,
-              gu: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-  });
-
-  const productWithLikeCount = await Promise.all(
-    likedProducts.map(async (like) => {
-      const likeCount = await db.like.count({
-        where: {
-          postId: like.product.id,
-        },
-      });
-      return { ...like.product, likeCount };
-    })
-  );
-
-  return productWithLikeCount;
-}
 export default async function LikedPostsPage({
   params,
 }: {
@@ -80,15 +43,17 @@ export default async function LikedPostsPage({
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Image
-                        src={product.user.image || "/default-avatar.png"}
-                        alt={product.user.name || "none"}
-                        width={24}
-                        height={24}
-                        className="rounded-full mr-2"
-                      />
-                      <span className="text-sm font-medium">
+                    <div className="flex items-center gap-3 px-3 py-2 rounded-full transition-colors duration-200">
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
+                        <Image
+                          src={product.user.image || "/default-avatar.png"}
+                          alt={`${product.user.name}'s profile image`}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <span className="font-medium text-gray-700 truncate max-w-[100px]">
                         {product.user.name}
                       </span>
                     </div>

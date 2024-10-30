@@ -199,7 +199,7 @@ export async function deletePost(postId: number) {
       where: { id: postId },
     });
 
-    return true;
+    return { success: true };
   } catch (error) {
     console.error("Failed to delete post:", error);
     return { success: false, error: "Failed to delete post" };

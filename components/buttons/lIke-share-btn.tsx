@@ -4,19 +4,25 @@ import { HandThumbUpIcon as OutLineHandThumbUpIcon } from "@heroicons/react/24/o
 import { useOptimistic } from "react";
 import {
   dislikePost,
+  dislikeProduct,
   likePost,
-} from "@/app/user/marketplace/products/[id]/action";
+  likeProduct,
+} from "@/app/utils/commonAction";
+
+type ItemType = "product" | "post";
 
 interface LikeButtonProps {
   isLiked: boolean;
   likeCount: number;
-  postId: number;
+  itemId: number;
+  type: ItemType;
 }
 
 export default function LikeButton({
   isLiked,
   likeCount,
-  postId,
+  itemId,
+  type,
 }: LikeButtonProps) {
   const [state, reducerFn] = useOptimistic(
     { isLiked, likeCount },
@@ -27,14 +33,26 @@ export default function LikeButton({
         : previousState.likeCount + 1,
     })
   );
+
   const onClick = async () => {
     reducerFn(undefined);
-    if (isLiked) {
-      await dislikePost(postId);
+    console.log(state);
+
+    if (state.isLiked) {
+      if (type === "product") {
+        await dislikeProduct(itemId);
+      } else {
+        await dislikePost(itemId);
+      }
     } else {
-      await likePost(postId);
+      if (type === "product") {
+        await likeProduct(itemId);
+      } else {
+        await likePost(itemId);
+      }
     }
   };
+
   return (
     <button
       onClick={onClick}
@@ -42,7 +60,7 @@ export default function LikeButton({
         ${
           state.isLiked
             ? "bg-orange-500 text-white border-orange-500"
-            : "hover:bg-neutral-800 "
+            : "hover:bg-neutral-800 hover:text-white"
         }`}
     >
       {state.isLiked ? (
@@ -50,11 +68,9 @@ export default function LikeButton({
       ) : (
         <OutLineHandThumbUpIcon className="size-5" />
       )}
-      {state.isLiked ? (
-        <span>unlike ({state.likeCount})</span>
-      ) : (
-        <span>like ({state.likeCount})</span>
-      )}
+      <span>
+        {state.isLiked ? "Unlike" : "Like"} ({state.likeCount})
+      </span>
     </button>
   );
 }

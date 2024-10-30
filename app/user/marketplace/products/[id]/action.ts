@@ -77,6 +77,13 @@ export async function getProduct(id: number) {
 // 조회수만 증가시키는 함수
 export async function incrementProductViews(id: number) {
   try {
+    const product = await db.product.findUnique({
+      where: { id: id },
+    });
+
+    if (!product) {
+      return { success: false, error: "Product not found" };
+    }
     await db.product.update({
       where: { id },
       data: {

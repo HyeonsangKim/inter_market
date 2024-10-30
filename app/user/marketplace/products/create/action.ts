@@ -1,64 +1,112 @@
 "use server";
 
-import fs from "fs/promises";
 import { redirect } from "next/navigation";
-import { productSchema } from "./shema";
 import { db } from "@/lib/db";
-import { getCurrentUser } from "@/app/utils/supabase/get-user";
+import { productSchema } from "./shema";
+import { createClient } from "@/app/utils/supabase/server";
+import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 export async function uploadProduct(_: any, formData: FormData) {
-  const data = {
-    photos: formData.getAll("photos"),
-    title: formData.get("title"),
-    price: formData.get("price"),
-    content: formData.get("content"),
-  };
+  try {
+    const supabase = createClient();
 
-  const photoPaths: string[] = [];
-  for (const photo of data.photos) {
-    if (photo instanceof File) {
-      const photoData = await photo.arrayBuffer();
+    const data = {
+      photos: formData.getAll("photos"),
+      title: formData.get("title"),
+      price: formData.get("price"),
+      content: formData.get("content"),
+    };
 
-      const photoPath = `/productsImg/${Date.now()}_${photo.name}`;
-      await fs.writeFile(
-        `./public${photoPath}`,
-        new Uint8Array(Buffer.from(photoData))
-      );
-      photoPaths.push(photoPath); // 저장된 경로를 배열에 추가합니다.
+    // 이미지 업로드 처리
+    const photoPaths: string[] = [];
+    for (const photo of data.photos) {
+      if (photo instanceof File) {
+        const fileExt = photo.name.split(".").pop();
+        const fileName = `${Date.now()}_${Math.random()
+          .toString(36)
+          .substring(7)}.${fileExt}`;
+        const filePath = `products/${fileName}`;
+
+        const photoBuffer = await photo.arrayBuffer();
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("products")
+          .upload(filePath, photoBuffer, {
+            contentType: photo.type,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw new Error("Failed to upload image: " + uploadError.message);
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("products").getPublicUrl(filePath);
+
+        photoPaths.push(publicUrl);
+      }
     }
-  }
 
-  data.photos = photoPaths; // 파일 경로들을 배열로 저장합니다.
-  const result = productSchema.safeParse(data);
+    data.photos = photoPaths;
+    const result = productSchema.safeParse(data);
 
-  if (!result.success) {
-    return result.error.flatten();
-  } else {
-    const session = await getCurrentUser();
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error.flatten(),
+      };
+    }
 
-    if (session!.id) {
-      const product = await db.product.create({
-        data: {
-          title: result.data.title,
-          description: result.data.content,
-          price: Number(result.data.price),
-          photos: {
-            createMany: {
-              data: photoPaths.map((path) => ({ url: path })),
-            },
-          },
-          user: {
-            connect: {
-              id: session!.id.toString(),
-            },
+    const session = await supabase.auth.getSession();
+    const userId = session.data.session?.user.id;
+
+    if (!userId) {
+      return {
+        success: false,
+        error: {
+          formErrors: ["인증이 필요합니다."],
+        },
+      };
+    }
+
+    const product = await db.product.create({
+      data: {
+        title: result.data.title,
+        description: result.data.content,
+        price: Number(result.data.price),
+        photos: {
+          createMany: {
+            data: photoPaths.map((url) => ({ url })),
           },
         },
-        select: {
-          id: true,
+        user: {
+          connect: {
+            id: userId,
+          },
         },
-      });
+      },
+      select: {
+        id: true,
+      },
+    });
 
-      redirect(`/user/marketplace/products/`);
-    }
+    // 캐시 갱신
+    revalidatePath("/user/marketplace/products");
+
+    return {
+      success: true,
+      productId: product.id,
+    };
+  } catch (error) {
+    console.error("Error in uploadProduct:", error);
+
+    return {
+      success: false,
+      error: {
+        formErrors: ["제품 업로드 중 오류가 발생했습니다."],
+      },
+    };
   }
 }

@@ -6,15 +6,10 @@ import {
 } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/server";
 import { getSupabaseErrorMessage } from "@/lib/errors";
-interface RegisterFormData {
-  email: string;
-  password: string;
-  name: string;
-}
+
 const checkPassword = ({
   password,
   confirmPassword,
@@ -107,8 +102,6 @@ export async function createAccount(prevState: any, formData: FormData) {
         },
       });
     }
-
-    // await saveSession(user.id, "profile");
     return redirect(`/login`);
   }
 }
