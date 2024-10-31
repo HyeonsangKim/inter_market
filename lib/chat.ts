@@ -10,6 +10,7 @@ export const createChatRoom = async (targetId: string) => {
       AND: [
         { users: { some: { id: targetId } } },
         { users: { some: { id: session!.id } } },
+        { NOT: { hiddenBy: { has: session!.id } } },
       ],
     },
     select: { id: true },
@@ -29,6 +30,7 @@ export const createChatRoom = async (targetId: string) => {
             },
           ],
         },
+        hiddenBy: [],
       },
       select: {
         id: true,

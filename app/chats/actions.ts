@@ -18,26 +18,48 @@ export async function saveMessage(
   receiverId: string
 ): Promise<{ id: number }> {
   const session = await getCurrentUser();
-  return await db.message.create({
-    data: {
-      payload,
-      chatRoomId,
-      senderId: session!.id!,
-      receiverId,
-      isRead: false,
-    },
-    select: { id: true },
+
+  return await db.$transaction(async (tx) => {
+    // 1. 메시지 저장
+    const message = await tx.message.create({
+      data: {
+        payload,
+        chatRoomId,
+        senderId: session!.id!,
+        receiverId,
+        isRead: false,
+      },
+      select: { id: true },
+    });
+
+    // 2. 채팅방 숨김 해제 및 시간 업데이트
+    await tx.chatRoom.update({
+      where: { id: chatRoomId },
+      data: {
+        hiddenBy: {
+          set: [], // 모든 숨김 해제
+        },
+        updated_at: new Date(), // 채팅방 시간 업데이트
+      },
+    });
+
+    return message;
   });
 }
 
 export async function getMessageRooms(
   currentId: string
 ): Promise<ChatRoomWithUsersAndMessages[]> {
-  return await db.chatRoom.findMany({
+  const rooms = await db.chatRoom.findMany({
     where: {
       users: {
         some: {
           id: currentId,
+        },
+      },
+      NOT: {
+        hiddenBy: {
+          has: currentId,
         },
       },
     },
@@ -70,6 +92,7 @@ export async function getMessageRooms(
       updated_at: "desc",
     },
   });
+  return rooms;
 }
 
 export async function markMessagesAsRead(
@@ -96,4 +119,21 @@ export async function getUnreadMessagesCount(userId: string) {
     },
   });
   return unreadCount;
+}
+
+export async function hideChat(chatRoomId: string, userId: string) {
+  try {
+    await db.chatRoom.update({
+      where: { id: chatRoomId },
+      data: {
+        hiddenBy: {
+          push: userId,
+        },
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to hide chat:", error);
+    return { success: false, error: "Failed to hide chat" };
+  }
 }

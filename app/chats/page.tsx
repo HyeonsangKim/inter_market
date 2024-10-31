@@ -1,17 +1,15 @@
-import Image from "next/image";
-import Link from "next/link";
 import { getMessageRooms } from "./actions";
-import { ChatRoom, Message, User } from "@prisma/client";
 import { getCurrentUser } from "../utils/supabase/get-user";
+import { ChatRoom, Message, User } from "@prisma/client";
+import { ChatItem } from "@/components/chat-item";
 
-type ChatRoomWithUsersAndMessages = ChatRoom & {
+export type ChatRoomWithUsersAndMessages = ChatRoom & {
   users: User[];
   messages: (Message & {
     sender: Pick<User, "id" | "name" | "image">;
     receiver: Pick<User, "id" | "name" | "image">;
   })[];
 };
-
 export default async function ChatList() {
   const session = await getCurrentUser();
   const chatList: ChatRoomWithUsersAndMessages[] = await getMessageRooms(
@@ -32,34 +30,14 @@ export default async function ChatList() {
           ).length;
 
           return (
-            <Link href={`/chats/${chat.id}`} key={chat.id}>
-              <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
-                <Image
-                  src={otherUser.image || "/img/default.jpg"}
-                  alt={otherUser.name || "no"}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-                <div className="ml-3 flex-grow">
-                  <div className="flex justify-between items-center">
-                    <p className="font-semibold">{otherUser.name}</p>
-                    {unreadCount > 0 && (
-                      <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    {lastMessage ? (
-                      <>{lastMessage.payload}</>
-                    ) : (
-                      "No messages yet"
-                    )}
-                  </p>
-                </div>
-              </div>
-            </Link>
+            <ChatItem
+              key={chat.id}
+              chatId={chat.id}
+              currentUserId={session!.id}
+              otherUser={otherUser}
+              lastMessage={lastMessage}
+              unreadCount={unreadCount}
+            />
           );
         })}
       </div>

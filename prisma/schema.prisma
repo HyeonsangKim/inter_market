@@ -164,6 +164,7 @@ model ChatRoom {
   updated_at DateTime  @updatedAt
   messages   Message[]
   users      User[]    @relation("ChatRoomToUser")
+  hiddenBy   String[]  
 }
 
 model Message {

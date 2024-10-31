@@ -1,7 +1,14 @@
 "use client";
 import { InitialChatList, InitialChatMessages } from "@/app/chats/[id]/page";
 import { formatToTimeAgo } from "@/app/utils/utils";
-import { ArrowUpCircle, Info, Phone, Video } from "lucide-react";
+import {
+  ArrowLeftCircle,
+  ArrowRightCircle,
+  ArrowUpCircle,
+  Info,
+  Phone,
+  Video,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { RealtimeChannel, createClient } from "@supabase/supabase-js";
@@ -13,6 +20,7 @@ interface User {
   name: string | null;
   image: string | null;
 }
+
 interface Message {
   id: number;
   payload: string;
@@ -37,6 +45,7 @@ interface ChatMessagesListProps {
   chatRoomId: string;
   chatList: InitialChatList[];
 }
+
 export default function ChatMessagesList({
   chatRoomId,
   currentUser,
@@ -46,6 +55,7 @@ export default function ChatMessagesList({
 }: ChatMessagesListProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [message, setMessage] = useState("");
+  const [showMobileList, setShowMobileList] = useState(false);
   const channel = useRef<RealtimeChannel>();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +64,7 @@ export default function ChatMessagesList({
     } = event;
     setMessage(value);
   };
+
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const newMessage = {
@@ -103,7 +114,54 @@ export default function ChatMessagesList({
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
-      {/* 채팅 목록 */}
+      {/* 모바일 채팅 목록 오버레이 */}
+      {showMobileList && (
+        <div className="fixed inset-0 bg-white z-50 md:hidden flex flex-col h-[calc(100vh-64px)]">
+          {" "}
+          {/* 모바일 네비게이션 높이(64px) 만큼 빼기 */}
+          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">채팅 목록</h2>
+            <button
+              onClick={() => setShowMobileList(false)}
+              className="text-gray-600"
+            >
+              <ArrowRightCircle className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="overflow-y-auto flex-1 pb-16">
+            {" "}
+            {/* 바텀 네비게이션 영역만큼 패딩 추가 */}
+            {chatList.map((item) => (
+              <Link
+                key={item?.id}
+                href={`/chats/${item?.id}`}
+                onClick={() => setShowMobileList(false)}
+              >
+                <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
+                    <Image
+                      src={item?.users[0].image || "/default-avatar.png"}
+                      alt={`${item?.users[0].name}'s profile image`}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="ml-3">
+                    <p className="font-semibold">
+                      {item?.users[1]?.name || "User"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {item?.messages?.[0]?.payload || "No messages yet"}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+      {/* 데스크탑 채팅 목록 */}
       <div className="w-80 border-r border-gray-200 bg-white flex-shrink-0 overflow-y-auto hidden md:flex md:flex-col">
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold">채팅</h2>
@@ -112,13 +170,15 @@ export default function ChatMessagesList({
           {chatList.map((item) => (
             <Link key={item?.id} href={`/chats/${item?.id}`}>
               <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
-                <Image
-                  src={item?.users[1]?.image || "/img/default.jpg"}
-                  alt={item?.users[1]?.name || "User"}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
+                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
+                  <Image
+                    src={item?.users[0].image || "/default-avatar.png"}
+                    alt={`${item?.users[0].name}'s profile image`}
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <div className="ml-3">
                   <p className="font-semibold">
                     {item?.users[1]?.name || "User"}
@@ -138,13 +198,21 @@ export default function ChatMessagesList({
         {/* 채팅 상대 정보 */}
         <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Image
-              src={otherUser.image || "/img/default.jpg"}
-              alt={otherUser.name || "no"}
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
+            <button
+              onClick={() => setShowMobileList(true)}
+              className="mr-3 md:hidden"
+            >
+              <ArrowLeftCircle className="w-6 h-6 text-gray-600" />
+            </button>
+            <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
+              <Image
+                src={otherUser.image || "/default-avatar.png"}
+                alt={`${otherUser.name}'s profile image`}
+                width={128}
+                height={128}
+                className="w-full h-full object-cover"
+              />
+            </div>
             <h2 className="text-xl font-semibold ml-3">{otherUser.name}</h2>
           </div>
           <div className="flex space-x-4">
@@ -154,7 +222,7 @@ export default function ChatMessagesList({
           </div>
         </div>
 
-        {/* 메시지 영역 (스크롤 가능) */}
+        {/* 메시지 영역 */}
         <div className="flex-grow overflow-y-auto bg-gray-100">
           <div className="p-4 space-y-4">
             {messages.map((message, idx) => (
@@ -212,7 +280,7 @@ export default function ChatMessagesList({
           </div>
         </div>
 
-        {/* 입력 영역 (항상 표시) */}
+        {/* 입력 영역 */}
         <div className="bg-white border-t border-gray-200 p-4">
           <form className="flex items-center" onSubmit={onSubmit}>
             <input

@@ -27,8 +27,8 @@ export function UserInfoDropdown({ user }: UserInfoDropdownType) {
           <Image
             src={user.image || "/default-avatar.png"}
             alt={`${user.name}'s profile image`}
-            width={64}
-            height={64}
+            width={128}
+            height={128}
             className="w-full h-full object-cover"
           />
         </div>
