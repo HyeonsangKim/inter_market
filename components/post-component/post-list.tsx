@@ -7,75 +7,89 @@ import { InitialPosts } from "@/app/user/community/page";
 import { regions } from "@/app/utils/address-info";
 import { RegionFilter, SearchBar } from "../search";
 import { format } from "date-fns";
-const POSTS_PER_PAGE = 10;
+import { getMorePosts } from "@/app/user/community/action";
 
 interface PostListProps {
   initialPosts: InitialPosts;
+  initialLocation: {
+    city: string;
+    district: string;
+  };
 }
 
-export default function PostList({ initialPosts }: PostListProps) {
-  const [posts, setPosts] = useState<InitialPosts>([]);
-  const [filteredPosts, setFilteredPosts] =
-    useState<InitialPosts>(initialPosts);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+export default function PostList({
+  initialPosts,
+  initialLocation,
+}: PostListProps) {
+  const [posts, setPosts] = useState<InitialPosts>(initialPosts);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
+  const [city, setCity] = useState(initialLocation.city);
+  const [district, setDistrict] = useState(initialLocation.district);
+
   const { ref, inView } = useInView();
 
-  const loadMorePosts = useCallback(() => {
-    if (!hasMore || loading) return;
+  const loadMorePosts = useCallback(async () => {
+    if (loading || !hasMore) return;
 
     setLoading(true);
-    const startIndex = (page - 1) * POSTS_PER_PAGE;
-    const endIndex = startIndex + POSTS_PER_PAGE;
-    const newPosts = filteredPosts.slice(startIndex, endIndex);
+    try {
+      const response = await getMorePosts(page + 1, city, district, query);
 
-    if (newPosts.length > 0) {
-      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setHasMore(false);
+      if (response.posts.length > 0) {
+        setPosts((prev) => [...prev, ...response.posts]);
+        setPage((p) => p + 1);
+        setHasMore(response.hasMore);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Failed to load more posts:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, [page, filteredPosts, hasMore, loading]);
+  }, [page, city, district, query, loading, hasMore]);
 
   useEffect(() => {
-    if (inView && hasMore && !loading) {
+    if (inView) {
       loadMorePosts();
     }
-  }, [inView, hasMore, loading, loadMorePosts]);
+  }, [inView]);
 
-  const resetPostList = useCallback(() => {
-    setPosts([]);
+  const handleSearch = async (searchQuery: string) => {
+    setQuery(searchQuery);
     setPage(1);
-    setHasMore(true);
-    setLoading(false);
-  }, []);
+    setLoading(true);
 
-  const handleSearch = (query: string) => {
-    const filtered = initialPosts.filter((post) =>
-      post.title.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredPosts(filtered);
-    resetPostList();
+    try {
+      const response = await getMorePosts(1, city, district, searchQuery);
+      setPosts(response.posts);
+      setHasMore(response.hasMore);
+    } catch (error) {
+      console.error("Search failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleFilterChange = (city: string, district: string) => {
-    const filtered = initialPosts.filter((post) => {
-      if (city && district) {
-        return post.user.si === city && post.user.gu === district;
-      } else if (city) {
-        return post.user.si === city;
-      }
-      return true;
-    });
-    setFilteredPosts(filtered);
-    resetPostList();
-  };
+  const handleFilterChange = async (newCity: string, newDistrict: string) => {
+    setCity(newCity);
+    setDistrict(newDistrict);
+    setPage(1);
+    setLoading(true);
 
-  if (loading && posts.length === 0) {
-    return <div>Loading...</div>;
-  }
+    try {
+      const response = await getMorePosts(1, newCity, newDistrict, query);
+      setPosts(response.posts);
+      setHasMore(response.hasMore);
+    } catch (error) {
+      console.error("Filter failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
@@ -91,7 +105,12 @@ export default function PostList({ initialPosts }: PostListProps) {
       </div>
 
       <SearchBar onSearch={handleSearch} />
-      <RegionFilter regions={regions} onFilterChange={handleFilterChange} />
+      <RegionFilter
+        regions={regions}
+        onFilterChange={handleFilterChange}
+        initialCity={initialLocation.city}
+        initialDistrict={initialLocation.district}
+      />
 
       <div className="space-y-4">
         {posts.map((post) => (
@@ -102,9 +121,8 @@ export default function PostList({ initialPosts }: PostListProps) {
           >
             <div className="border p-4 rounded">
               {post.title}
-
               <p className="text-gray-600">
-                {post.description!.substring(0, 100)}...
+                {post.description?.substring(0, 100)}...
               </p>
               <p className="text-sm text-gray-500 mt-2">
                 writer: {post.user.name} | date:{" "}
@@ -115,14 +133,22 @@ export default function PostList({ initialPosts }: PostListProps) {
         ))}
       </div>
 
-      {hasMore && (
-        <div ref={ref} className="flex justify-center items-center mt-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      {loading && (
+        <div className="flex justify-center items-center mt-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
         </div>
       )}
 
+      {hasMore && !loading && <div ref={ref} className="h-10" />}
+
+      {!hasMore && posts.length > 0 && (
+        <p className="text-center text-gray-500 mt-8">
+          모든 게시글을 불러왔습니다.
+        </p>
+      )}
+
       {!hasMore && posts.length === 0 && (
-        <div className="text-center mt-8">No post.</div>
+        <div className="text-center mt-8">게시글이 없습니다.</div>
       )}
     </div>
   );

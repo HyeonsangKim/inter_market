@@ -1,55 +1,60 @@
+// page.tsx
 import React from "react";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import ProductList from "@/components/product-component/product-list";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
+import { getMoreProducts } from "./action";
 
-async function getInitialProducts() {
-  const products = await db.product.findMany({
-    select: {
-      title: true,
-      price: true,
-      created_at: true,
-      soldout: true,
-      photos: {
-        select: {
-          url: true,
-        },
-        take: 1,
-      },
-      id: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          si: true,
-          gu: true,
-          dong: true,
-        },
-      },
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-  });
+export type Product = {
+  user: {
+    image: string | null;
+    id: string;
+    gu: string | null;
+    name: string | null;
+    si: string | null;
+    dong: string | null;
+  };
+  id: number;
+  title: string;
+  price: number;
+  created_at: Date;
+  soldout: boolean | null;
+  photos: { url: string }[];
+};
 
-  return products.map((product) => ({
-    ...product,
-    firstPhoto: product.photos[0]?.url || null,
-  }));
+export type InitialProducts = Product[];
+
+interface PageLocation {
+  city: string;
+  district: string;
 }
 
-export type InitialProducts = Prisma.PromiseReturnType<
-  typeof getInitialProducts
->;
+// 서버 액션의 반환 타입 수정
 
 export default async function ProductListPage() {
-  const initialProducts = await getInitialProducts();
+  const session = await getCurrentUser();
+  const user = session
+    ? await db.user.findUnique({
+        where: { id: session.id },
+        select: { si: true, gu: true },
+      })
+    : null;
+
+  const { products: initialProducts } = await getMoreProducts(
+    1,
+    user?.si || undefined,
+    user?.gu || undefined,
+    ""
+  );
 
   return (
     <div className="container mx-auto w-full">
       <div>
-        <ProductList initialProducts={initialProducts} />
+        <ProductList
+          initialProducts={initialProducts}
+          initialLocation={{ city: user?.si || "", district: user?.gu || "" }}
+        />
       </div>
     </div>
   );

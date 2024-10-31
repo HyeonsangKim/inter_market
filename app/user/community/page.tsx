@@ -1,41 +1,49 @@
-import PostList from "@/components/post-component/post-list";
+// app/user/community/page.tsx
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { getMorePosts } from "./action";
+import PostList from "@/components/post-component/post-list";
 
-async function getInitialPosts() {
-  const posts = await db.post.findMany({
-    select: {
-      title: true,
-      created_at: true,
-      id: true,
-      description: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          si: true,
-          gu: true,
-          dong: true,
-        },
-      },
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-  });
+export type Post = {
+  user: {
+    image: string | null;
+    id: string;
+    gu: string | null;
+    name: string | null;
+    si: string | null;
+    dong: string | null;
+  };
+  id: number;
+  title: string;
+  description: string | null;
+  created_at: Date;
+};
 
-  return posts;
-}
-
-export type InitialPosts = Prisma.PromiseReturnType<typeof getInitialPosts>;
+export type InitialPosts = Post[];
 
 export default async function PostListPage() {
-  const initialPosts = await getInitialPosts();
+  const session = await getCurrentUser();
+  const user = session
+    ? await db.user.findUnique({
+        where: { id: session.id },
+        select: { si: true, gu: true },
+      })
+    : null;
+
+  const { posts: initialPosts } = await getMorePosts(
+    1,
+    user?.si || undefined,
+    user?.gu || undefined,
+    ""
+  );
+
   return (
     <div className="container mx-auto w-full">
       <div>
-        <PostList initialPosts={initialPosts} />
+        <PostList
+          initialPosts={initialPosts}
+          initialLocation={{ city: user?.si || "", district: user?.gu || "" }}
+        />
       </div>
     </div>
   );

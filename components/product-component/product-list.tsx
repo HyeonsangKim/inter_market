@@ -8,11 +8,14 @@ import { MapPin, Plus } from "lucide-react";
 import { InitialProducts } from "@/app/user/marketplace/products/page";
 import { regions } from "@/app/utils/address-info";
 import { RegionFilter, SearchBar } from "../search";
-
-const PRODUCTS_PER_PAGE = 12; // 한 페이지당 표시할 제품 수 증가
+import { getMoreProducts } from "@/app/user/marketplace/products/action";
 
 interface ProductListProps {
   initialProducts: InitialProducts;
+  initialLocation: {
+    city: string;
+    district: string;
+  };
 }
 
 const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
@@ -68,59 +71,78 @@ const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
   </Link>
 );
 
-export default function ProductList({ initialProducts }: ProductListProps) {
-  const [products, setProducts] = useState<InitialProducts>(
-    initialProducts.slice(0, PRODUCTS_PER_PAGE)
-  );
-  const [filteredProducts, setFilteredProducts] =
-    useState<InitialProducts>(initialProducts);
+export default function ProductList({
+  initialProducts,
+  initialLocation,
+}: ProductListProps) {
+  const [products, setProducts] = useState<InitialProducts>(initialProducts);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [query, setQuery] = useState("");
+  const [city, setCity] = useState(initialLocation.city);
+  const [district, setDistrict] = useState(initialLocation.district);
+
   const { ref, inView } = useInView();
 
-  const loadMoreProducts = useCallback(() => {
-    const nextPage = page + 1;
-    const startIndex = (nextPage - 1) * PRODUCTS_PER_PAGE;
-    const endIndex = startIndex + PRODUCTS_PER_PAGE;
-    const newProducts = filteredProducts.slice(startIndex, endIndex);
+  const loadMoreProducts = useCallback(async () => {
+    if (loading || !hasMore) return;
 
-    if (newProducts.length > 0) {
-      setProducts((prevProducts) => [...prevProducts, ...newProducts]);
-      setPage(nextPage);
-    } else {
-      setHasMore(false);
+    setLoading(true);
+    try {
+      const response = await getMoreProducts(page + 1, city, district, query);
+
+      if (response.products.length > 0) {
+        setProducts((prev) => [...prev, ...response.products]);
+        setPage((p) => p + 1);
+        setHasMore(response.hasMore);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Failed to load more products:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [page, filteredProducts]);
+  }, [page, city, district, query, loading, hasMore]);
 
   useEffect(() => {
-    if (inView && hasMore) {
+    if (inView) {
       loadMoreProducts();
     }
-  }, [inView, hasMore, loadMoreProducts]);
+  }, [inView]);
 
-  const handleSearch = (query: string) => {
-    const filtered = initialProducts.filter((product) =>
-      product.title.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-    setProducts(filtered.slice(0, PRODUCTS_PER_PAGE));
+  const handleSearch = async (searchQuery: string) => {
+    setQuery(searchQuery);
     setPage(1);
-    setHasMore(true);
+    setLoading(true);
+
+    try {
+      const response = await getMoreProducts(1, city, district, searchQuery);
+      setProducts(response.products);
+      setHasMore(response.hasMore);
+    } catch (error) {
+      console.error("Search failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleFilterChange = (city: string, district: string) => {
-    const filtered = initialProducts.filter((product) => {
-      if (city && district) {
-        return product.user.si === city && product.user.gu === district;
-      } else if (city) {
-        return product.user.si === city;
-      }
-      return true;
-    });
-    setFilteredProducts(filtered);
-    setProducts(filtered.slice(0, PRODUCTS_PER_PAGE));
+  const handleFilterChange = async (newCity: string, newDistrict: string) => {
+    setCity(newCity);
+    setDistrict(newDistrict);
     setPage(1);
-    setHasMore(true);
+    setLoading(true);
+
+    try {
+      const response = await getMoreProducts(1, newCity, newDistrict, query);
+      setProducts(response.products);
+      setHasMore(response.hasMore);
+    } catch (error) {
+      console.error("Filter failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -135,17 +157,33 @@ export default function ProductList({ initialProducts }: ProductListProps) {
           New Product
         </Link>
       </div>
+
       <SearchBar onSearch={handleSearch} />
-      <RegionFilter regions={regions} onFilterChange={handleFilterChange} />
+      <RegionFilter
+        regions={regions}
+        onFilterChange={handleFilterChange}
+        initialCity={initialLocation.city}
+        initialDistrict={initialLocation.district}
+      />
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
-      {hasMore && (
-        <div ref={ref} className="flex justify-center items-center mt-8">
+
+      {loading && (
+        <div className="flex justify-center items-center mt-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
         </div>
+      )}
+
+      {hasMore && !loading && <div ref={ref} className="h-10" />}
+
+      {!hasMore && products.length > 0 && (
+        <p className="text-center text-gray-500 mt-8">
+          모든 상품을 불러왔습니다.
+        </p>
       )}
     </div>
   );

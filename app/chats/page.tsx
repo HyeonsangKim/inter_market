@@ -19,9 +19,9 @@ export default async function ChatList() {
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white">
+    <div className="container mx-auto bg-white">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold">채팅</h2>
+        <h2 className="text-xl font-semibold">Chat</h2>
       </div>
       <div className="overflow-y-auto">
         {chatList.map((chat) => {

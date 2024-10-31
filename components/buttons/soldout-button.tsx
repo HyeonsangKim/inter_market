@@ -16,9 +16,6 @@ export default function SoldOutButton({
   onToggle,
   children,
 }: SoldOutButtonProps) {
-  const handleClick = () => {
-    onToggle(productId, isSoldOut || false);
-  };
   const { pending } = useFormStatus();
   return (
     <button
