@@ -65,7 +65,9 @@ export default async function PostDetail({
   if (!product) {
     return notFound();
   }
-  const { likeCount, isLiked } = await getCachedLikeStatus(id, session!.id);
+  const likeStatus = session
+    ? await getCachedLikeStatus(id, session.id)
+    : { likeCount: 0, isLiked: false };
 
   const comments = await getCachedCommentList(id);
 
@@ -107,15 +109,24 @@ export default async function PostDetail({
               <EyeIcon className="h-5 w-5 mr-1" />
               <span>view {product.views}</span>
             </div>
-            <LikeButton
-              isLiked={isLiked}
-              likeCount={likeCount}
-              itemId={product.id}
-              type="product"
-            />
+            {session ? (
+              <LikeButton
+                isLiked={likeStatus.isLiked}
+                likeCount={likeStatus.likeCount}
+                itemId={product.id}
+                type="product"
+              />
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors"
+              >
+                <span>로그인하고 좋아요 누르기</span>
+              </Link>
+            )}
           </div>
 
-          {session!.id === product.user.id && (
+          {session?.id === product.user.id && (
             <div className="flex gap-4 mb-8">
               <Link
                 href={`/user/marketplace/products/edit/${id}`}
@@ -151,10 +162,24 @@ export default async function PostDetail({
                 comment={comment}
                 postId={product.id}
                 category={"product"}
-                currentUser={String(session?.id)}
+                currentUser={session?.id || ""}
               />
             ))}
-            <CommentList postId={String(product.id)} category="product" />
+            {session ? (
+              <CommentList postId={String(product.id)} category="product" />
+            ) : (
+              <div className="text-center py-4 bg-gray-50 rounded-lg">
+                <p className="text-gray-600 mb-2">
+                  댓글을 작성하려면 로그인이 필요합니다
+                </p>
+                <Link
+                  href="/login"
+                  className="text-indigo-600 hover:text-indigo-500 font-medium"
+                >
+                  로그인하러 가기
+                </Link>
+              </div>
+            )}
           </Suspense>
         </div>
       </div>

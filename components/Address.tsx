@@ -2,6 +2,8 @@
 import { fetchAddress, insertAddress } from "@/lib/location";
 import { MapPin, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 interface LocationProps {
   latitude: number;
   longitude: number;
@@ -14,7 +16,7 @@ interface AddressProps {
     dong?: string | null;
     fullAdress?: string | null;
   } | null;
-  userId: string;
+  userId: string | null; // null인 경우 추가
 }
 
 interface Address {
@@ -25,6 +27,7 @@ interface Address {
 }
 
 export default function AddressInfo({ address, userId }: AddressProps) {
+  const router = useRouter();
   const [location, setLocation] = useState<LocationProps | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState<Address | null>(address);
@@ -38,6 +41,14 @@ export default function AddressInfo({ address, userId }: AddressProps) {
   }, [address]);
 
   const handleFetchAddress = () => {
+    // 로그인 체크
+    if (!userId) {
+      router.push(
+        "/login?redirectTo=" + encodeURIComponent(window.location.pathname)
+      );
+      return;
+    }
+
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser");
       return;
@@ -55,7 +66,6 @@ export default function AddressInfo({ address, userId }: AddressProps) {
             insertAddress({ fetchedAddress, userId });
           } else {
             console.error("Fetched address is null");
-            // null에 대한 추가 처리 로직
           }
         } catch (err) {
           setError("Unable to retrieve address");
@@ -85,7 +95,7 @@ export default function AddressInfo({ address, userId }: AddressProps) {
           className="flex items-center text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full hover:bg-indigo-200 transition-colors duration-200 ml-4"
         >
           <RefreshCw size={14} className="mr-1" />
-          Update Location
+          {userId ? "Update Location" : "Sign in to Update"}
         </button>
       </div>
       {error && <p className="text-red-500 text-xs mt-2">{error}</p>}

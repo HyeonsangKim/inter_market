@@ -1,6 +1,4 @@
-// page.tsx
 import React from "react";
-import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import ProductList from "@/components/product-component/product-list";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
@@ -25,13 +23,6 @@ export type Product = {
 
 export type InitialProducts = Product[];
 
-interface PageLocation {
-  city: string;
-  district: string;
-}
-
-// 서버 액션의 반환 타입 수정
-
 export default async function ProductListPage() {
   const session = await getCurrentUser();
   const user = session
@@ -43,8 +34,8 @@ export default async function ProductListPage() {
 
   const { products: initialProducts } = await getMoreProducts(
     1,
-    user?.si || undefined,
-    user?.gu || undefined,
+    user?.si || "",
+    user?.gu || "",
     ""
   );
 
@@ -54,6 +45,7 @@ export default async function ProductListPage() {
         <ProductList
           initialProducts={initialProducts}
           initialLocation={{ city: user?.si || "", district: user?.gu || "" }}
+          isLoggedIn={!!session}
         />
       </div>
     </div>

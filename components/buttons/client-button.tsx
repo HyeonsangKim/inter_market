@@ -55,8 +55,9 @@ export function GoogleLogin() {
   }
 
   return (
-    <div className="mt-6">
+    <div>
       <button
+        type="button"
         className="flex items-center justify-center gap-3 w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300"
         onClick={handleGoogleSignIn}
         disabled={isLoading}
@@ -83,7 +84,7 @@ export function GoogleLogin() {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            로그인 중...
+            login...
           </div>
         ) : (
           <>

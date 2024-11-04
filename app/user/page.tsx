@@ -7,10 +7,6 @@ export default async function Page() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* <h1 className="text-4xl font-bold mb-8 text-center">
-        Welcome to Our Community
-      </h1> */}
-
       <PopularItems
         title="Popular Products"
         items={popularProducts.map((p) => ({

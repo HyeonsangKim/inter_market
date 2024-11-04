@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
 import { LoginState } from "../types";
+import Link from "next/link";
 
 const initialState: LoginState = {
   success: false,
@@ -57,12 +58,12 @@ export default function Login() {
   }, [state, router, supabase]);
 
   return (
-    <div className="flex flex-col gap-10 py-8 px-6">
-      <div className="flex flex-col gap-2 *:font-medium">
-        <h1 className="text-2xl">Hola!</h1>
-        <h2 className="text-xl">Login with email and password.</h2>
+    <div className="flex flex-col gap-10 py-8 px-6 max-w-3xl mx-auto w-full">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold text-gray-900">Welcome back!</h1>
+        <h2 className="text-lg text-gray-600">Login to your account</h2>
       </div>
-      <form action={dispatch} className="flex flex-col gap-6">
+      <form action={dispatch} className="flex flex-col gap-4">
         <Input
           name="email"
           type="email"
@@ -84,8 +85,29 @@ export default function Login() {
 
         <div className="w-full h-px bg-neutral-500" />
       </form>
-      <div>
-        <GoogleLogin />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">Or continue with</span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <div onClick={(e) => e.preventDefault()}>
+          <GoogleLogin />
+        </div>
+        <div className="text-center">
+          <span className="text-gray-600">Don&apos;t have an account? </span>
+          <Link
+            href="/create-account"
+            className="text-indigo-600 hover:text-indigo-500 font-medium"
+          >
+            Sign up
+          </Link>
+        </div>
       </div>
     </div>
   );

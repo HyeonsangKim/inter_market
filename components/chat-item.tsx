@@ -47,7 +47,7 @@ export function ChatItem({
             <p className="font-semibold">{otherUser.name}</p>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                   {unreadCount}
                 </span>
               )}

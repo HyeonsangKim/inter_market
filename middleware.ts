@@ -11,12 +11,11 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // 인증이 필요한 경로들
     "/user/:path*",
     "/profile/:path*",
     "/dashboard/:path*",
     "/login",
     "/create-account",
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api).*)",
   ],
 };

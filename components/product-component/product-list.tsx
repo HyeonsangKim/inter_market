@@ -16,6 +16,7 @@ interface ProductListProps {
     city: string;
     district: string;
   };
+  isLoggedIn?: boolean;
 }
 
 const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
@@ -74,6 +75,7 @@ const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
 export default function ProductList({
   initialProducts,
   initialLocation,
+  isLoggedIn = false,
 }: ProductListProps) {
   const [products, setProducts] = useState<InitialProducts>(initialProducts);
   const [page, setPage] = useState(1);
@@ -149,13 +151,22 @@ export default function ProductList({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Marketplace</h1>
-        <Link
-          href="/user/marketplace/products/create"
-          className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-        >
-          <Plus size={20} className="mr-2" />
-          New Product
-        </Link>
+        {isLoggedIn ? (
+          <Link
+            href="/user/marketplace/products/create"
+            className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+          >
+            <Plus size={20} className="mr-2" />
+            New Product
+          </Link>
+        ) : (
+          <Link
+            href="/login"
+            className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+          >
+            로그인하고 상품 등록하기
+          </Link>
+        )}
       </div>
 
       <SearchBar onSearch={handleSearch} />

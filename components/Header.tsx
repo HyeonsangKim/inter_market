@@ -1,17 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getUnreadMessagesCount } from "@/app/chats/actions";
-import UnreadBadge from "./unread-count";
 import {
   Home,
   Users,
   ShoppingBag,
   Heart,
   MessageCircle,
-  User,
   LogIn,
 } from "lucide-react";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
+import { MobileNavLink, NavLink } from "./nav-link";
+import UnreadBadge from "./unread-count";
 
 export default async function ResponsiveHeader() {
   const user = await getCurrentUser();
@@ -22,45 +22,41 @@ export default async function ResponsiveHeader() {
 
   return (
     <>
-      <header className="bg-white shadow-lg w-full sticky top-0 z-50 hidden sm:block">
+      <header className="bg-white shadow-sm border-b w-full sticky top-0 z-50 hidden sm:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link
-              href="/user"
-              className="flex items-center space-x-2 text-xl font-bold text-indigo-600 hover:text-indigo-700 transition duration-300"
+              href={`${user ? "/user" : "/"}`}
+              className="flex items-center space-x-3 text-xl font-bold text-gray-900 hover:text-indigo-600 transition-colors duration-300"
             >
-              <span className="text-2xl">🌏</span>
-              <span>InterAgora</span>
+              <span className="text-3xl">🌏</span>
+              <span className="font-extrabold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
+                InterAgora
+              </span>
             </Link>
 
-            <nav className="flex space-x-4">
-              <Link
-                href="/user/community"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-              >
-                Community
-              </Link>
-              <Link
-                href="/user/marketplace/products/"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-              >
-                Market
-              </Link>
+            <nav className="flex items-center space-x-1">
+              <NavLink href="/user/community">
+                <Users size={18} className="mb-0.5" />
+                <span>Community</span>
+              </NavLink>
+              <NavLink href="/user/marketplace/products">
+                <ShoppingBag size={18} className="mb-0.5" />
+                <span>Market</span>
+              </NavLink>
               {user && (
                 <>
-                  <Link
-                    href={`/like/${user.id}`}
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium relative transition duration-300"
-                  >
-                    Like
-                  </Link>
-                  <Link
-                    href={`/chats`}
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium relative transition duration-300"
-                  >
-                    Chats
-                    <UnreadBadge count={unreadCount} />
-                  </Link>
+                  <NavLink href={`/like/${user.id}`}>
+                    <Heart size={18} className="mb-0.5" />
+                    <span>Like</span>
+                  </NavLink>
+                  <div className="relative">
+                    <NavLink href="/chats">
+                      <MessageCircle size={18} className="mb-0.5" />
+                      <span>Chats</span>
+                      {unreadCount > 0 && <UnreadBadge count={unreadCount} />}
+                    </NavLink>
+                  </div>
                 </>
               )}
             </nav>
@@ -68,10 +64,9 @@ export default async function ResponsiveHeader() {
             {user ? (
               <Link
                 href={`/profile/${user.id}`}
-                className="flex items-center justify-center w-12 h-12" // 크기 조정
+                className="flex items-center space-x-3 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200"
               >
-                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
-                  {/* 컨테이너 추가 */}
+                <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-indigo-100">
                   <Image
                     src={user.image || "/default-avatar.png"}
                     alt="User profile"
@@ -84,9 +79,10 @@ export default async function ResponsiveHeader() {
             ) : (
               <Link
                 href="/login"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
+                className="flex items-center space-x-1 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 font-medium transition-all duration-200"
               >
-                Login
+                <LogIn size={18} className="mb-0.5" />
+                <span>Login</span>
               </Link>
             )}
           </div>
@@ -94,63 +90,44 @@ export default async function ResponsiveHeader() {
       </header>
 
       {/* Mobile Tab Bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg z-50">
-        <div className="flex justify-around items-center h-16">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
+        <div className="flex justify-around items-center h-16 px-2">
           {user ? (
             <>
-              <Link
-                href="/user"
-                className="flex flex-col items-center text-gray-600 hover:text-indigo-600"
-              >
-                <Home size={24} />
-                <span className="text-xs mt-1">Home</span>
-              </Link>
-              <Link
+              <MobileNavLink href="/user" iconName="Home" label="Home" />
+              <MobileNavLink
                 href="/user/community"
-                className="flex flex-col items-center text-gray-600 hover:text-indigo-600"
-              >
-                <Users size={24} />
-                <span className="text-xs mt-1">Community</span>
-              </Link>
-              <Link
-                href="/user/marketplace/products/"
-                className="flex flex-col items-center text-gray-600 hover:text-indigo-600"
-              >
-                <ShoppingBag size={24} />
-                <span className="text-xs mt-1">Market</span>
-              </Link>
-              <Link
-                href={`/like/${user.id}`}
-                className="flex flex-col items-center text-gray-600 hover:text-indigo-600 relative"
-              >
-                <Heart size={24} />
-                <span className="text-xs mt-1">Like</span>
-                <UnreadBadge count={unreadCount} />
-              </Link>
-              <Link
-                href="/chats"
-                className="flex flex-col items-center text-gray-600 hover:text-indigo-600 relative"
-              >
-                <MessageCircle size={24} />
-                <span className="text-xs mt-1">Chats</span>
-                <UnreadBadge count={unreadCount} />
-              </Link>
-              <Link
+                iconName="Users"
+                label="Community"
+              />
+              <MobileNavLink
+                href="/user/marketplace/products"
+                iconName="ShoppingBag"
+                label="Market"
+              />
+              <div className="relative">
+                <MobileNavLink
+                  href={`/like/${user.id}`}
+                  iconName="Heart"
+                  label="Like"
+                />
+              </div>
+              <div className="relative">
+                <MobileNavLink
+                  href="/chats"
+                  iconName="MessageCircle"
+                  label="Chats"
+                />
+                {unreadCount > 0 && <UnreadBadge count={unreadCount} />}
+              </div>
+              <MobileNavLink
                 href={`/profile/${user.id}`}
-                className="flex flex-col items-center text-gray-600 hover:text-indigo-600"
-              >
-                <User size={24} />
-                <span className="text-xs mt-1">Profile</span>
-              </Link>
+                iconName="User"
+                label="Profile"
+              />
             </>
           ) : (
-            <Link
-              href="/login"
-              className="flex flex-col items-center text-gray-600 hover:text-indigo-600"
-            >
-              <LogIn size={24} />
-              <span className="text-xs mt-1">Login</span>
-            </Link>
+            <MobileNavLink href="/login" iconName="LogIn" label="Login" />
           )}
         </div>
       </nav>

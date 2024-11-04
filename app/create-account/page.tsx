@@ -7,6 +7,7 @@ import { createAccount } from "./actions";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 import { GoogleLogin } from "@/components/buttons/client-button";
 import { CreateAccountState } from "../types";
+import Link from "next/link";
 const initialState: CreateAccountState = {
   fieldErrors: {},
   formError: undefined,
@@ -17,10 +18,12 @@ export default function CreatAccount() {
     initialState
   );
   return (
-    <div className="flex flex-col gap-10 py-8 px-6">
-      <div className="flex flex-col gap-2 *:font-medium">
-        <h1 className="text-2xl">안녕하세요!</h1>
-        <h2 className="text-xl">Fill in the form below to join!</h2>
+    <div className="flex flex-col gap-10 py-8 px-6 max-w-3xl mx-auto w-full">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold text-gray-900">Hello!</h1>
+        <h2 className="text-lg text-gray-600">
+          Fill in the form below to join!
+        </h2>
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
         <Input
@@ -55,9 +58,30 @@ export default function CreatAccount() {
           errors={state?.fieldErrors?.confirmPassword}
           min={PASSWORD_MIN_LENGTH}
         />
-        <Button variant="primary">Submit</Button>
+        <Button variant="primary">Create Account</Button>
       </form>
-      <GoogleLogin />
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">Or continue with</span>
+        </div>
+      </div>
+      <div className="space-y-3">
+        <div onClick={(e) => e.preventDefault()}>
+          <GoogleLogin />
+        </div>
+        <div className="text-center">
+          <span className="text-gray-600">Already have an account? </span>
+          <Link
+            href="/login"
+            className="text-indigo-600 hover:text-indigo-500 font-medium"
+          >
+            Log in
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

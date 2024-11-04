@@ -14,7 +14,7 @@ export default async function UserLayout({
     <div>
       <AddressInfo
         address={addressExit}
-        userId={userData ? userData!.id : ""}
+        userId={userData ? userData.id : null}
       />
       {children}
     </div>
