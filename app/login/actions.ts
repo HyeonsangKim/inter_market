@@ -1,7 +1,7 @@
 "use server";
 
+import { createClient } from "@/app/utils/supabase/server";
 import { db } from "@/lib/db";
-import { createClient } from "../utils/supabase/server";
 import { cookies } from "next/headers";
 
 interface UserData {

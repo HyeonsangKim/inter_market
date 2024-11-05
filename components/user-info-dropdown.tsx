@@ -16,7 +16,6 @@ interface UserInfoDropdownType {
 
 export function UserInfoDropdown({ user }: UserInfoDropdownType) {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className="relative">
       <button

@@ -51,7 +51,7 @@ export function ProfileForm({
   const productsCount = products?.length ?? 0;
 
   return (
-    <div className="space-y-8">
+    <div className="container space-y-8">
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-6">
           <div className="flex flex-col sm:flex-row items-center">

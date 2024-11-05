@@ -13,7 +13,6 @@ import {
 import { CommentForm } from "./comment";
 import { format } from "date-fns";
 import { Comment } from "@/app/types";
-
 export function CommentList({
   postId,
   category,
@@ -41,12 +40,14 @@ export function CommentItem({
   comment: Comment;
   postId: number;
   category: string;
-  currentUser: string;
+  currentUser: string | null;
 }) {
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.payload);
   const router = useRouter();
+
+  console.log(currentUser);
 
   const handleNewReply = () => {
     setIsReplying(false);
@@ -58,7 +59,6 @@ export function CommentItem({
     } else {
       await deletePostComment(commentId, postId);
     }
-
     router.refresh();
   };
 
@@ -89,7 +89,7 @@ export function CommentItem({
             onClick={() => setIsEditing(false)}
             className="text-gray-500 text-sm mt-1"
           >
-            cancle
+            cancel
           </button>
         </div>
       ) : (
@@ -98,30 +98,43 @@ export function CommentItem({
       <p className="text-sm text-gray-500">
         {format(new Date(comment.created_at), "yyyy-MM-dd")}
       </p>
-      <button
-        onClick={() => setIsReplying(!isReplying)}
-        className="text-blue-500 text-sm mt-1 mr-2"
-      >
-        {isReplying ? "cancle" : "reply"}
-      </button>
-      {currentUser === comment.user.id && (
-        <>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="text-green-500 text-sm mt-1 mr-2"
-          >
-            edit
-          </button>
-          <button
-            onClick={() => onDelete(comment.id, postId)}
-            className="text-red-500 text-sm mt-1"
-          >
-            delete
-          </button>
-        </>
-      )}
 
-      {isReplying && (
+      {/* 버튼들을 currentUser 유무에 따라 다르게 표시 */}
+      <div className="mt-1 space-x-2">
+        {currentUser ? (
+          // 로그인한 경우
+          <>
+            <button
+              onClick={() => setIsReplying(!isReplying)}
+              className="text-blue-500 text-sm"
+            >
+              {isReplying ? "cancel" : "reply"}
+            </button>
+
+            {currentUser === comment.user.id && (
+              <>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="text-green-500 text-sm"
+                >
+                  edit
+                </button>
+                <button
+                  onClick={() => onDelete(comment.id, postId)}
+                  className="text-red-500 text-sm"
+                >
+                  delete
+                </button>
+              </>
+            )}
+          </>
+        ) : (
+          // 로그인하지 않은 경우
+          <></>
+        )}
+      </div>
+
+      {isReplying && currentUser && (
         <CommentForm
           postId={Number(postId)}
           parentId={comment.id}
@@ -129,6 +142,7 @@ export function CommentItem({
           onCommentAdded={handleNewReply}
         />
       )}
+
       {comment!.replies! && (
         <div className="ml-8 mt-4">
           {comment!.replies!.map((reply) => (

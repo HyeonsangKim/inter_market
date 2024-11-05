@@ -117,12 +117,7 @@ export default async function PostDetail({
                 type="product"
               />
             ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors"
-              >
-                <span>로그인하고 좋아요 누르기</span>
-              </Link>
+              <></>
             )}
           </div>
 
@@ -168,17 +163,7 @@ export default async function PostDetail({
             {session ? (
               <CommentList postId={String(product.id)} category="product" />
             ) : (
-              <div className="text-center py-4 bg-gray-50 rounded-lg">
-                <p className="text-gray-600 mb-2">
-                  댓글을 작성하려면 로그인이 필요합니다
-                </p>
-                <Link
-                  href="/login"
-                  className="text-indigo-600 hover:text-indigo-500 font-medium"
-                >
-                  로그인하러 가기
-                </Link>
-              </div>
+              <></>
             )}
           </Suspense>
         </div>

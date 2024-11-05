@@ -6,8 +6,8 @@ import { useFormState } from "react-dom";
 import { createAccount } from "./actions";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 import { GoogleLogin } from "@/components/buttons/client-button";
-import { CreateAccountState } from "../types";
 import Link from "next/link";
+import { CreateAccountState } from "../types";
 const initialState: CreateAccountState = {
   fieldErrors: {},
   formError: undefined,

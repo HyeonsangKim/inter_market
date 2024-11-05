@@ -3,7 +3,7 @@
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { hideChat } from "@/app/chats/actions";
+import { hideChat } from "@/app/[locale]/chats/actions";
 import { Message, User } from "@prisma/client";
 
 interface ChatItemProps {

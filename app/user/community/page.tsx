@@ -43,6 +43,7 @@ export default async function PostListPage() {
         <PostList
           initialPosts={initialPosts}
           initialLocation={{ city: user?.si || "", district: user?.gu || "" }}
+          isLoggedIn={!!session}
         />
       </div>
     </div>

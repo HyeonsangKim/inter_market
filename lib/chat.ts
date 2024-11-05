@@ -5,6 +5,9 @@ import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export const createChatRoom = async (targetId: string) => {
   const session = await getCurrentUser();
+  if (!session) {
+    redirect("/login");
+  }
   const roomExist = await db.chatRoom.findFirst({
     where: {
       AND: [

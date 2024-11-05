@@ -1,0 +1,20 @@
+{
+  "home": {
+    "title": "インター アゴラ",
+    "welcome": "ようこそ！",
+    "description": "商品を交換・販売し、新しい友達を作りましょう。ここで近所の方々と交流しましょう！",
+    "startJourney": "始めましょう",
+    "haveAccount": "すでにアカウントをお持ちですか？",
+    "login": "ログイン",
+    "features": {
+      "exchange": {
+        "title": "🤝 交換",
+        "description": "近所の方と商品を交換"
+      },
+      "connect": {
+        "title": "💬 つながる",
+        "description": "地域コミュニティとチャット"
+      }
+    }
+  }
+}

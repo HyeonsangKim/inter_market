@@ -6,9 +6,11 @@ import { loginWithEmail } from "./actions";
 import { GoogleLogin } from "@/components/buttons/client-button";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "../utils/supabase/client";
-import { LoginState } from "../types";
 import Link from "next/link";
+import LanguageSelector from "@/components/language-selector";
+import Footer from "@/components/footer";
+import { LoginState } from "@/app/types";
+import { createClient } from "@/app/utils/supabase/client";
 
 const initialState: LoginState = {
   success: false,

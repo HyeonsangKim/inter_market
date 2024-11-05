@@ -1,6 +1,8 @@
 import AddressInfo from "@/components/address";
 import { checkAddress } from "@/lib/location";
-import { getCurrentUser } from "../utils/supabase/get-user";
+import Footer from "@/components/footer";
+import LanguageSelector from "@/components/language-selector";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 export default async function UserLayout({
   children,
@@ -16,7 +18,9 @@ export default async function UserLayout({
         address={addressExit}
         userId={userData ? userData.id : null}
       />
+      <LanguageSelector />
       {children}
+      <Footer />
     </div>
   );
 }

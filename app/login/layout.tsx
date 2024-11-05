@@ -1,8 +1,11 @@
 import Footer from "@/components/footer";
 import LanguageSelector from "@/components/language-selector";
-import React from "react";
 
-export default function TabLayout({ children }: { children: React.ReactNode }) {
+export default async function LogIneLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <LanguageSelector />

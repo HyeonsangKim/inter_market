@@ -1,0 +1,20 @@
+{
+  "home": {
+    "title": "Inter Agora",
+    "welcome": "Welcome!",
+    "description": "Exchange your product or sell, and make a friend. Get information about your neighbor in here!",
+    "startJourney": "Start Journey",
+    "haveAccount": "Do you have account already?",
+    "login": "Login",
+    "features": {
+      "exchange": {
+        "title": "🤝 Exchange",
+        "description": "Trade items with neighbors"
+      },
+      "connect": {
+        "title": "💬 Connect",
+        "description": "Chat with local community"
+      }
+    }
+  }
+}

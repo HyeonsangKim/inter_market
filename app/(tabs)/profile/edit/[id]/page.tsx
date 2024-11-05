@@ -83,7 +83,7 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="container max-w-md mx-auto p-4">
       <form action={dispatch} className="space-y-6">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex flex-col items-center mb-6">

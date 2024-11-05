@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getUnreadMessagesCount } from "@/app/chats/actions";
 import {
   Home,
   Users,
@@ -12,6 +11,7 @@ import {
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { MobileNavLink, NavLink } from "./nav-link";
 import UnreadBadge from "./unread-count";
+import { getUnreadMessagesCount } from "@/app/chats/actions";
 
 export default async function ResponsiveHeader() {
   const user = await getCurrentUser();
@@ -82,7 +82,7 @@ export default async function ResponsiveHeader() {
                 className="flex items-center space-x-1 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 font-medium transition-all duration-200"
               >
                 <LogIn size={18} className="mb-0.5" />
-                <span>Login</span>
+                <span>Sign in</span>
               </Link>
             )}
           </div>

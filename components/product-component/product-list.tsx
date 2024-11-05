@@ -160,12 +160,7 @@ export default function ProductList({
             New Product
           </Link>
         ) : (
-          <Link
-            href="/login"
-            className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
-          >
-            로그인하고 상품 등록하기
-          </Link>
+          <></>
         )}
       </div>
 

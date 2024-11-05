@@ -34,8 +34,8 @@ export default async function ProductListPage() {
 
   const { products: initialProducts } = await getMoreProducts(
     1,
-    user?.si || "",
-    user?.gu || "",
+    user?.si || undefined,
+    user?.gu || undefined,
     ""
   );
 

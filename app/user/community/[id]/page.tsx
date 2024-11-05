@@ -62,7 +62,9 @@ export default async function PostDetail({
   if (!post) {
     return notFound();
   }
-  const { likeCount, isLiked } = await getCachedLikeStatus(id, session!.id);
+  const likeStatus = session
+    ? await getCachedLikeStatus(id, session.id)
+    : { likeCount: 0, isLiked: false };
   const comments = await getCachedCommentList(id);
   if (post && !isClientSideRendering()) {
     await incrementPostViews(id);
@@ -98,15 +100,19 @@ export default async function PostDetail({
               <EyeIcon className="h-5 w-5 mr-1" />
               <span>views {post.views}</span>
             </div>
-            <LikeButton
-              isLiked={isLiked}
-              likeCount={likeCount}
-              itemId={post.id}
-              type="post"
-            />
+            {session ? (
+              <LikeButton
+                isLiked={likeStatus.isLiked}
+                likeCount={likeStatus.likeCount}
+                itemId={post.id}
+                type="post"
+              />
+            ) : (
+              <></>
+            )}
           </div>
 
-          {session!.id === post.user.id && (
+          {session?.id === post.user.id && (
             <div className="flex gap-4 mb-8">
               <Link href={`/user/community/edit/${id}`}>
                 <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors duration-200">
@@ -134,10 +140,14 @@ export default async function PostDetail({
                 comment={comment}
                 postId={post.id}
                 category={"post"}
-                currentUser={String(session?.id)}
+                currentUser={session?.id || null}
               />
             ))}
-            <CommentList postId={String(post.id)} category="post" />
+            {session ? (
+              <CommentList postId={String(post.id)} category="post" />
+            ) : (
+              <></>
+            )}
           </Suspense>
         </div>
       </div>

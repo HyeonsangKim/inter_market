@@ -15,11 +15,13 @@ interface PostListProps {
     city: string;
     district: string;
   };
+  isLoggedIn?: boolean;
 }
 
 export default function PostList({
   initialPosts,
   initialLocation,
+  isLoggedIn = false,
 }: PostListProps) {
   const [posts, setPosts] = useState<InitialPosts>(initialPosts);
   const [loading, setLoading] = useState(false);
@@ -95,13 +97,17 @@ export default function PostList({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Community</h1>
-        <Link
-          href="/user/community/create"
-          className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-        >
-          <Plus size={20} className="mr-2" />
-          New Post
-        </Link>
+        {isLoggedIn ? (
+          <Link
+            href="/user/community/create"
+            className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+          >
+            <Plus size={20} className="mr-2" />
+            New Post
+          </Link>
+        ) : (
+          <></>
+        )}
       </div>
 
       <SearchBar onSearch={handleSearch} />

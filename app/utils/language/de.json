@@ -1,0 +1,20 @@
+{
+  "home": {
+    "title": "Inter Agora",
+    "welcome": "Willkommen!",
+    "description": "Tauschen oder verkaufen Sie Ihre Produkte und finden Sie neue Freunde. Lernen Sie hier Ihre Nachbarn kennen!",
+    "startJourney": "Loslegen",
+    "haveAccount": "Haben Sie bereits ein Konto?",
+    "login": "Anmelden",
+    "features": {
+      "exchange": {
+        "title": "🤝 Tauschen",
+        "description": "Artikel mit Nachbarn tauschen"
+      },
+      "connect": {
+        "title": "💬 Verbinden",
+        "description": "Mit der lokalen Community chatten"
+      }
+    }
+  }
+}

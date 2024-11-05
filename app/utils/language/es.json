@@ -1,0 +1,20 @@
+{
+  "home": {
+    "title": "Inter Agora",
+    "welcome": "¡Bienvenido!",
+    "description": "Intercambia o vende tus productos, y haz amigos. ¡Conoce a tus vecinos aquí!",
+    "startJourney": "Comenzar",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "login": "Iniciar sesión",
+    "features": {
+      "exchange": {
+        "title": "🤝 Intercambio",
+        "description": "Intercambia artículos con vecinos"
+      },
+      "connect": {
+        "title": "💬 Conectar",
+        "description": "Chatea con la comunidad local"
+      }
+    }
+  }
+}
