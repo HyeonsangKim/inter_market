@@ -12,8 +12,8 @@ import {
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { RealtimeChannel, createClient } from "@supabase/supabase-js";
-import { markMessagesAsRead, saveMessage } from "@/app/[locale]/chats/actions";
 import Link from "next/link";
+import { markMessagesAsRead, saveMessage } from "@/app/chats/actions";
 
 interface User {
   id: string;

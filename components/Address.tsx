@@ -78,7 +78,7 @@ export default function AddressInfo({ address, userId }: AddressProps) {
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-lg p-4 mb-6">
+    <div className="bg-white shadow-sm rounded-lg p-4 mb-6 mx-auto px-10 xl:px-20">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <MapPin size={20} className="text-indigo-500 mr-2" />

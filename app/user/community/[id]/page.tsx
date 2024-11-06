@@ -71,7 +71,7 @@ export default async function PostDetail({
   }
 
   return (
-    <div className="mx-auto p-4 bg-white shadow-lg rounded-lg">
+    <div className="container mx-auto p-4 bg-white shadow-lg rounded-lg">
       <div className="mb-6 gap-2">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
