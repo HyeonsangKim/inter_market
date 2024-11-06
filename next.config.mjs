@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   images: {
     domains: ["rymesndbhkasxusysszb.supabase.co"],
     remotePatterns: [
@@ -10,6 +11,9 @@ const nextConfig = {
         pathname: "**",
       },
     ],
+  },
+  experimental: {
+    serverActions: true,
   },
 };
 

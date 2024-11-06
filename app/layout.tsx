@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "../components/Header";
 const inter = Inter({ subsets: ["latin"] });
 
+export const dynamic = "force-dynamic";
 export default function RootLayout({
   children,
 }: Readonly<{
