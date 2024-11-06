@@ -3,9 +3,9 @@ import { unstable_cache as nextCache } from "next/cache";
 import { EyeIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
-import DeleteButton from "@/components/buttons/delete-button";
+import DeleteButton from "@/components/buttons/DeleteButton";
 import Link from "next/link";
-import { UserInfoDropdown } from "@/components/user-info-dropdown";
+import { UserInfoDropdown } from "@/components/UserInfoDropdown";
 import {
   deletePost,
   getComments,
@@ -13,10 +13,10 @@ import {
   getPost,
   incrementPostViews,
 } from "./action";
-import { CommentItem, CommentList } from "@/components/comment/commentList";
+import { CommentItem, CommentList } from "@/components/comment/CommentList";
 import { format } from "date-fns";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
-import LikeButton from "@/components/buttons/lIke-share-btn";
+import LikeButton from "@/components/buttons/LIkeShareBtn";
 
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments

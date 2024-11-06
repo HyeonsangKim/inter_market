@@ -9,9 +9,9 @@ import {
   LogIn,
 } from "lucide-react";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
-import { MobileNavLink, NavLink } from "./nav-link";
-import UnreadBadge from "./unread-count";
+import UnreadBadge from "./UnreadCount";
 import { getUnreadMessagesCount } from "@/app/chats/actions";
+import { MobileNavLink, NavLink } from "./NavLink";
 
 export default async function ResponsiveHeader() {
   const user = await getCurrentUser();

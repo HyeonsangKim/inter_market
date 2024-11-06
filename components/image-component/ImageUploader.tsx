@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ImagePreview from "./image-preview";
+import ImagePreview from "./ImagePreview";
 
 interface Image {
   id: number;

@@ -1,11 +1,11 @@
 "use client";
 
-import Button from "@/components/buttons/button";
-import Input from "@/components/input";
+import Button from "@/components/buttons/Button";
+import Input from "@/components/Input";
 import { useFormState } from "react-dom";
 import { createAccount } from "./actions";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
-import { GoogleLogin } from "@/components/buttons/client-button";
+import { GoogleLogin } from "@/components/buttons/ClientButton";
 import Link from "next/link";
 import { CreateAccountState } from "../types";
 const initialState: CreateAccountState = {

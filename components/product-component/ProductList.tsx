@@ -7,7 +7,7 @@ import Link from "next/link";
 import { MapPin, Plus } from "lucide-react";
 import { InitialProducts } from "@/app/user/marketplace/products/page";
 import { regions } from "@/app/utils/address-info";
-import { RegionFilter, SearchBar } from "../search";
+import { RegionFilter, SearchBar } from "../Search";
 import { getMoreProducts } from "@/app/user/marketplace/products/action";
 
 interface ProductListProps {

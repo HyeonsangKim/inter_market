@@ -2,8 +2,8 @@
 
 import { useEffect, useState, ChangeEvent } from "react";
 import Image from "next/image";
-import Button from "@/components/buttons/button";
-import Input from "@/components/input";
+import Button from "@/components/buttons/Button";
+import Input from "@/components/Input";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";

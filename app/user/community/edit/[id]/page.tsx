@@ -1,4 +1,4 @@
-import EditForm from "@/components/post-component/post-edit-form";
+import EditForm from "@/components/post-component/PostEditForm";
 import { getPost } from "./action";
 
 export default async function Page({ params }: { params: { id: string } }) {

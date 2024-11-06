@@ -2,7 +2,7 @@
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { db } from "@/lib/db";
 import { getMorePosts } from "./action";
-import PostList from "@/components/post-component/post-list";
+import PostList from "@/components/post-component/PostList";
 
 export type Post = {
   user: {

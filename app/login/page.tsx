@@ -1,14 +1,14 @@
 "use client";
-import Button from "@/components/buttons/button";
-import Input from "@/components/input";
+import Button from "@/components/buttons/Button";
+import Input from "@/components/Input";
 import { useFormState } from "react-dom";
 import { loginWithEmail } from "./actions";
-import { GoogleLogin } from "@/components/buttons/client-button";
+import { GoogleLogin } from "@/components/buttons/ClientButton";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import LanguageSelector from "@/components/language-selector";
-import Footer from "@/components/footer";
+import LanguageSelector from "@/components/LanguageSelector";
+import Footer from "@/components/Footer";
 import { LoginState } from "@/app/types";
 import { createClient } from "@/app/utils/supabase/client";
 

@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
-import { ProfileForm } from "@/components/profile-form";
+import { ProfileForm } from "@/components/ProfileForm";
 import { db } from "@/lib/db";
 
 async function getMyProducts(userId: string) {

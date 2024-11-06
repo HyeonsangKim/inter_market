@@ -1,4 +1,4 @@
-import PopularItems from "@/components/popular-items";
+import PopularItems from "@/components/PopularItems";
 import { fetchPopularPosts, fetchPopularProducts } from "./actions";
 
 export default async function Page() {

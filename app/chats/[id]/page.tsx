@@ -1,4 +1,4 @@
-import ChatMessagesList from "@/components/chat-messages-list";
+import ChatMessagesList from "@/components/ChatMessagesList";
 import { db } from "@/lib/db";
 import type { ChatRoom, Message, User } from "@prisma/client";
 import { notFound } from "next/navigation";

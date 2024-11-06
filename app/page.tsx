@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import Footer from "@/components/footer";
+import Footer from "@/components/Footer";
 
 export default async function Home() {
   return (

@@ -10,9 +10,9 @@ import {
   deletePostComment,
   updatePostComment,
 } from "@/app/user/community/[id]/action";
-import { CommentForm } from "./comment";
 import { format } from "date-fns";
 import { Comment } from "@/app/types";
+import { CommentForm } from "./Comment";
 export function CommentList({
   postId,
   category,

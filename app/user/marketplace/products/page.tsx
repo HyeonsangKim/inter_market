@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/lib/db";
-import ProductList from "@/components/product-component/product-list";
+import ProductList from "@/components/product-component/ProductList";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { getMoreProducts } from "./action";
 

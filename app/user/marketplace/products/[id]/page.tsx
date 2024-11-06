@@ -10,17 +10,17 @@ import {
 } from "./action";
 import { Prisma } from "@prisma/client";
 import { Suspense } from "react";
-import DeleteButton from "@/components/buttons/delete-button";
+import DeleteButton from "@/components/buttons/DeleteButton";
 import Link from "next/link";
-import { UserInfoDropdown } from "@/components/user-info-dropdown";
-import { CommentItem, CommentList } from "@/components/comment/commentList";
-import SoldOutButton from "@/components/buttons/soldout-button";
+import { UserInfoDropdown } from "@/components/UserInfoDropdown";
+import { CommentItem, CommentList } from "@/components/comment/CommentList";
+import SoldOutButton from "@/components/buttons/SoldoutButton";
 import { format } from "date-fns";
-import ImageSlider from "@/components/image-component/image-slider";
+import ImageSlider from "@/components/image-component/imageSlider";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { deleteProduct } from "../edit/[id]/action";
 import { Edit } from "lucide-react";
-import LikeButton from "@/components/buttons/lIke-share-btn";
+import LikeButton from "@/components/buttons/LIkeShareBtn";
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
 >;
