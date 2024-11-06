@@ -1,5 +1,4 @@
 import Footer from "@/components/footer";
-import LanguageSelector from "@/components/language-selector";
 
 export default async function LogIneLayout({
   children,
@@ -8,7 +7,6 @@ export default async function LogIneLayout({
 }) {
   return (
     <div>
-      <LanguageSelector />
       {children}
       <Footer />
     </div>

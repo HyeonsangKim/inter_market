@@ -42,16 +42,29 @@ export const RegionFilter: React.FC<RegionFilterProps> = ({
   initialCity = "",
   initialDistrict = "",
 }) => {
-  const [selectedCity, setSelectedCity] = useState(initialCity);
-  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
+  const isCityAvailable = regions.some((region) => region.city === initialCity);
+  const initialCityFiltered = isCityAvailable ? initialCity : "";
+  const initialDistrictFiltered = isCityAvailable
+    ? regions
+        .find((region) => region.city === initialCity)
+        ?.districts.includes(initialDistrict)
+      ? initialDistrict
+      : ""
+    : "";
+
+  const [selectedCity, setSelectedCity] = useState(initialCityFiltered);
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    initialDistrictFiltered
+  );
 
   useEffect(() => {
-    if (initialCity) {
-      setSelectedCity(initialCity);
-      if (initialDistrict) {
-        setSelectedDistrict(initialDistrict);
-        onFilterChange(initialCity, initialDistrict);
-      }
+    if (initialCityFiltered) {
+      setSelectedCity(initialCityFiltered);
+      setSelectedDistrict(initialDistrictFiltered);
+      onFilterChange(initialCityFiltered, initialDistrictFiltered);
+    } else {
+      // Default to "All cities" if initialCity is unavailable
+      onFilterChange("", "");
     }
   }, [initialCity, initialDistrict]);
 
@@ -96,11 +109,19 @@ export const RegionFilter: React.FC<RegionFilterProps> = ({
             className="appearance-none bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
             <option value="">All districts</option>
-            {currentRegion?.districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
+            {currentRegion
+              ? currentRegion.districts.map((district) => (
+                  <option key={district} value={district}>
+                    {district}
+                  </option>
+                ))
+              : regions
+                  .flatMap((region) => region.districts) // 모든 구를 나열
+                  .map((district, index) => (
+                    <option key={index} value={district}>
+                      {district}
+                    </option>
+                  ))}
           </select>
           <ChevronDown
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"

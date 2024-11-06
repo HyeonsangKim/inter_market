@@ -1,5 +1,4 @@
 import Footer from "@/components/footer";
-import LanguageSelector from "@/components/language-selector";
 
 export default async function LikeLayout({
   children,
@@ -8,7 +7,6 @@ export default async function LikeLayout({
 }) {
   return (
     <div>
-      <LanguageSelector />
       {children}
       <Footer />
     </div>

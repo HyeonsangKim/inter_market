@@ -52,7 +52,7 @@ export default function Footer() {
             © {new Date().getFullYear()} InterAgora
           </p>
           <a
-            href="https://github.com"
+            href="https://github.com/HyeonsangKim/inter_market"
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <Github size={20} />

@@ -191,6 +191,9 @@ export default function ProductList({
           모든 상품을 불러왔습니다.
         </p>
       )}
+      {!hasMore && products.length === 0 && (
+        <div className="text-center mt-8">상품이 없습니다.</div>
+      )}
     </div>
   );
 }
