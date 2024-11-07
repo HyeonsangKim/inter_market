@@ -1,4 +1,4 @@
-import Footer from "@/components/Footer";
+import Footer from "@/components/CustomFooter";
 import LanguageSelector from "@/components/LanguageSelector";
 import React from "react";
 

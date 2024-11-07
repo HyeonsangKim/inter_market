@@ -1,4 +1,4 @@
-import Footer from "@/components/Footer";
+import Footer from "@/components/CustomFooter";
 
 export default async function CreateAccountLayout({
   children,

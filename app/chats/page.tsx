@@ -2,7 +2,7 @@ import { getMessageRooms } from "./actions";
 import { ChatRoom, Message, User } from "@prisma/client";
 import { ChatItem } from "@/components/ChatItem";
 import { getCurrentUser } from "../utils/supabase/get-user";
-import Footer from "@/components/Footer";
+import Footer from "@/components/CustomFooter";
 
 export type ChatRoomWithUsersAndMessages = ChatRoom & {
   users: User[];

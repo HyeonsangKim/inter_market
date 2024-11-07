@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LanguageSelector from "@/components/LanguageSelector";
-import Footer from "@/components/Footer";
+import Footer from "@/components/CustomFooter";
 import { LoginState } from "@/app/types";
 import { createClient } from "@/app/utils/supabase/client";
 

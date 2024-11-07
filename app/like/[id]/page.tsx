@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Heart, Clock, MapPin, MessageCircle, Package } from "lucide-react";
 import { getLikedItems } from "./action";
 import { format } from "date-fns";
-import { Pagination } from "@/components/Pagination";
+import { Pagination } from "@/components/CustomPagination";
 
 export default async function LikedItemsPage({
   params,
