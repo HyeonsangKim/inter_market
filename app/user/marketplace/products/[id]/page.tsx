@@ -16,7 +16,7 @@ import { UserInfoDropdown } from "@/components/UserInfoDropdown";
 import { CommentItem, CommentList } from "@/components/comment/CommentList";
 import SoldOutButton from "@/components/buttons/SoldoutButton";
 import { format } from "date-fns";
-import ImageSlider from "@/components/image-component/ImageSlider";
+import ImageSlider from "@/components/image-component/CustomImageSlider";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { deleteProduct } from "../edit/[id]/action";
 import { Edit } from "lucide-react";
