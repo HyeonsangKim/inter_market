@@ -7,7 +7,7 @@ import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 import { GoogleLogin } from "@/components/buttons/ClientButton";
 import Link from "next/link";
 import { CreateAccountState } from "../types";
-import Button from "@/components/buttons/Button";
+import Button from "@/components/buttons/CustomButton";
 const initialState: CreateAccountState = {
   fieldErrors: {},
   formError: undefined,

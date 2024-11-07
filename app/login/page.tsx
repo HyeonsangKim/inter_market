@@ -1,5 +1,5 @@
 "use client";
-import Button from "@/components/buttons/Button";
+import Button from "@/components/buttons/CustomButton";
 import Input from "@/components/Input";
 import { useFormState } from "react-dom";
 import { loginWithEmail } from "./actions";
