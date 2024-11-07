@@ -95,6 +95,8 @@ export async function getComments(postId: number) {
           select: {
             id: true,
             name: true,
+
+            image: true,
           },
         },
         replies: {
@@ -103,6 +105,7 @@ export async function getComments(postId: number) {
               select: {
                 id: true,
                 name: true,
+                image: true,
               },
             },
           },

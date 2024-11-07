@@ -37,6 +37,7 @@ export interface Comment {
   user: {
     id: string;
     name?: string | null;
+    image?: string | null;
   };
   replies?: Comment[];
 }

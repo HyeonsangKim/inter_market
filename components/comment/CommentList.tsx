@@ -13,6 +13,10 @@ import {
 import { format } from "date-fns";
 import { Comment } from "@/app/types";
 import { CommentForm } from "./Comment";
+import Image from "next/image";
+import { UserInfoDropdown } from "../UserInfoDropdown";
+import Link from "next/link";
+
 export function CommentList({
   postId,
   category,
@@ -21,7 +25,8 @@ export function CommentList({
   category: string;
 }) {
   return (
-    <div>
+    <div className="mt-8 space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Comments</h3>
       <CommentForm
         postId={Number(postId)}
         parentId={null}
@@ -47,115 +52,149 @@ export function CommentItem({
   const [editedContent, setEditedContent] = useState(comment.payload);
   const router = useRouter();
 
-  console.log(currentUser);
-
   const handleNewReply = () => {
     setIsReplying(false);
   };
 
   const onDelete = async (commentId: number, postId: number) => {
-    if (category === "product") {
-      await deleteComment(commentId, postId);
-    } else {
-      await deletePostComment(commentId, postId);
+    if (window.confirm("Delete this comment?")) {
+      if (category === "product") {
+        await deleteComment(commentId, postId);
+      } else {
+        await deletePostComment(commentId, postId);
+      }
+      router.refresh();
     }
-    router.refresh();
   };
 
   const onEdit = async () => {
-    if (category === "product") {
-      await updateComment(comment.id, postId, editedContent);
-    } else {
-      await updatePostComment(comment.id, postId, editedContent);
+    if (editedContent.trim()) {
+      if (category === "product") {
+        await updateComment(comment.id, postId, editedContent);
+      } else {
+        await updatePostComment(comment.id, postId, editedContent);
+      }
+      setIsEditing(false);
+      router.refresh();
     }
-    setIsEditing(false);
-    router.refresh();
   };
 
   return (
-    <div className="border-t py-4">
-      <p className="font-semibold">{comment.user.name}</p>
-      {isEditing ? (
-        <div>
-          <textarea
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
-            className="w-full p-2 border rounded text-black"
+    <div className="border-t border-gray-100 py-6">
+      <div className="flex items-start space-x-3">
+        {/* 프로필 이미지 (있다면) */}
+        <Link
+          href={`/profile/${comment.user.id}`}
+          className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-200"
+        >
+          <Image
+            src={comment.user.image || "/default.jpg"}
+            alt={`${comment.user.name}'s profile image`}
+            width={128}
+            height={128}
+            className="w-full h-full object-cover"
           />
-          <button onClick={onEdit} className="text-blue-500 text-sm mt-1 mr-2">
-            submit
-          </button>
-          <button
-            onClick={() => setIsEditing(false)}
-            className="text-gray-500 text-sm mt-1"
-          >
-            cancel
-          </button>
-        </div>
-      ) : (
-        <p>{comment.payload}</p>
-      )}
-      <p className="text-sm text-gray-500">
-        {format(new Date(comment.created_at), "yyyy-MM-dd")}
-      </p>
+        </Link>
+        <div className="flex-grow">
+          {/* 헤더: 이름과 날짜 */}
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-medium text-gray-900">
+              {comment.user.name}
+            </span>
+            <span className="text-sm text-gray-500">
+              {format(new Date(comment.created_at), "yyyy.MM.dd")}
+            </span>
+          </div>
 
-      {/* 버튼들을 currentUser 유무에 따라 다르게 표시 */}
-      <div className="mt-1 space-x-2">
-        {currentUser ? (
-          // 로그인한 경우
-          <>
-            <button
-              onClick={() => setIsReplying(!isReplying)}
-              className="text-blue-500 text-sm"
-            >
-              {isReplying ? "cancel" : "reply"}
-            </button>
+          {/* 내용 */}
+          {isEditing ? (
+            <div className="space-y-2">
+              <textarea
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-800"
+                rows={3}
+              />
+              <div className="flex space-x-2">
+                <button
+                  onClick={onEdit}
+                  className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-3 py-1 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-800 whitespace-pre-wrap">
+              {comment.payload}
+            </p>
+          )}
 
-            {currentUser === comment.user.id && (
+          {/* 액션 버튼들 */}
+          <div className="mt-3 flex items-center space-x-4">
+            {currentUser && (
               <>
                 <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="text-green-500 text-sm"
+                  onClick={() => setIsReplying(!isReplying)}
+                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
-                  edit
+                  {isReplying ? "Cancel reply" : "Reply"}
                 </button>
-                <button
-                  onClick={() => onDelete(comment.id, postId)}
-                  className="text-red-500 text-sm"
-                >
-                  delete
-                </button>
+
+                {currentUser === comment.user.id && (
+                  <>
+                    <button
+                      onClick={() => setIsEditing(!isEditing)}
+                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => onDelete(comment.id, postId)}
+                      className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </>
             )}
-          </>
-        ) : (
-          // 로그인하지 않은 경우
-          <></>
-        )}
-      </div>
+          </div>
 
-      {isReplying && currentUser && (
-        <CommentForm
-          postId={Number(postId)}
-          parentId={comment.id}
-          category={category}
-          onCommentAdded={handleNewReply}
-        />
-      )}
+          {/* 답글 폼 */}
+          {isReplying && currentUser && (
+            <div className="mt-4">
+              <CommentForm
+                postId={Number(postId)}
+                parentId={comment.id}
+                category={category}
+                onCommentAdded={handleNewReply}
+              />
+            </div>
+          )}
 
-      {comment!.replies! && (
-        <div className="ml-8 mt-4">
-          {comment!.replies!.map((reply) => (
-            <CommentItem
-              key={reply.id}
-              comment={reply}
-              postId={postId}
-              category={category}
-              currentUser={currentUser}
-            />
-          ))}
+          {/* 답글 목록 */}
+          {comment.replies && comment.replies.length > 0 && (
+            <div className="mt-4 ml-4 pl-4 border-l border-gray-100">
+              {comment.replies.map((reply) => (
+                <CommentItem
+                  key={reply.id}
+                  comment={reply}
+                  postId={postId}
+                  category={category}
+                  currentUser={currentUser}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
