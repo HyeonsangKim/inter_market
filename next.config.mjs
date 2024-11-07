@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Node.js 런타임 사용을 명시
-  runtime: "nodejs",
   // 나머지 설정 유지
   output: "standalone",
   images: {

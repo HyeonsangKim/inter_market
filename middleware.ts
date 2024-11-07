@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "./app/utils/supabase/middleware";
 
-export const runtime = "edge";
+export const runtime = "experimental-edge";
 
 export async function middleware(request: NextRequest) {
   // 서버 액션과 정적 리소스는 미들웨어를 건너뛰도록 함
