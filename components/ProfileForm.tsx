@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./buttons/CustomButton";
 import { Logout } from "./buttons/ClientButton";
+import { format } from "date-fns";
 
 type User = {
   image: string | null;
@@ -71,7 +72,7 @@ export function ProfileForm({
                 {userData?.email}
               </p>
               <p className="text-gray-500 mt-1">
-                Joined: {new Date(userData!.created_at).toLocaleDateString()}
+                Joined: {format(new Date(userData!.created_at), "dd/MM/yyyy")}
               </p>
             </div>
           </div>

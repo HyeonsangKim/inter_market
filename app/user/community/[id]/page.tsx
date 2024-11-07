@@ -85,7 +85,7 @@ export default async function PostDetail({
           <div className="flex items-center text-gray-600">
             <ClockIcon className="h-4 w-4 mr-3" />
             <span>
-              <span>{format(new Date(post.created_at), "yyyy-MM-dd")}</span>
+              <span>{format(new Date(post.created_at), "dd/MM/yyyy")}</span>
             </span>
           </div>
         </div>

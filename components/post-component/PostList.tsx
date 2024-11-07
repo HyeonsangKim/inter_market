@@ -132,7 +132,7 @@ export default function PostList({
               </p>
               <p className="text-sm text-gray-500 mt-2">
                 writer: {post.user.name} | date:{" "}
-                {format(new Date(post.created_at), "yyyy-MM-dd")}
+                {format(new Date(post.created_at), "dd/MM/yyyy")}
               </p>
             </div>
           </Link>
@@ -149,12 +149,12 @@ export default function PostList({
 
       {!hasMore && posts.length > 0 && (
         <p className="text-center text-gray-500 mt-8">
-          모든 게시글을 불러왔습니다.
+          All posts have been loaded.
         </p>
       )}
 
       {!hasMore && posts.length === 0 && (
-        <div className="text-center mt-8">게시글이 없습니다.</div>
+        <div className="text-center mt-8">No more prosts.</div>
       )}
     </div>
   );

@@ -188,11 +188,11 @@ export default function ProductList({
 
       {!hasMore && products.length > 0 && (
         <p className="text-center text-gray-500 mt-8">
-          모든 상품을 불러왔습니다.
+          All products have been loaded.
         </p>
       )}
       {!hasMore && products.length === 0 && (
-        <div className="text-center mt-8">상품이 없습니다.</div>
+        <div className="text-center mt-8">No more products.</div>
       )}
     </div>
   );

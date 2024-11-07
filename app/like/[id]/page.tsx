@@ -152,7 +152,7 @@ export default async function LikedItemsPage({
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />
-                              {format(new Date(post.created_at), "yyyy-MM-dd")}
+                              {format(new Date(post.created_at), "dd/MM/yyyy")}
                             </div>
                           </div>
                           <div className="flex items-center text-red-500">

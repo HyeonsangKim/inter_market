@@ -1,59 +1,66 @@
 import Link from "next/link";
 import { Github } from "lucide-react";
-import { headers } from "next/headers";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t">
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-          <div className="space-y-2 flex sm:block flex-col items-center text-center sm:text-left">
+    <footer className="bg-gray-50 border-t">
+      <div className="max-w-6xl mx-auto px-6 py-8 text-gray-700">
+        {/* Main content */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm sm:text-base">
+          {/* Logo & Description */}
+          <div className="space-y-3 text-center sm:text-left">
             <Link
               href="/"
-              className="flex items-center space-x-2 text-xl font-bold"
+              className="flex items-center justify-center sm:justify-start space-x-2 text-xl font-semibold text-gray-800"
             >
-              <span className="text-2xl">🌏</span>
-              <span className="bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
+              <span className="text-3xl">🌏</span>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 InterAgora
               </span>
             </Link>
-            <p className="text-gray-500 text-sm">
-              Exchange items, make friends
-            </p>
+            <p className="text-gray-500">Exchange items, make friends</p>
           </div>
 
-          <div className="flex sm:block flex-col items-center text-center sm:text-left">
-            <h3 className="font-semibold mb-2">Services</h3>
-            <ul className="space-y-1.5 text-sm text-gray-500">
+          {/* Services */}
+          <div className="text-center sm:text-left">
+            <h3 className="font-semibold text-gray-800 mb-2">Explore</h3>
+            <ul className="space-y-1 text-gray-500">
               <li>
-                <Link href="/marketplace">Marketplace</Link>
+                <Link href="/projects">Projects</Link>
               </li>
               <li>
-                <Link href="/community">Community</Link>
+                <Link href="/blog">Blog</Link>
+              </li>
+              <li>
+                <Link href="/contact">Contact</Link>
               </li>
             </ul>
           </div>
 
-          <div className="flex sm:block flex-col items-center text-center sm:text-left">
-            <h3 className="font-semibold mb-2">Legal</h3>
-            <ul className="space-y-1.5 text-sm text-gray-500">
+          {/* Legal */}
+          <div className="text-center sm:text-left">
+            <h3 className="font-semibold text-gray-800 mb-2">Legal</h3>
+            <ul className="space-y-1 text-gray-500">
               <li>
                 <Link href="/privacy">Privacy Policy</Link>
               </li>
               <li>
-                <Link href="/terms">Terms of Use</Link>
+                <Link href="/terms">Terms of Service</Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-6 pt-4 sm:pt-6 border-t flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-          <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} InterAgora
+        {/* Bottom content */}
+        <div className="mt-6 pt-4 border-t flex flex-col sm:flex-row justify-between items-center text-center sm:text-left space-y-3 sm:space-y-0">
+          <p className="text-xs sm:text-sm text-gray-500">
+            © {new Date().getFullYear()} MyPortfolio. All rights reserved.
           </p>
           <a
             href="https://github.com/HyeonsangKim/inter_market"
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors flex items-center space-x-1"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <Github size={20} />
           </a>
