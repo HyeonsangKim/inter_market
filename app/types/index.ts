@@ -57,4 +57,7 @@ export interface CreateAccountState {
     password?: string[];
     confirmPassword?: string[];
   };
+  message?: string;
+  success?: boolean;
+  redirect?: string;
 }

@@ -8,15 +8,25 @@ import { GoogleLogin } from "@/components/buttons/ClientButton";
 import Link from "next/link";
 import { CreateAccountState } from "../types";
 import Button from "@/components/buttons/CustomButton";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 const initialState: CreateAccountState = {
   fieldErrors: {},
   formError: undefined,
+  success: false,
 };
 export default function CreatAccount() {
   const [state, dispatch] = useFormState<CreateAccountState, FormData>(
     createAccount,
     initialState
   );
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.success && state?.redirect) {
+      router.push(state.redirect);
+    }
+  }, [state?.success, state?.redirect, router]);
   return (
     <div className="flex flex-col gap-10 py-8 px-6 max-w-3xl mx-auto w-full">
       <div className="flex flex-col gap-2">

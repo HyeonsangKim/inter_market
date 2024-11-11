@@ -83,12 +83,8 @@ export default async function LikedItemsPage({
                             <div className="flex items-center gap-2">
                               <div className="relative w-6 h-6 rounded-full overflow-hidden">
                                 <Image
-                                  src={
-                                    product.user.image || "/default-avatar.png"
-                                  }
-                                  alt={
-                                    product.user.name || "/default-avatar.png"
-                                  }
+                                  src={product.user.image || "/img/default.jpg"}
+                                  alt={product.user.name || "/img/default.jpg"}
                                   fill
                                   className="object-cover"
                                 />
@@ -164,8 +160,8 @@ export default async function LikedItemsPage({
                         <div className="flex items-center gap-2 pt-4 border-t">
                           <div className="relative w-6 h-6 rounded-full overflow-hidden">
                             <Image
-                              src={post.user.image || "/default-avatar.png"}
-                              alt={post.user.name || "/default-avatar.png"}
+                              src={post.user.image || "/img/default.jpg"}
+                              alt={post.user.name || "/img/default.jpg"}
                               fill
                               className="object-cover"
                             />

@@ -88,7 +88,7 @@ export function CommentItem({
           className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-200"
         >
           <Image
-            src={comment.user.image || "/default.jpg"}
+            src={comment.user.image || "/img/default.jpg"}
             alt={`${comment.user.name}'s profile image`}
             width={128}
             height={128}

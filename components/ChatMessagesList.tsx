@@ -140,7 +140,7 @@ export default function ChatMessagesList({
                 <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
                     <Image
-                      src={item?.users[0].image || "/default-avatar.png"}
+                      src={item?.users[0].image || "/img/default.jpg"}
                       alt={`${item?.users[0].name}'s profile image`}
                       width={128}
                       height={128}
@@ -172,7 +172,7 @@ export default function ChatMessagesList({
               <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
                 <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
                   <Image
-                    src={item?.users[0].image || "/default-avatar.png"}
+                    src={item?.users[0].image || "/img/default.jpg"}
                     alt={`${item?.users[0].name}'s profile image`}
                     width={128}
                     height={128}
@@ -206,7 +206,7 @@ export default function ChatMessagesList({
             </button>
             <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
               <Image
-                src={otherUser.image || "/default-avatar.png"}
+                src={otherUser.image || "/img/default.jpg"}
                 alt={`${otherUser.name}'s profile image`}
                 width={128}
                 height={128}

@@ -68,7 +68,7 @@ export default async function ResponsiveHeader() {
               >
                 <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-indigo-100">
                   <Image
-                    src={user.image || "/default-avatar.png"}
+                    src={user.image || "/img/default.jpg"}
                     alt="User profile"
                     width={128}
                     height={128}

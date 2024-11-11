@@ -73,9 +73,6 @@ export async function handleGoogleUser(user: UserData) {
       where: { id: user.id },
       select: { id: true },
     });
-    console.log("[poasdpasuidpahspidbaipsodnpasndipn");
-
-    console.log(existingUser);
 
     if (!existingUser) {
       await db.user.create({

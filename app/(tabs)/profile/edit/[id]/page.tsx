@@ -98,7 +98,7 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
                       width={128}
                       height={128}
                       className="w-full h-full object-cover"
-                      src={preview || userData?.image || "/default-avatar.png"}
+                      src={preview || userData?.image || "/img/default.jpg"}
                       alt={userData?.name || "Profile"}
                       priority
                     />

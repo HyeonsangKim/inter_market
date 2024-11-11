@@ -1,4 +1,5 @@
 "use server";
+
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
@@ -6,9 +7,9 @@ import {
 } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { redirect } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/server";
 import { getSupabaseErrorMessage } from "@/lib/errors";
+import { cookies } from "next/headers";
 
 const checkPassword = ({
   password,
@@ -57,51 +58,101 @@ const formSchema = z
     }
   })
   .refine(checkPassword, {
-    message: "Both passwords shoudl be the same!",
+    message: "Both passwords should be the same!",
     path: ["confirmPassword"],
   });
+
 export async function createAccount(prevState: any, formData: FormData) {
-  const data = {
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
-  };
-  const result = await formSchema.safeParseAsync(data);
-  if (!result.success) {
-    return result.error.flatten();
-  } else {
+  try {
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    };
+
+    const result = await formSchema.safeParseAsync(data);
+
+    if (!result.success) {
+      return {
+        fieldErrors: result.error.flatten().fieldErrors,
+        success: false,
+      };
+    }
+
     const supabase = createClient();
     const { email, password, name } = result.data;
 
-    const { data: authData, error: supabaseError } = await supabase.auth.signUp(
-      {
-        email,
-        password,
-        options: {
-          data: {
-            name,
-          },
+    // 1. Sign up the user
+    const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
         },
-      }
-    );
-    if (supabaseError) {
-      console.log(supabaseError);
+      },
+    });
+
+    if (signUpError) {
+      console.log("SignUp Error:", signUpError);
       return {
-        formError: getSupabaseErrorMessage(supabaseError),
+        formError: getSupabaseErrorMessage(signUpError),
+        success: false,
       };
     }
+
     if (authData.user) {
+      // 2. Create user in database
       await db.user.create({
         data: {
+          id: authData.user.id,
           name: result.data.name,
           email: result.data.email,
-        },
-        select: {
-          id: true,
+          image: null,
         },
       });
+
+      // 3. Auto login after signup
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+      if (signInError) {
+        console.log("SignIn Error:", signInError);
+        return {
+          message: "Registration was completed, but automatic login failed.",
+          success: false,
+        };
+      }
+
+      // 4. Set session cookie if login successful
+      if (signInData.session) {
+        cookies().set("sb-token", signInData.session.access_token, {
+          path: "/",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+        });
+
+        return {
+          success: true,
+          redirect: "/user", // 리다이렉트 경로를 반환
+        };
+      }
     }
-    return redirect(`/login`);
+
+    return {
+      message: "An error occurred during the registration process.",
+      success: false,
+    };
+  } catch (error) {
+    console.error("Account creation error:", error);
+    return {
+      message: "A server error occurred. Please try again later.",
+      success: false,
+    };
   }
 }
