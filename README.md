@@ -75,6 +75,11 @@ npm run dev
 # Build for production
 npm run build
 
+
+
+
+```
+
 👨‍💻 Developer
 This project was developed as a personal portfolio project, aiming to solve real-world problems faced by foreign residents in Korea. It demonstrates proficiency in modern web development technologies while addressing a specific market need.
 📄 License
@@ -83,4 +88,3 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 <div align="center">
   <i>Built with ❤️ for the international community in Korea</i>
 </div>
-```
