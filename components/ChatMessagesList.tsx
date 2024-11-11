@@ -111,6 +111,7 @@ export default function ChatMessagesList({
       channel.current?.unsubscribe();
     };
   }, [chatRoomId]);
+  console.log(chatList[0]?.users);
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
@@ -140,8 +141,8 @@ export default function ChatMessagesList({
                 <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
                     <Image
-                      src={item?.users[0].image || "/img/default.jpg"}
-                      alt={`${item?.users[0].name}'s profile image`}
+                      src={item?.users[1].image || "/img/default.jpg"}
+                      alt={`${item?.users[1].name}'s profile image`}
                       width={128}
                       height={128}
                       className="w-full h-full object-cover"
@@ -172,8 +173,8 @@ export default function ChatMessagesList({
               <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
                 <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-200">
                   <Image
-                    src={item?.users[0].image || "/img/default.jpg"}
-                    alt={`${item?.users[0].name}'s profile image`}
+                    src={item?.users[1].image || "/img/default.jpg"}
+                    alt={`${item?.users[1].name}'s profile image`}
                     width={128}
                     height={128}
                     className="w-full h-full object-cover"

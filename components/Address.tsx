@@ -61,6 +61,8 @@ export default function AddressInfo({ address, userId }: AddressProps) {
 
         try {
           const fetchedAddress = await fetchAddress(latitude, longitude);
+          console.log(fetchedAddress);
+
           if (fetchedAddress) {
             setNewAddress(fetchedAddress);
             insertAddress({ fetchedAddress, userId });

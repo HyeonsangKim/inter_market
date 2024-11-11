@@ -101,6 +101,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const otherUser = room.users.find((user) => user.id !== session!.id)!;
 
   await markMessagesAsRead(params.id, currentUser.id);
+  console.log(chatList[0].users);
 
   return (
     <ChatMessagesList

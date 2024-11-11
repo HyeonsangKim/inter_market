@@ -69,8 +69,11 @@ export const fetchAddress = async (
     }
 
     const data = await response.json();
+    console.log(data);
 
     const addressComponents = data.results[0]?.address_components || [];
+
+    console.log(addressComponents);
 
     const si = addressComponents.find((comp: any) =>
       comp.types.includes("administrative_area_level_1")

@@ -60,7 +60,7 @@ export function ProfileForm({
               width={112}
               height={112}
               className="size-28 sm:size-32 rounded-full object-cover"
-              src={userData?.image || "/default.jpg"}
+              src={userData?.image || "/img/default.jpg"}
               alt={userData?.name || "User avatar"}
             />
             <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
