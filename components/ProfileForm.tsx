@@ -19,7 +19,7 @@ type User = {
 interface Post {
   id: string | number;
   title: string;
-  content?: string;
+  description?: string;
   created_at: string | Date;
 }
 
@@ -127,16 +127,16 @@ export function ProfileForm({
                 posts!.map((post) => (
                   <div
                     key={post.id}
-                    className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition"
+                    className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition cursor-pointer"
                   >
                     <h3 className="text-lg font-semibold text-gray-900">
                       {post.title}
                     </h3>
                     <p className="text-gray-600 mt-1 line-clamp-2">
-                      {post.content}
+                      {post.description}
                     </p>
                     <p className="text-gray-400 text-sm mt-2">
-                      {new Date(post.created_at).toLocaleDateString()}
+                      {format(new Date(post.created_at), "dd/MM/yyyy")}
                     </p>
                   </div>
                 ))
@@ -172,7 +172,7 @@ export function ProfileForm({
                           ₩ {product.price.toFixed(2)}
                         </p>
                         <p className="text-gray-400 text-sm mt-1">
-                          {new Date(product.created_at).toLocaleDateString()}
+                          {format(new Date(product.created_at), "dd/MM/yyyy")}
                         </p>
                       </div>
                     </div>

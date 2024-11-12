@@ -2,6 +2,35 @@ import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { ProfileForm } from "@/components/ProfileForm";
 import { db } from "@/lib/db";
 
+async function getMyPosts(userId: string) {
+  const posts = await db.post.findMany({
+    select: {
+      title: true,
+      created_at: true,
+      id: true,
+      description: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          si: true,
+          gu: true,
+          dong: true,
+        },
+      },
+    },
+    where: {
+      userId,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+
+  return posts;
+}
+
 async function getMyProducts(userId: string) {
   const products = await db.product.findMany({
     select: {
@@ -60,6 +89,7 @@ export default async function Profile({ params }: { params: { id: string } }) {
   const userId = params.id;
   const user = await getProfile(userId);
   const products = await getMyProducts(user!.id);
+  const posts = await getMyPosts(user!.id);
   const session = await getCurrentUser();
   let currentUser = false;
   if (session!.id === userId) {
@@ -69,6 +99,7 @@ export default async function Profile({ params }: { params: { id: string } }) {
   return (
     <ProfileForm
       userData={user}
+      posts={posts}
       products={products}
       currentUser={currentUser}
     />
