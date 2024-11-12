@@ -83,7 +83,7 @@ export default async function PostDetail({
           <UserInfoDropdown user={product.user} />
         </div>
         <p className="text-2xl font-normal mb-4">
-          price : {product.price.toLocaleString()} 원
+          price : ₩ {product.price.toLocaleString()}
         </p>
         <div>
           <p className="flex items-center text-gray-600 mb-2">

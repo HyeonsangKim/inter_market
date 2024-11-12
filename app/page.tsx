@@ -12,8 +12,8 @@ export default async function Home() {
           </div>
           <div className="p-2">
             {/* 패딩 추가 */}
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent py-2">
-              Inter Agora
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent py-2">
+              InterAgora
             </h2>
           </div>
           <h2 className="text-4xl font-semibold text-gray-800">Welcome!</h2>

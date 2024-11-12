@@ -13,11 +13,13 @@ export default async function UserLayout({
 
   return (
     <div>
-      <AddressInfo
-        address={addressExit}
-        userId={userData ? userData.id : null}
-      />
-      {children}
+      <div className="container">
+        <AddressInfo
+          address={addressExit}
+          userId={userData ? userData.id : null}
+        />
+        {children}
+      </div>
       <Footer />
     </div>
   );

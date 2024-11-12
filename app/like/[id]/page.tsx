@@ -41,14 +41,15 @@ export default async function LikedItemsPage({
                     key={product.id}
                     className="group"
                   >
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 h-[180px]">
-                      <div className="flex gap-4">
-                        <div className="relative h-[180px] w-[180px] flex-shrink-0">
+                    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300">
+                      <div className="flex h-full">
+                        <div className="relative w-[180px] flex-shrink-0">
                           <Image
                             src={product.photos[0]?.url || "/placeholder.png"}
                             alt={product.title}
-                            fill
-                            className={`object-cover ${
+                            width={180}
+                            height={180}
+                            className={`h-full w-full object-cover ${
                               !product.soldout && "group-hover:scale-105"
                             } transition-transform duration-300`}
                           />
@@ -61,26 +62,41 @@ export default async function LikedItemsPage({
                           )}
                         </div>
 
-                        <div className="flex-1 p-4">
-                          <h3 className="text-lg font-semibold mb-2 line-clamp-1">
-                            {product.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                            {product.description}
-                          </p>
-                          <p className="text-lg font-semibold mb-2">
-                            ₩ {product.price.toLocaleString()}
-                          </p>
-
-                          <div className="text-sm text-gray-500 mb-2">
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {product.user.si}, {product.user.gu}
-                            </div>
+                        <div className="flex-1 p-4 flex flex-col justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold mb-2 line-clamp-1">
+                              {product.title}
+                            </h3>
+                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                              {product.description}
+                            </p>
+                            <p className="text-lg font-semibold mb-2">
+                              ₩ {product.price.toLocaleString()}
+                            </p>
                           </div>
 
-                          <div className="flex items-center justify-between mt-2">
-                            <div className="flex items-center gap-2">
+                          <div className="flex flex-col justify-between h-[80px]">
+                            <div className="flex items-center justify-between text-sm text-gray-500">
+                              <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  {product.user.si}, {product.user.gu}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Clock className="w-4 h-4" />
+                                  {format(
+                                    new Date(product.created_at),
+                                    "dd/MM/yyyy"
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center text-red-500">
+                                <Heart className="w-4 h-4 mr-1 fill-current" />
+                                {product.likeCount}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 pt-4 border-t">
                               <div className="relative w-6 h-6 rounded-full overflow-hidden">
                                 <Image
                                   src={product.user.image || "/img/default.jpg"}
@@ -92,10 +108,6 @@ export default async function LikedItemsPage({
                               <span className="text-sm text-gray-600">
                                 {product.user.name}
                               </span>
-                            </div>
-                            <div className="flex items-center text-red-500 text-sm">
-                              <Heart className="w-4 h-4 mr-1 fill-current" />
-                              {product.likeCount}
                             </div>
                           </div>
                         </div>

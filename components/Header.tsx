@@ -29,8 +29,8 @@ export default async function ResponsiveHeader() {
               href={`${user ? "/user" : "/"}`}
               className="flex items-center space-x-3 text-xl font-bold text-gray-900 hover:text-indigo-600 transition-colors duration-300"
             >
-              <span className="text-3xl">🌏</span>
-              <span className="font-extrabold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
+              <span className="text-3xl ">🌏</span>
+              <span className="font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 InterAgora
               </span>
             </Link>

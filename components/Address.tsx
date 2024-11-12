@@ -80,12 +80,14 @@ export default function AddressInfo({ address, userId }: AddressProps) {
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-lg p-4 mb-6 mx-auto px-10 xl:px-20">
+    <div className="bg-white shadow-sm rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <MapPin size={20} className="text-indigo-500 mr-2" />
+        <div className="flex items-center min-w-0">
+          {" "}
+          {/* min-w-0 추가로 텍스트 오버플로우 방지 */}
+          <MapPin size={20} className="text-indigo-500 mr-2 flex-shrink-0" />
           {newAddress ? (
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 truncate">
               {newAddress.si} {newAddress.gu}
             </p>
           ) : (
@@ -94,9 +96,9 @@ export default function AddressInfo({ address, userId }: AddressProps) {
         </div>
         <button
           onClick={handleFetchAddress}
-          className="flex items-center text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full hover:bg-indigo-200 transition-colors duration-200 ml-4"
+          className="flex items-center text-sm bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-full hover:bg-indigo-200 transition-colors duration-200 ml-4 flex-shrink-0 whitespace-nowrap"
         >
-          <RefreshCw size={14} className="mr-1" />
+          <RefreshCw size={14} className="mr-1.5" />
           {userId ? "Update Location" : "Sign in to Update"}
         </button>
       </div>

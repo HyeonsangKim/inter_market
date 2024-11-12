@@ -56,7 +56,7 @@ const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
           {product.title}
         </h2>
         <p className="text-xl font-bold text-indigo-600 mb-2">
-          {product.price.toLocaleString()} Won
+          ₩ {product.price.toLocaleString()}
         </p>
       </div>
       <div>

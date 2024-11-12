@@ -62,7 +62,7 @@ const ItemCard: React.FC<ItemProps> = (props) => {
           {type === "product" && (
             <>
               <p className="text-indigo-600 font-bold mb-2">
-                ${props.price.toFixed(2)}
+                ₩ {props.price.toLocaleString()}
               </p>
               <p className="text-gray-600 font-bold mb-2">{props.address}</p>
             </>

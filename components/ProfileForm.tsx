@@ -169,7 +169,7 @@ export function ProfileForm({
                           {product.description}
                         </p>
                         <p className="text-indigo-600 font-semibold mt-2">
-                          ${product.price.toFixed(2)}
+                          ₩ {product.price.toFixed(2)}
                         </p>
                         <p className="text-gray-400 text-sm mt-1">
                           {new Date(product.created_at).toLocaleDateString()}
