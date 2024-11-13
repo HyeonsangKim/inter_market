@@ -13,7 +13,9 @@ async function getMyPosts(userId: string) {
         select: {
           id: true,
           name: true,
+          email: true,
           image: true,
+          created_at: true,
           si: true,
           gu: true,
           dong: true,
@@ -37,6 +39,7 @@ async function getMyProducts(userId: string) {
       title: true,
       price: true,
       created_at: true,
+      description: true,
       photos: {
         select: {
           url: true,
@@ -49,7 +52,9 @@ async function getMyProducts(userId: string) {
         select: {
           id: true,
           name: true,
+          email: true,
           image: true,
+          created_at: true,
           si: true,
           gu: true,
           dong: true,
@@ -80,6 +85,9 @@ async function getProfile(userId: string) {
       email: true,
       image: true,
       created_at: true,
+      si: true,
+      gu: true,
+      dong: true,
     },
   });
   return currentUser;

@@ -12,27 +12,29 @@ type User = {
   image: string | null;
   id: string;
   name: string | null;
-  email: string | null;
   created_at: Date;
+  email: string | null;
+  si: string | null;
+  gu: string | null;
+  dong: string | null;
 } | null;
 
 interface Post {
   id: string | number;
   title: string;
-  description?: string;
+  description: string | null;
   created_at: string | Date;
+  user: User;
 }
 
 interface Product {
   id: string | number;
   title: string;
-  description?: string;
+  description: string;
   price: number;
   firstPhoto: string | null;
   created_at: string | Date;
-  user: {
-    name: string | null;
-  };
+  user: User;
 }
 
 export function ProfileForm({
