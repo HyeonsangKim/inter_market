@@ -16,7 +16,6 @@ export default async function ChatList() {
   const chatList: ChatRoomWithUsersAndMessages[] = await getMessageRooms(
     session!.id
   );
-  console.log(chatList);
 
   return (
     <>

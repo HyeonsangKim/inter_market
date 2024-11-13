@@ -67,10 +67,7 @@ export async function getMessageRooms(
     include: {
       users: true,
       messages: {
-        orderBy: {
-          created_at: "desc",
-        },
-        take: 1,
+        take: 20, // 최근 20개 메시지만 가져옵니다
         include: {
           sender: {
             select: {
@@ -87,6 +84,9 @@ export async function getMessageRooms(
             },
           },
         },
+        orderBy: {
+          created_at: "desc",
+        },
       },
     },
     orderBy: {
@@ -94,7 +94,6 @@ export async function getMessageRooms(
     },
   });
 
-  // 현재 유저를 첫 번째로, 상대방을 두 번째로 정렬
   return rooms.map((room) => ({
     ...room,
     users: room.users.sort((a, b) => {
@@ -104,7 +103,6 @@ export async function getMessageRooms(
     }),
   }));
 }
-
 export async function markMessagesAsRead(
   chatRoomId: string,
   currentUserId: string

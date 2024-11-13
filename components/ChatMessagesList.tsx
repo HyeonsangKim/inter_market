@@ -209,11 +209,23 @@ export default function ChatMessagesList({
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="ml-3">
-                    <p className="font-semibold">
-                      {item?.users[1]?.name || "User"}
-                    </p>
-                    <p className="text-sm text-gray-500">
+                  <div className="ml-3 flex-grow">
+                    <div className="flex justify-between items-center">
+                      <p className="font-semibold">
+                        {item?.users[1]?.name || "User"}
+                      </p>
+                      {!item?.messages?.[0].isRead && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
+                      )}
+                    </div>
+
+                    <p
+                      className={`text-sm ${
+                        !item?.messages?.[0].isRead
+                          ? "font-semibold text-black"
+                          : "text-gray-500"
+                      }`}
+                    >
                       {item?.messages?.[0]?.payload || "No messages yet"}
                     </p>
                   </div>
@@ -241,11 +253,23 @@ export default function ChatMessagesList({
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="ml-3">
-                  <p className="font-semibold">
-                    {item?.users[1]?.name || "User"}
-                  </p>
-                  <p className="text-sm text-gray-500">
+                <div className="ml-3 flex-grow">
+                  <div className="flex justify-between items-center">
+                    <p className="font-semibold">
+                      {item?.users[1]?.name || "User"}
+                    </p>
+                    {!item?.messages?.[0].isRead && (
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
+                    )}
+                  </div>
+
+                  <p
+                    className={`text-sm ${
+                      !item?.messages?.[0].isRead
+                        ? "font-semibold text-black"
+                        : "text-gray-500"
+                    }`}
+                  >
                     {item?.messages?.[0]?.payload || "No messages yet"}
                   </p>
                 </div>

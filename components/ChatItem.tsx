@@ -47,9 +47,7 @@ export function ChatItem({
             <p className="font-semibold">{otherUser.name}</p>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
+                <div className="w-2 h-2 bg-blue-500 rounded-full" />
               )}
               <button
                 onClick={handleHideChat}
@@ -59,7 +57,11 @@ export function ChatItem({
               </button>
             </div>
           </div>
-          <p className="text-sm text-gray-500">
+          <p
+            className={`text-sm ${
+              unreadCount > 0 ? "font-semibold text-black" : "text-gray-500"
+            }`}
+          >
             {lastMessage ? lastMessage.payload : "No messages yet"}
           </p>
         </div>

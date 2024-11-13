@@ -95,8 +95,23 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
 
   const initialMessages = await getMessages(params.id);
   const session = await getCurrentUser();
-  const chatList = await getMessageRooms(session!.id);
+  let chatList = await getMessageRooms(session!.id);
+  chatList = chatList.map((chat) => {
+    const sortedMessages = chat.messages.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
+    const unreadMessages = sortedMessages.filter(
+      (msg) => msg.receiverId === session!.id && !msg.isRead
+    );
+
+    return {
+      ...chat,
+      messages: sortedMessages,
+      unreadCount: unreadMessages.length,
+    };
+  });
   const currentUser = room.users.find((user) => user.id === session!.id)!;
   const otherUser = room.users.find((user) => user.id !== session!.id)!;
 
