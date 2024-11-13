@@ -16,6 +16,7 @@ export default async function ChatList() {
   const chatList: ChatRoomWithUsersAndMessages[] = await getMessageRooms(
     session!.id
   );
+  console.log(chatList);
 
   return (
     <>
@@ -25,9 +26,7 @@ export default async function ChatList() {
         </div>
         <div className="overflow-y-auto">
           {chatList.map((chat) => {
-            const otherUser = chat.users.find(
-              (user) => user.id !== session!.id
-            )!;
+            const otherUser = chat.users[1];
             const lastMessage = chat.messages[0];
             const unreadCount = chat.messages.filter(
               (msg) => msg.receiverId === session!.id && !msg.isRead

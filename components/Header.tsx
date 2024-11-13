@@ -12,6 +12,7 @@ import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import UnreadBadge from "./UnreadCount";
 import { getUnreadMessagesCount } from "@/app/chats/actions";
 import { MobileNavLink, NavLink } from "./NavLink";
+import UnreadBadgeWithRealtime from "./UnreadBadgeWithRealtime";
 
 export default async function ResponsiveHeader() {
   const user = await getCurrentUser();
@@ -54,7 +55,10 @@ export default async function ResponsiveHeader() {
                     <NavLink href="/chats">
                       <MessageCircle size={18} className="mb-0.5" />
                       <span>Chats</span>
-                      {unreadCount > 0 && <UnreadBadge count={unreadCount} />}
+                      <UnreadBadgeWithRealtime
+                        initialCount={unreadCount}
+                        userId={user.id}
+                      />
                     </NavLink>
                   </div>
                 </>
@@ -118,7 +122,10 @@ export default async function ResponsiveHeader() {
                   iconName="MessageCircle"
                   label="Chats"
                 />
-                {unreadCount > 0 && <UnreadBadge count={unreadCount} />}
+                <UnreadBadgeWithRealtime
+                  initialCount={unreadCount}
+                  userId={user.id}
+                />
               </div>
               <MobileNavLink
                 href={`/profile/${user.id}`}

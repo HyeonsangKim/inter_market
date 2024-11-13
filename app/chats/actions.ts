@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { Message, ChatRoom, User } from "@prisma/client";
 import { getCurrentUser } from "../utils/supabase/get-user";
+import { createClient } from "@supabase/supabase-js";
 
 type ChatRoomWithUsersAndMessages = ChatRoom & {
   users: User[];
@@ -92,13 +93,26 @@ export async function getMessageRooms(
       updated_at: "desc",
     },
   });
-  return rooms;
+
+  // 현재 유저를 첫 번째로, 상대방을 두 번째로 정렬
+  return rooms.map((room) => ({
+    ...room,
+    users: room.users.sort((a, b) => {
+      if (a.id === currentId) return -1;
+      if (b.id === currentId) return 1;
+      return 0;
+    }),
+  }));
 }
 
 export async function markMessagesAsRead(
   chatRoomId: string,
   currentUserId: string
 ): Promise<void> {
+  const client = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY as string
+  );
   await db.message.updateMany({
     where: {
       chatRoomId: chatRoomId,
@@ -107,6 +121,21 @@ export async function markMessagesAsRead(
     },
     data: {
       isRead: true,
+    },
+  });
+  const newUnreadCount = await db.message.count({
+    where: {
+      receiverId: currentUserId,
+      isRead: false,
+    },
+  });
+  const channel = client.channel("message-status");
+  await channel.send({
+    type: "broadcast",
+    event: "read-messages",
+    payload: {
+      currentUserId,
+      newCount: newUnreadCount,
     },
   });
 }

@@ -23,7 +23,7 @@ export function ChatItem({
 }: ChatItemProps) {
   const handleHideChat = async (e: React.MouseEvent) => {
     e.preventDefault(); // Link 클릭 방지
-    if (confirm("이 채팅방을 삭제하시겠습니까?")) {
+    if (confirm("You wanna delete this chat room?")) {
       const result = await hideChat(chatId, currentUserId);
       if (result.success) {
         window.location.reload();
@@ -47,8 +47,8 @@ export function ChatItem({
             <p className="font-semibold">{otherUser.name}</p>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  {unreadCount}
+                <span className="bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                  {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
               <button

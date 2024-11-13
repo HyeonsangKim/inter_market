@@ -50,14 +50,22 @@ export default function ChatMessagesList({
   chatRoomId,
   currentUser,
   otherUser,
-  chatList,
+  chatList: initialChatList,
   initialMessages,
 }: ChatMessagesListProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [chatList, setChatList] = useState(initialChatList);
   const [message, setMessage] = useState("");
   const [showMobileList, setShowMobileList] = useState(false);
-  const channel = useRef<RealtimeChannel>();
+  const messageChannel = useRef<RealtimeChannel>();
+  const chatListChannel = useRef<RealtimeChannel>();
+  const messageBoxRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (messageBoxRef.current) {
+      messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { value },
@@ -65,14 +73,79 @@ export default function ChatMessagesList({
     setMessage(value);
   };
 
+  useEffect(() => {
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY as string
+    );
+
+    messageChannel.current = client.channel(`room-${chatRoomId}`);
+    messageChannel.current
+      .on("broadcast", { event: "message" }, (payload) => {
+        setMessages((prev) => [...prev, payload.payload]);
+        if (payload.payload.receiverId === currentUser.id) {
+          markMessagesAsRead(chatRoomId, currentUser.id);
+        }
+
+        setChatList((prev) =>
+          prev.map((chat) => {
+            if (chat?.id === chatRoomId) {
+              return {
+                ...chat,
+                messages: [payload.payload, ...(chat.messages || [])],
+              };
+            }
+            return chat;
+          })
+        );
+      })
+      .subscribe();
+
+    chatListChannel.current = client.channel("read-status");
+    chatListChannel.current
+      .on("broadcast", { event: "read" }, (payload) => {
+        if (payload.roomId === chatRoomId) {
+          setMessages((prev) =>
+            prev.map((msg) => ({
+              ...msg,
+              isRead: true,
+            }))
+          );
+
+          setChatList((prev) =>
+            prev.map((chat) => {
+              if (chat?.id === chatRoomId) {
+                return {
+                  ...chat,
+                  messages: chat.messages?.map((msg) => ({
+                    ...msg,
+                    isRead: true,
+                  })),
+                };
+              }
+              return chat;
+            })
+          );
+        }
+      })
+      .subscribe();
+
+    return () => {
+      messageChannel.current?.unsubscribe();
+      chatListChannel.current?.unsubscribe();
+    };
+  }, [chatRoomId]);
+
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const newMessage = {
       id: Date.now(),
       payload: message,
       created_at: new Date(),
+      updated_at: new Date(),
       senderId: currentUser.id,
       receiverId: otherUser.id,
+      chatRoomId: chatRoomId,
       isRead: false,
       sender: {
         name: currentUser.name,
@@ -84,7 +157,20 @@ export default function ChatMessagesList({
       },
     };
     setMessages((prevMsgs) => [...prevMsgs, newMessage]);
-    channel.current?.send({
+
+    setChatList((prev) =>
+      prev.map((chat) => {
+        if (chat?.id === chatRoomId) {
+          return {
+            ...chat,
+            messages: [newMessage, ...(chat.messages || [])],
+          };
+        }
+        return chat;
+      })
+    );
+
+    messageChannel.current?.send({
       type: "broadcast",
       event: "message",
       payload: newMessage,
@@ -93,33 +179,10 @@ export default function ChatMessagesList({
     setMessage("");
   };
 
-  useEffect(() => {
-    const client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY as string
-    );
-    channel.current = client.channel(`room-${chatRoomId}`);
-    channel.current
-      .on("broadcast", { event: "message" }, (payload) => {
-        setMessages((prev) => [...prev, payload.payload]);
-        if (payload.payload.receiverId === currentUser.id) {
-          markMessagesAsRead(chatRoomId, currentUser.id);
-        }
-      })
-      .subscribe();
-    return () => {
-      channel.current?.unsubscribe();
-    };
-  }, [chatRoomId]);
-  console.log(chatList[0]?.users);
-
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
-      {/* 모바일 채팅 목록 오버레이 */}
       {showMobileList && (
         <div className="fixed inset-0 bg-white z-50 md:hidden flex flex-col h-[calc(100vh-64px)]">
-          {" "}
-          {/* 모바일 네비게이션 높이(64px) 만큼 빼기 */}
           <div className="p-4 border-b border-gray-200 flex items-center justify-between">
             <h2 className="text-xl font-semibold">채팅 목록</h2>
             <button
@@ -130,8 +193,6 @@ export default function ChatMessagesList({
             </button>
           </div>
           <div className="overflow-y-auto flex-1 pb-16">
-            {" "}
-            {/* 바텀 네비게이션 영역만큼 패딩 추가 */}
             {chatList.map((item) => (
               <Link
                 key={item?.id}
@@ -162,7 +223,7 @@ export default function ChatMessagesList({
           </div>
         </div>
       )}
-      {/* 데스크탑 채팅 목록 */}
+
       <div className="w-80 border-r border-gray-200 bg-white flex-shrink-0 overflow-y-auto hidden md:flex md:flex-col">
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold">채팅</h2>
@@ -194,9 +255,7 @@ export default function ChatMessagesList({
         </div>
       </div>
 
-      {/* 채팅 인터페이스 */}
       <div className="flex-grow flex flex-col min-w-0">
-        {/* 채팅 상대 정보 */}
         <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="flex items-center">
             <button
@@ -223,8 +282,10 @@ export default function ChatMessagesList({
           </div>
         </div>
 
-        {/* 메시지 영역 */}
-        <div className="flex-grow overflow-y-auto bg-gray-100">
+        <div
+          ref={messageBoxRef}
+          className="flex-grow overflow-y-auto bg-gray-100"
+        >
           <div className="p-4 space-y-4">
             {messages.map((message, idx) => (
               <div
@@ -281,7 +342,6 @@ export default function ChatMessagesList({
           </div>
         </div>
 
-        {/* 입력 영역 */}
         <div className="bg-white border-t border-gray-200 p-4">
           <form className="flex items-center" onSubmit={onSubmit}>
             <input
