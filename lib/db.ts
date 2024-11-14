@@ -1,11 +1,12 @@
+// lib/db.ts에서 확인
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+declare global {
+  var prisma: PrismaClient | undefined;
+}
 
-const prisma = globalForPrisma.prisma ?? new PrismaClient();
+export const db = globalThis.prisma || new PrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-
-export const db = prisma;
+if (process.env.NODE_ENV !== "production") {
+  globalThis.prisma = db;
+}
