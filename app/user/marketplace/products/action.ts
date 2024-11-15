@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { InitialProducts } from "./page";
+import { regions } from "@/app/utils/address-info";
 type ProductsResponse = {
   products: InitialProducts;
   hasMore: boolean;
@@ -10,13 +11,38 @@ type ProductsResponse = {
 
 export async function getMoreProducts(
   page: number,
+  province?: string,
   city?: string,
   district?: string,
   query?: string
 ): Promise<ProductsResponse> {
   const ITEMS_PER_PAGE = 12;
   const skip = (page - 1) * ITEMS_PER_PAGE;
-
+  const regionData = province
+    ? regions.find((r) => r.province === province)
+    : null;
+  let locationFilter = {};
+  if (regionData) {
+    if (regionData.type === "metropolitan") {
+      // 광역시의 경우
+      locationFilter = {
+        user: {
+          province: province,
+          city: null,
+          ...(district ? { district } : {}),
+        },
+      };
+    } else {
+      // 도의 경우
+      locationFilter = {
+        user: {
+          province: province,
+          ...(city ? { city } : {}),
+          ...(district ? { district } : {}),
+        },
+      };
+    }
+  }
   const where = {
     AND: [
       // 검색어 필터
@@ -29,14 +55,7 @@ export async function getMoreProducts(
           }
         : {},
       // 지역 필터
-      city
-        ? {
-            user: {
-              si: city,
-              ...(district ? { gu: district } : {}),
-            },
-          }
-        : {},
+      locationFilter,
     ],
   };
 
@@ -58,9 +77,9 @@ export async function getMoreProducts(
             id: true,
             name: true,
             image: true,
-            si: true,
-            gu: true,
-            dong: true,
+            province: true,
+            city: true,
+            district: true,
           },
         },
       },

@@ -12,7 +12,8 @@ import { getMorePosts } from "@/app/user/community/action";
 interface PostListProps {
   initialPosts: InitialPosts;
   initialLocation: {
-    city: string;
+    province: string;
+    city?: string;
     district: string;
   };
   isLoggedIn?: boolean;
@@ -28,7 +29,8 @@ export default function PostList({
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
-  const [city, setCity] = useState(initialLocation.city);
+  const [province, setProvince] = useState(initialLocation.province);
+  const [city, setCity] = useState(initialLocation.city || "");
   const [district, setDistrict] = useState(initialLocation.district);
 
   const { ref, inView } = useInView();
@@ -38,7 +40,13 @@ export default function PostList({
 
     setLoading(true);
     try {
-      const response = await getMorePosts(page + 1, city, district, query);
+      const response = await getMorePosts(
+        page + 1,
+        province,
+        city,
+        district,
+        query
+      );
 
       if (response.posts.length > 0) {
         setPosts((prev) => [...prev, ...response.posts]);
@@ -52,7 +60,7 @@ export default function PostList({
     } finally {
       setLoading(false);
     }
-  }, [page, city, district, query, loading, hasMore]);
+  }, [page, province, city, district, query, loading, hasMore]);
 
   useEffect(() => {
     if (inView) {
@@ -66,7 +74,13 @@ export default function PostList({
     setLoading(true);
 
     try {
-      const response = await getMorePosts(1, city, district, searchQuery);
+      const response = await getMorePosts(
+        1,
+        province,
+        city,
+        district,
+        searchQuery
+      );
       setPosts(response.posts);
       setHasMore(response.hasMore);
     } catch (error) {
@@ -76,14 +90,25 @@ export default function PostList({
     }
   };
 
-  const handleFilterChange = async (newCity: string, newDistrict: string) => {
+  const handleFilterChange = async (
+    newProvince: string,
+    newCity: string,
+    newDistrict: string
+  ) => {
+    setProvince(newProvince);
     setCity(newCity);
     setDistrict(newDistrict);
     setPage(1);
     setLoading(true);
 
     try {
-      const response = await getMorePosts(1, newCity, newDistrict, query);
+      const response = await getMorePosts(
+        1,
+        newProvince,
+        newCity,
+        newDistrict,
+        query
+      );
       setPosts(response.posts);
       setHasMore(response.hasMore);
     } catch (error) {
@@ -112,8 +137,8 @@ export default function PostList({
 
       <SearchBar onSearch={handleSearch} />
       <RegionFilter
-        regions={regions}
         onFilterChange={handleFilterChange}
+        initialProvince={initialLocation.province}
         initialCity={initialLocation.city}
         initialDistrict={initialLocation.district}
       />

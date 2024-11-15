@@ -6,7 +6,7 @@ import { productSchema } from "./shema";
 import { createClient } from "@/app/utils/supabase/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 export async function uploadProduct(_: any, formData: FormData) {
   try {
     const supabase = createClient();
@@ -61,12 +61,21 @@ export async function uploadProduct(_: any, formData: FormData) {
 
     const session = await supabase.auth.getSession();
     const userId = session.data.session?.user.id;
+    const userAdress = await getCurrentUser();
 
     if (!userId) {
       return {
         success: false,
         error: {
           formErrors: ["인증이 필요합니다."],
+        },
+      };
+    }
+    if (!userAdress?.fullAddress) {
+      return {
+        success: false,
+        error: {
+          formErrors: ["Please update your address."],
         },
       };
     }

@@ -1,6 +1,7 @@
 "use client";
+import { regions } from "@/app/utils/address-info";
 import { ChevronDown, Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export const SearchBar: React.FC<{ onSearch: (query: string) => void }> = ({
   onSearch,
@@ -30,69 +31,71 @@ export const SearchBar: React.FC<{ onSearch: (query: string) => void }> = ({
 };
 
 interface RegionFilterProps {
-  regions: { city: string; districts: string[] }[];
-  onFilterChange: (city: string, district: string) => void;
+  onFilterChange: (province: string, city: string, district: string) => void;
+  initialProvince?: string;
   initialCity?: string;
   initialDistrict?: string;
 }
 
 export const RegionFilter: React.FC<RegionFilterProps> = ({
-  regions,
   onFilterChange,
+  initialProvince = "",
   initialCity = "",
   initialDistrict = "",
 }) => {
-  const isCityAvailable = regions.some((region) => region.city === initialCity);
-  const initialCityFiltered = isCityAvailable ? initialCity : "";
-  const initialDistrictFiltered = isCityAvailable
-    ? regions
-        .find((region) => region.city === initialCity)
-        ?.districts.includes(initialDistrict)
-      ? initialDistrict
-      : ""
-    : "";
+  const [selectedProvince, setSelectedProvince] = useState(initialProvince);
+  const [selectedCity, setSelectedCity] = useState(initialCity);
+  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
 
-  const [selectedCity, setSelectedCity] = useState(initialCityFiltered);
-  const [selectedDistrict, setSelectedDistrict] = useState(
-    initialDistrictFiltered
-  );
+  const currentRegion = regions.find((r) => r.province === selectedProvince);
 
-  useEffect(() => {
-    if (initialCityFiltered) {
-      setSelectedCity(initialCityFiltered);
-      setSelectedDistrict(initialDistrictFiltered);
-      onFilterChange(initialCityFiltered, initialDistrictFiltered);
-    } else {
-      // Default to "All cities" if initialCity is unavailable
-      onFilterChange("", "");
-    }
-  }, [initialCity, initialDistrict]);
+  const cities =
+    currentRegion?.type === "province"
+      ? (currentRegion.districts as { city: string; areas: string[] }[]).map(
+          (d) => d.city
+        )
+      : [];
+
+  const districts =
+    currentRegion?.type === "metropolitan"
+      ? (currentRegion.districts as string[])
+      : currentRegion?.type === "province"
+      ? (currentRegion.districts as { city: string; areas: string[] }[]).find(
+          (d) => d.city === selectedCity
+        )?.areas || []
+      : [];
+
+  const handleProvinceChange = (province: string) => {
+    setSelectedProvince(province);
+    setSelectedCity("");
+    setSelectedDistrict("");
+    onFilterChange(province, "", "");
+  };
 
   const handleCityChange = (city: string) => {
     setSelectedCity(city);
     setSelectedDistrict("");
-    onFilterChange(city, "");
+    onFilterChange(selectedProvince, city || "", "");
   };
 
   const handleDistrictChange = (district: string) => {
     setSelectedDistrict(district);
-    onFilterChange(selectedCity, district);
+    onFilterChange(selectedProvince, selectedCity || "", district || "");
   };
-
-  const currentRegion = regions.find((region) => region.city === selectedCity);
 
   return (
     <div className="flex space-x-4 mb-6">
+      {/* Province Select */}
       <div className="relative">
         <select
-          value={selectedCity}
-          onChange={(e) => handleCityChange(e.target.value)}
+          value={selectedProvince}
+          onChange={(e) => handleProvinceChange(e.target.value)}
           className="appearance-none bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         >
-          <option value="">All cities</option>
+          <option value="">All Provinces</option>
           {regions.map((region) => (
-            <option key={region.city} value={region.city}>
-              {region.city}
+            <option key={region.province} value={region.province}>
+              {region.province}
             </option>
           ))}
         </select>
@@ -101,27 +104,42 @@ export const RegionFilter: React.FC<RegionFilterProps> = ({
           size={20}
         />
       </div>
-      {selectedCity && (
+
+      {/* City Select (for provinces only) */}
+      {selectedProvince && currentRegion?.type === "province" && (
+        <div className="relative">
+          <select
+            value={selectedCity}
+            onChange={(e) => handleCityChange(e.target.value)}
+            className="appearance-none bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+            <option value="">All Cities</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
+        </div>
+      )}
+
+      {selectedProvince && districts.length > 0 && (
         <div className="relative">
           <select
             value={selectedDistrict}
             onChange={(e) => handleDistrictChange(e.target.value)}
             className="appearance-none bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
-            <option value="">All districts</option>
-            {currentRegion
-              ? currentRegion.districts.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
-                  </option>
-                ))
-              : regions
-                  .flatMap((region) => region.districts) // 모든 구를 나열
-                  .map((district, index) => (
-                    <option key={index} value={district}>
-                      {district}
-                    </option>
-                  ))}
+            <option value="">All Districts</option>
+            {districts.map((district) => (
+              <option key={district} value={district}>
+                {district}
+              </option>
+            ))}
           </select>
           <ChevronDown
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"

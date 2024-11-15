@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
-import { formatToTimeAgo } from "@/app/utils/utils";
+import { formatToTimeAgo, getDisplayAddress } from "@/app/utils/utils";
 import Link from "next/link";
 import { MapPin, Plus } from "lucide-react";
 import { InitialProducts } from "@/app/user/marketplace/products/page";
@@ -13,12 +13,12 @@ import { getMoreProducts } from "@/app/user/marketplace/products/action";
 interface ProductListProps {
   initialProducts: InitialProducts;
   initialLocation: {
-    city: string;
+    province: string;
+    city?: string;
     district: string;
   };
   isLoggedIn?: boolean;
 }
-
 const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
   product,
 }) => (
@@ -62,7 +62,7 @@ const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
       <div>
         <p className="text-sm text-gray-600 flex items-center">
           <MapPin size={14} className="mr-1" />
-          {product.user.si} {product.user.gu}
+          {getDisplayAddress(product)}
         </p>
         <p className="text-xs text-gray-500 mt-1">
           {formatToTimeAgo(product.created_at.toString())}
@@ -82,7 +82,8 @@ export default function ProductList({
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [query, setQuery] = useState("");
-  const [city, setCity] = useState(initialLocation.city);
+  const [province, setProvince] = useState(initialLocation.province);
+  const [city, setCity] = useState(initialLocation.city || "");
   const [district, setDistrict] = useState(initialLocation.district);
 
   const { ref, inView } = useInView();
@@ -92,7 +93,13 @@ export default function ProductList({
 
     setLoading(true);
     try {
-      const response = await getMoreProducts(page + 1, city, district, query);
+      const response = await getMoreProducts(
+        page + 1,
+        province,
+        city,
+        district,
+        query
+      );
 
       if (response.products.length > 0) {
         setProducts((prev) => [...prev, ...response.products]);
@@ -106,7 +113,7 @@ export default function ProductList({
     } finally {
       setLoading(false);
     }
-  }, [page, city, district, query, loading, hasMore]);
+  }, [page, province, city, district, query, loading, hasMore]);
 
   useEffect(() => {
     if (inView) {
@@ -120,7 +127,13 @@ export default function ProductList({
     setLoading(true);
 
     try {
-      const response = await getMoreProducts(1, city, district, searchQuery);
+      const response = await getMoreProducts(
+        1,
+        province,
+        city,
+        district,
+        searchQuery
+      );
       setProducts(response.products);
       setHasMore(response.hasMore);
     } catch (error) {
@@ -130,14 +143,25 @@ export default function ProductList({
     }
   };
 
-  const handleFilterChange = async (newCity: string, newDistrict: string) => {
+  const handleFilterChange = async (
+    newProvince: string,
+    newCity: string,
+    newDistrict: string
+  ) => {
+    setProvince(newProvince);
     setCity(newCity);
     setDistrict(newDistrict);
     setPage(1);
     setLoading(true);
 
     try {
-      const response = await getMoreProducts(1, newCity, newDistrict, query);
+      const response = await getMoreProducts(
+        1,
+        newProvince,
+        newCity,
+        newDistrict,
+        query
+      );
       setProducts(response.products);
       setHasMore(response.hasMore);
     } catch (error) {
@@ -166,8 +190,8 @@ export default function ProductList({
 
       <SearchBar onSearch={handleSearch} />
       <RegionFilter
-        regions={regions}
         onFilterChange={handleFilterChange}
+        initialProvince={initialLocation.province}
         initialCity={initialLocation.city}
         initialDistrict={initialLocation.district}
       />

@@ -8,17 +8,16 @@ export type Post = {
   user: {
     image: string | null;
     id: string;
-    gu: string | null;
     name: string | null;
-    si: string | null;
-    dong: string | null;
+    province: string | null;
+    city: string | null;
+    district: string | null;
   };
   id: number;
   title: string;
   description: string | null;
   created_at: Date;
 };
-
 export type InitialPosts = Post[];
 
 export default async function PostListPage() {
@@ -26,14 +25,15 @@ export default async function PostListPage() {
   const user = session
     ? await db.user.findUnique({
         where: { id: session.id },
-        select: { si: true, gu: true },
+        select: { province: true, city: true, district: true },
       })
     : null;
 
   const { posts: initialPosts } = await getMorePosts(
     1,
-    user?.si || undefined,
-    user?.gu || undefined,
+    user?.province || undefined,
+    user?.city || undefined,
+    user?.district || undefined,
     ""
   );
 
@@ -42,7 +42,11 @@ export default async function PostListPage() {
       <div>
         <PostList
           initialPosts={initialPosts}
-          initialLocation={{ city: user?.si || "", district: user?.gu || "" }}
+          initialLocation={{
+            province: user?.province || "",
+            city: user?.city || "",
+            district: user?.district || "",
+          }}
           isLoggedIn={!!session}
         />
       </div>

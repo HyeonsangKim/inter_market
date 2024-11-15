@@ -14,9 +14,9 @@ type User = {
   name: string | null;
   created_at: Date;
   email: string | null;
-  si: string | null;
-  gu: string | null;
-  dong: string | null;
+  province: string | null;
+  city?: string | null;
+  district: string | null;
 } | null;
 
 interface Post {

@@ -1,13 +1,48 @@
 "use server";
-import { getCurrentUser } from "@/app/utils/supabase/get-user";
+
+import { regions } from "@/app/utils/address-info";
 import { db } from "./db";
+import { getCurrentUser } from "@/app/utils/supabase/get-user";
 
 interface Address {
-  si?: string;
-  gu?: string;
-  dong?: string;
-  fullAdress?: string;
+  province?: string | null;
+  city?: string | null;
+  district?: string | null;
+  fullAddress?: string | null;
 }
+
+export const checkAddress = async () => {
+  const userData = await getCurrentUser();
+
+  if (userData) {
+    const user = await db.user.findUnique({
+      where: {
+        id: userData.id,
+      },
+      select: {
+        province: true,
+        city: true,
+        district: true,
+        fullAddress: true,
+      },
+    });
+
+    if (!user) return null;
+
+    if (!user.province && !user.city && !user.district) {
+      return null;
+    }
+
+    return {
+      province: user.province,
+      city: user.city,
+      district: user.district,
+      fullAddress: user.fullAddress,
+    };
+  }
+
+  return null;
+};
 export const insertAddress = async ({
   fetchedAddress,
   userId,
@@ -21,38 +56,15 @@ export const insertAddress = async ({
         id: userId,
       },
       data: {
-        si: fetchedAddress.si,
-        dong: fetchedAddress.dong,
-        gu: fetchedAddress.gu,
-        fullAdress: fetchedAddress.fullAdress,
+        province: fetchedAddress.province,
+        city: fetchedAddress.city,
+        district: fetchedAddress.district,
+        fullAddress: fetchedAddress.fullAddress,
       },
     });
     return result;
-  } else {
-    return null;
   }
-};
-
-export const checkAddress = async () => {
-  const userData = await getCurrentUser();
-
-  if (userData) {
-    const user = await db.user.findUnique({
-      where: {
-        id: userData!.id,
-      },
-      select: {
-        si: true,
-        dong: true,
-        gu: true,
-        fullAdress: true,
-      },
-    });
-
-    return user;
-  } else {
-    return null;
-  }
+  return null;
 };
 
 export const fetchAddress = async (
@@ -69,24 +81,78 @@ export const fetchAddress = async (
     }
 
     const data = await response.json();
-    console.log(data);
-
     const addressComponents = data.results[0]?.address_components || [];
 
-    console.log(addressComponents);
+    const country = addressComponents.find((comp: any) =>
+      comp.types.includes("country")
+    )?.short_name;
 
-    const si = addressComponents.find((comp: any) =>
+    if (country !== "KR") {
+      throw new Error("FOREIGN_ADDRESS");
+    }
+
+    const rawProvince = addressComponents.find((comp: any) =>
       comp.types.includes("administrative_area_level_1")
     )?.long_name;
-    const gu = addressComponents.find((comp: any) =>
-      comp.types.includes("sublocality_level_1")
-    )?.long_name;
-    const dong = addressComponents.find((comp: any) =>
-      comp.types.includes("sublocality_level_2")
-    )?.long_name;
-    const fullAdress = si + " " + " " + gu + " " + dong;
-    return { si, gu, dong, fullAdress };
+
+    const regionData = regions.find((r) => r.province === rawProvince);
+    if (!regionData) {
+      throw new Error("UNSUPPORTED_REGION");
+    }
+
+    let city: string | undefined;
+    let district: string | undefined;
+
+    if (regionData.type === "metropolitan") {
+      district = addressComponents.find((comp: any) =>
+        comp.types.includes("sublocality_level_1")
+      )?.long_name;
+
+      if (district && !(regionData.districts as string[]).includes(district)) {
+        district = undefined;
+      }
+    } else {
+      const rawCity = addressComponents.find((comp: any) =>
+        comp.types.includes("locality")
+      )?.long_name;
+
+      const cityData = (
+        regionData.districts as { city: string; areas: string[] }[]
+      ).find((d) => d.city === rawCity);
+
+      if (cityData) {
+        city = cityData.city;
+        if (cityData.areas.length > 0) {
+          district = addressComponents.find((comp: any) =>
+            comp.types.includes("sublocality_level_1")
+          )?.long_name;
+
+          if (district && !cityData.areas.includes(district)) {
+            district = undefined;
+          }
+        }
+      }
+    }
+
+    const fullAddress = [regionData.province, city, district]
+      .filter(Boolean)
+      .join(" ");
+
+    return {
+      province: regionData.province,
+      city,
+      district,
+      fullAddress,
+    };
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "FOREIGN_ADDRESS") {
+        throw new Error("Service is only available in South Korea");
+      }
+      if (error.message === "UNSUPPORTED_REGION") {
+        throw new Error("Unsupported region");
+      }
+    }
     console.error(error);
     return null;
   }

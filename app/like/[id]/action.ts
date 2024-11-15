@@ -23,8 +23,9 @@ export async function getLikedItems(
                   select: {
                     name: true,
                     image: true,
-                    si: true,
-                    gu: true,
+                    province: true,
+                    city: true,
+                    district: true,
                   },
                 },
                 photos: {
@@ -60,8 +61,9 @@ export async function getLikedItems(
                   select: {
                     name: true,
                     image: true,
-                    si: true,
-                    gu: true,
+                    province: true,
+                    city: true,
+                    district: true,
                   },
                 },
               },

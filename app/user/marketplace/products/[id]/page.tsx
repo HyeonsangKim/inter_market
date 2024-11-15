@@ -21,6 +21,7 @@ import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { deleteProduct } from "../edit/[id]/action";
 import { Edit } from "lucide-react";
 import LikeButton from "@/components/buttons/LIkeShareBtn";
+import { getDisplayAddress } from "@/app/utils/utils";
 export type InitialProductsComments = Prisma.PromiseReturnType<
   typeof getComments
 >;
@@ -88,7 +89,7 @@ export default async function PostDetail({
         <div>
           <p className="flex items-center text-gray-600 mb-2">
             <MapPinIcon className="h-5 w-5 mr-2" />
-            location: {product.user.si}, {product.user.gu}
+            location: {getDisplayAddress(product)}
           </p>
           <div className="flex items-center text-gray-600">
             <ClockIcon className="h-4 w-4 mr-3" />

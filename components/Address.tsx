@@ -3,6 +3,25 @@ import { fetchAddress, insertAddress } from "@/lib/location";
 import { MapPin, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { regions } from "@/app/utils/address-info";
+
+interface Region {
+  province: string;
+  type: "metropolitan" | "province";
+  districts:
+    | string[]
+    | {
+        city: string;
+        areas: string[];
+      }[];
+}
+
+interface Address {
+  province?: string | null;
+  city?: string | null;
+  district?: string | null;
+  fullAddress?: string | null;
+}
 
 interface LocationProps {
   latitude: number;
@@ -11,19 +30,12 @@ interface LocationProps {
 
 interface AddressProps {
   address: {
-    si?: string | null;
-    gu?: string | null;
-    dong?: string | null;
-    fullAdress?: string | null;
+    province?: string | null;
+    city?: string | null;
+    district?: string | null;
+    fullAddress?: string | null;
   } | null;
-  userId: string | null; // null인 경우 추가
-}
-
-interface Address {
-  si?: string | null;
-  gu?: string | null;
-  dong?: string | null;
-  fullAdress?: string | null;
+  userId: string | null;
 }
 
 export default function AddressInfo({ address, userId }: AddressProps) {
@@ -32,16 +44,30 @@ export default function AddressInfo({ address, userId }: AddressProps) {
   const [error, setError] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState<Address | null>(address);
 
-  useEffect(() => {
-    if (!address || address.si === null) {
-      setNewAddress(null);
-    } else {
-      setNewAddress(address);
+  const getDisplayAddress = (address: Address | null) => {
+    if (!address?.province) return "";
+
+    const regionData = regions.find((r) => r.province === address.province);
+    if (!regionData) return "";
+
+    if (regionData.type === "metropolitan") {
+      return `${address.province} ${address.district || ""}`;
     }
-  }, [address]);
+
+    if (address.city) {
+      const cityData = (
+        regionData.districts as { city: string; areas: string[] }[]
+      ).find((d) => d.city === address.city);
+      if (cityData?.areas?.length) {
+        return `${address.province} ${address.city} ${address.district || ""}`;
+      }
+      return `${address.province} ${address.city}`;
+    }
+
+    return address.province;
+  };
 
   const handleFetchAddress = () => {
-    // 로그인 체크
     if (!userId) {
       router.push(
         "/login?redirectTo=" + encodeURIComponent(window.location.pathname)
@@ -61,7 +87,6 @@ export default function AddressInfo({ address, userId }: AddressProps) {
 
         try {
           const fetchedAddress = await fetchAddress(latitude, longitude);
-          console.log(fetchedAddress);
 
           if (fetchedAddress) {
             setNewAddress(fetchedAddress);
@@ -70,6 +95,10 @@ export default function AddressInfo({ address, userId }: AddressProps) {
             console.error("Fetched address is null");
           }
         } catch (err) {
+          if (err instanceof Error && err.message === "FOREIGN_ADDRESS") {
+            setError("Sorry, this service is only available in South Korea");
+            return;
+          }
           setError("Unable to retrieve address");
         }
       },
@@ -83,12 +112,10 @@ export default function AddressInfo({ address, userId }: AddressProps) {
     <div className="bg-white shadow-sm rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center min-w-0">
-          {" "}
-          {/* min-w-0 추가로 텍스트 오버플로우 방지 */}
           <MapPin size={20} className="text-indigo-500 mr-2 flex-shrink-0" />
           {newAddress ? (
             <p className="text-sm text-gray-700 truncate">
-              {newAddress.si} {newAddress.gu}
+              {getDisplayAddress(newAddress)}
             </p>
           ) : (
             <p className="text-sm text-gray-500">Address not set</p>

@@ -19,10 +19,10 @@ model User {
   emailVerified    DateTime?
   created_at       DateTime   @default(now())
   updated_at       DateTime   @updatedAt
-  si               String?
-  gu               String?
-  dong             String?
-  fullAdress       String?
+  province        String?    
+  city           String?    
+  district       String?  
+  fullAddress    String? 
   accounts         Account[]
   comments         Comment[]
   likes            Like[]

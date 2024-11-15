@@ -49,9 +49,9 @@ export async function getProduct(id: number) {
             id: true,
             name: true,
             image: true,
-            si: true,
-            gu: true,
-            dong: true,
+            province: true,
+            city: true,
+            district: true,
           },
         },
         photos: {

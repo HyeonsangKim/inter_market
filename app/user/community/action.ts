@@ -1,16 +1,44 @@
 // app/user/community/actions.ts
 "use server";
 
+import { regions } from "@/app/utils/address-info";
 import { db } from "@/lib/db";
 
 export async function getMorePosts(
   page: number,
-  city?: string | null,
-  district?: string | null,
+  province?: string,
+  city?: string,
+  district?: string,
   query?: string
 ) {
   const ITEMS_PER_PAGE = 10;
   const skip = (page - 1) * ITEMS_PER_PAGE;
+  const regionData = province
+    ? regions.find((r) => r.province === province)
+    : null;
+  let locationFilter = {};
+
+  if (regionData) {
+    if (regionData.type === "metropolitan") {
+      // 광역시의 경우
+      locationFilter = {
+        user: {
+          province: province,
+          city: null,
+          ...(district ? { district } : {}),
+        },
+      };
+    } else {
+      // 도의 경우
+      locationFilter = {
+        user: {
+          province: province,
+          ...(city ? { city } : {}),
+          ...(district ? { district } : {}),
+        },
+      };
+    }
+  }
 
   const where = {
     AND: [
@@ -24,14 +52,7 @@ export async function getMorePosts(
           }
         : {},
       // 지역 필터
-      city
-        ? {
-            user: {
-              si: city,
-              ...(district ? { gu: district } : {}),
-            },
-          }
-        : {},
+      locationFilter,
     ],
   };
 
@@ -49,9 +70,9 @@ export async function getMorePosts(
             id: true,
             name: true,
             image: true,
-            si: true,
-            gu: true,
-            dong: true,
+            province: true,
+            city: true,
+            district: true,
           },
         },
       },

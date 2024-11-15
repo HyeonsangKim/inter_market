@@ -4,6 +4,7 @@ import { Heart, Clock, MapPin, MessageCircle, Package } from "lucide-react";
 import { getLikedItems } from "./action";
 import { format } from "date-fns";
 import { Pagination } from "@/components/CustomPagination";
+import { getDisplayAddress } from "@/app/utils/utils";
 
 export default async function LikedItemsPage({
   params,
@@ -80,7 +81,7 @@ export default async function LikedItemsPage({
                               <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1">
                                   <MapPin className="w-4 h-4" />
-                                  {product.user.si}, {product.user.gu}
+                                  {getDisplayAddress(product)}
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <Clock className="w-4 h-4" />
@@ -156,7 +157,7 @@ export default async function LikedItemsPage({
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
                               <MapPin className="w-4 h-4" />
-                              {post.user.si}, {post.user.gu}
+                              {getDisplayAddress(post)}
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />

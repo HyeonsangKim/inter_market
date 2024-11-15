@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MapPin, MessageCircle } from "lucide-react";
 
 interface BaseItemProps {
   id: number;
@@ -14,7 +14,7 @@ interface ProductItemProps extends BaseItemProps {
   type: "product";
   price: number;
   photos: { url: string }[];
-  address: string;
+  address: string | null;
   soldout: boolean | null;
 }
 
@@ -60,12 +60,15 @@ const ItemCard: React.FC<ItemProps> = (props) => {
         <div className="p-4">
           <h3 className="font-semibold text-lg mb-2 truncate">{title}</h3>
           {type === "product" && (
-            <>
+            <div>
               <p className="text-indigo-600 font-bold mb-2">
                 ₩ {props.price.toLocaleString()}
               </p>
-              <p className="text-gray-600 font-bold mb-2">{props.address}</p>
-            </>
+              <p className="text-gray-600 mb-2 flex items-center">
+                <MapPin size={14} className="mr-1" />
+                {props.address}
+              </p>
+            </div>
           )}
           {/* {type === "post" && (
             <p className="text-gray-600 mb-2 line-clamp-2">{props.content}</p>

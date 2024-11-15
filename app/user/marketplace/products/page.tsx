@@ -8,10 +8,10 @@ export type Product = {
   user: {
     image: string | null;
     id: string;
-    gu: string | null;
     name: string | null;
-    si: string | null;
-    dong: string | null;
+    province: string | null;
+    city: string | null;
+    district: string | null;
   };
   id: number;
   title: string;
@@ -20,7 +20,6 @@ export type Product = {
   soldout: boolean | null;
   photos: { url: string }[];
 };
-
 export type InitialProducts = Product[];
 
 export default async function ProductListPage() {
@@ -28,14 +27,19 @@ export default async function ProductListPage() {
   const user = session
     ? await db.user.findUnique({
         where: { id: session.id },
-        select: { si: true, gu: true },
+        select: {
+          province: true,
+          city: true,
+          district: true,
+        },
       })
     : null;
 
   const { products: initialProducts } = await getMoreProducts(
     1,
-    user?.si || undefined,
-    user?.gu || undefined,
+    user?.province || undefined,
+    user?.city || undefined,
+    user?.district || undefined,
     ""
   );
 
@@ -44,7 +48,11 @@ export default async function ProductListPage() {
       <div>
         <ProductList
           initialProducts={initialProducts}
-          initialLocation={{ city: user?.si || "", district: user?.gu || "" }}
+          initialLocation={{
+            province: user?.province || "",
+            city: user?.city || "",
+            district: user?.district || "",
+          }}
           isLoggedIn={!!session}
         />
       </div>
