@@ -206,13 +206,11 @@ export default function CreateProductPage() {
           </p>
         </div>
 
-        {error && (
-          <div className="text-red-500 text-sm text-center">{error}</div>
-        )}
+        {error && <div className="custom_error">{error}</div>}
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center justify-center"
+          className="w-full btn-custom"
           disabled={isLoading}
         >
           {isLoading ? (

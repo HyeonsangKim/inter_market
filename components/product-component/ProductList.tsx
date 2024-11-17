@@ -1,76 +1,13 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
-import Image from "next/image";
-import { formatToTimeAgo, getDisplayAddress } from "@/app/utils/utils";
 import Link from "next/link";
-import { MapPin, Plus } from "lucide-react";
-import { InitialProducts } from "@/app/user/marketplace/products/page";
-import { regions } from "@/app/utils/address-info";
+import { Plus } from "lucide-react";
 import { RegionFilter, SearchBar } from "../CommonSearch";
 import { getMoreProducts } from "@/app/user/marketplace/products/action";
-
-interface ProductListProps {
-  initialProducts: InitialProducts;
-  initialLocation: {
-    province: string;
-    city?: string;
-    district: string;
-  };
-  isLoggedIn?: boolean;
-}
-const ProductCard: React.FC<{ product: InitialProducts[number] }> = ({
-  product,
-}) => (
-  <Link
-    href={`/user/marketplace/products/${product.id}`}
-    className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col"
-  >
-    <div className="relative">
-      <div className="relative h-48 w-full">
-        {product.photos[0] && (
-          <>
-            <Image
-              fill
-              src={product.photos[0].url}
-              alt={product.title}
-              className={`object-cover ${
-                product.soldout ? "filter blur-[2px]" : ""
-              }`}
-            />
-            {product.soldout && (
-              <Image
-                fill
-                src={"/img/soldout.png"}
-                alt={product.title}
-                className="object-contain"
-              />
-            )}
-          </>
-        )}
-      </div>
-    </div>
-    <div className="p-4 flex-grow flex flex-col justify-between">
-      <div>
-        <h2 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
-          {product.title}
-        </h2>
-        <p className="text-xl font-bold text-indigo-600 mb-2">
-          ₩ {product.price.toLocaleString()}
-        </p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-600 flex items-center">
-          <MapPin size={14} className="mr-1" />
-          {getDisplayAddress(product)}
-        </p>
-        <p className="text-xs text-gray-500 mt-1">
-          {formatToTimeAgo(product.created_at.toString())}
-        </p>
-      </div>
-    </div>
-  </Link>
-);
+import { InitialProducts } from "@/app/types/common";
+import { ProductListProps } from "@/app/types/props";
+import { ProductItem } from "./ProductItem";
 
 export default function ProductList({
   initialProducts,
@@ -178,10 +115,10 @@ export default function ProductList({
         {isLoggedIn ? (
           <Link
             href="/user/marketplace/products/create"
-            className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+            className="flex items-center btn-custom"
           >
             <Plus size={20} className="mr-2" />
-            New Product
+            New
           </Link>
         ) : (
           <></>
@@ -198,7 +135,7 @@ export default function ProductList({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductItem key={product.id} product={product} />
         ))}
       </div>
 

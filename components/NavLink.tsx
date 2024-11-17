@@ -24,7 +24,31 @@ const ICONS = {
 } as const;
 
 type IconType = keyof typeof ICONS;
+const getIcon = (name: string, isActive: boolean) => {
+  const props = {
+    size: 24,
+    className: isActive ? "text-indigo-600" : "text-gray-500",
+  };
 
+  switch (name) {
+    case "Home":
+      return <Home {...props} />;
+    case "Users":
+      return <Users {...props} />;
+    case "ShoppingBag":
+      return <ShoppingBag {...props} />;
+    case "Heart":
+      return <Heart {...props} />;
+    case "MessageCircle":
+      return <MessageCircle {...props} />;
+    case "User":
+      return <User {...props} />;
+    case "LogIn":
+      return <LogIn {...props} />;
+    default:
+      return <Home {...props} />;
+  }
+};
 export function NavLink({
   href,
   children,
@@ -60,8 +84,8 @@ export function MobileNavLink({
   label: string;
 }) {
   const pathname = usePathname();
-  const isActive = pathname.startsWith(href);
-  const Icon = ICONS[iconName];
+  const isActive =
+    pathname === href || (href !== "/user" && pathname?.startsWith(href));
 
   return (
     <Link
@@ -70,11 +94,12 @@ export function MobileNavLink({
         isActive ? "text-indigo-600" : "text-gray-600"
       }`}
     >
-      <Icon
-        size={24}
-        className={isActive ? "text-indigo-600" : "text-gray-600"}
-      />
-      <span className={`text-xs mt-1 ${isActive ? "font-medium" : ""}`}>
+      {getIcon(iconName, isActive)}
+      <span
+        className={`text-xs mt-1 ${
+          isActive ? "text-indigo-600" : "text-gray-500"
+        }`}
+      >
         {label}
       </span>
     </Link>

@@ -1,24 +1,7 @@
-// app/user/community/page.tsx
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { db } from "@/lib/db";
 import { getMorePosts } from "./action";
 import PostList from "@/components/post-component/PostList";
-
-export type Post = {
-  user: {
-    image: string | null;
-    id: string;
-    name: string | null;
-    province: string | null;
-    city: string | null;
-    district: string | null;
-  };
-  id: number;
-  title: string;
-  description: string | null;
-  created_at: Date;
-};
-export type InitialPosts = Post[];
 
 export default async function PostListPage() {
   const session = await getCurrentUser();

@@ -1,5 +1,5 @@
 "use server";
-import { SessionUser } from "@/app/types/user";
+import { SessionUser } from "@/app/types/common";
 import { db } from "@/lib/db";
 import { cache } from "react";
 import { createClient } from "./server";

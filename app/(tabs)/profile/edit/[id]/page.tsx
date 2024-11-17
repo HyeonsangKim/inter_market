@@ -8,12 +8,14 @@ import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";
 import { editProfile } from "./action";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ProfileEdit({ params }: { params: { id: string } }) {
   const router = useRouter();
   const supabase = createClient();
   const [userData, setUserData] = useState<any>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [state, dispatch] = useFormState(editProfile, null);
 
   useEffect(() => {
@@ -52,10 +54,46 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
   }, [params.id, router, supabase]);
 
   useEffect(() => {
-    if (state?.success) {
-      router.refresh();
+    if (state) {
+      setIsSubmitting(false);
+      if (state.success) {
+        toast.success("Profile updated successfully!", {
+          duration: 3000,
+          position: "top-center",
+          style: {
+            background: "#4F46E5",
+            color: "#fff",
+          },
+          icon: "👍",
+        });
+        router.refresh();
+      } else if (state.error) {
+        toast.error("Failed to update profile. Please try again.", {
+          duration: 3000,
+          position: "top-center",
+          style: {
+            background: "#EF4444",
+            color: "#fff",
+          },
+          icon: "❌",
+        });
+      }
     }
   }, [state, router]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isSubmitting) return; // 중복 제출 방지
+
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    try {
+      await dispatch(formData);
+    } catch (error) {
+      setIsSubmitting(false);
+      toast.error("An unexpected error occurred");
+    }
+  };
 
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -83,92 +121,103 @@ export default function ProfileEdit({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="container max-w-md mx-auto p-4">
-      <form action={dispatch} className="space-y-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex flex-col items-center mb-6">
-            <div className="relative w-32 h-32 mb-4">
-              <label
-                htmlFor="image"
-                className="cursor-pointer block w-full h-full"
-              >
-                <div className="relative w-full h-full">
-                  <div className="w-full h-full rounded-full overflow-hidden">
-                    <Image
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-cover"
-                      src={preview || userData?.image || "/img/default.jpg"}
-                      alt={userData?.name || "Profile"}
-                      priority
-                    />
+    <>
+      <Toaster />
+      <div className="container max-w-md mx-auto p-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex flex-col items-center mb-6">
+              <div className="relative w-32 h-32 mb-4">
+                <label
+                  htmlFor="image"
+                  className="cursor-pointer block w-full h-full"
+                >
+                  <div className="relative w-full h-full">
+                    <div className="w-full h-full rounded-full overflow-hidden">
+                      <Image
+                        width={128}
+                        height={128}
+                        className="w-full h-full object-cover"
+                        src={preview || userData?.image || "/img/default.jpg"}
+                        alt={userData?.name || "Profile"}
+                        priority
+                      />
+                    </div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
+                      <span className="text-white text-sm font-medium">
+                        Change Photo
+                      </span>
+                    </div>
                   </div>
-                  <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
-                    <span className="text-white text-sm font-medium">
-                      Change Photo
-                    </span>
-                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  onChange={onImageChange}
+                  className="hidden"
+                />
+              </div>
+
+              <div className="w-full space-y-4">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Name
+                  </label>
+                  <Input
+                    type="text"
+                    name="name"
+                    id="name"
+                    defaultValue={userData.name}
+                    className="w-full"
+                  />
                 </div>
-              </label>
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*"
-                onChange={onImageChange}
-                className="hidden"
-              />
-            </div>
 
-            <div className="w-full space-y-4">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Name
-                </label>
-                <Input
-                  type="text"
-                  name="name"
-                  id="name"
-                  defaultValue={userData.name}
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Email
-                </label>
-                <Input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={userData.email}
-                  readOnly
-                  className="w-full bg-gray-50"
-                />
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Email
+                  </label>
+                  <Input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value={userData.email}
+                    readOnly
+                    className="w-full bg-gray-50"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {state?.error && (
-            <div className="text-red-500 text-sm text-center mb-4">
-              {state.error}
+            {state?.error && <div className="error mb-4">{state.error}</div>}
+
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isSubmitting}
+                className="flex items-center justify-center min-w-[120px] bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  <span>Save Changes</span>
+                )}
+              </Button>
             </div>
-          )}
-
-          <div className="flex justify-end">
-            <Button type="submit" variant="primary">
-              Save Changes
-            </Button>
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 }

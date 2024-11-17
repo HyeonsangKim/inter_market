@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { InitialProducts } from "./page";
 import { regions } from "@/app/utils/address-info";
+import { InitialProducts } from "@/app/types/common";
 type ProductsResponse = {
   products: InitialProducts;
   hasMore: boolean;
@@ -81,6 +81,9 @@ export async function getMoreProducts(
             city: true,
             district: true,
           },
+        },
+        _count: {
+          select: { likes: true },
         },
       },
       orderBy: { created_at: "desc" },

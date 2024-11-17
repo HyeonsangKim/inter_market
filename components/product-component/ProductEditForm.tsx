@@ -235,9 +235,7 @@ export default function EditForm({ productId, product }: EditFormProps) {
           </p>
         </div>
 
-        {error && (
-          <div className="text-red-500 text-sm text-center">{error}</div>
-        )}
+        {error && <div className="error">{error}</div>}
 
         <button
           type="submit"

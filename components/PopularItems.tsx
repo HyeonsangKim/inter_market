@@ -70,21 +70,12 @@ const ItemCard: React.FC<ItemProps> = (props) => {
               </p>
             </div>
           )}
-          {/* {type === "post" && (
-            <p className="text-gray-600 mb-2 line-clamp-2">{props.content}</p>
-          )} */}
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">{user.name}</span>
             <div className="flex items-center space-x-2">
               <span className="flex items-center text-sm text-red-500">
                 <Heart size={16} className="mr-1" /> {likes}
               </span>
-              {/* {type === "post" && (
-                <span className="flex items-center text-sm text-blue-500">
-                  <MessageCircle size={16} className="mr-1" />{" "}
-                  {props.commentCount}
-                </span>
-              )} */}
             </div>
           </div>
         </div>

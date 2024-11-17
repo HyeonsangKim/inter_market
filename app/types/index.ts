@@ -1,30 +1,3 @@
-export interface User {
-  id: string;
-  name: string | null;
-  email: string | null;
-  image: string | null;
-  created_at: Date;
-}
-
-export interface Post {
-  id: string | number;
-  title: string;
-  content?: string;
-  created_at: string | Date;
-}
-
-export interface Product {
-  id: string | number;
-  title: string;
-  description?: string;
-  price: number;
-  firstPhoto: string | null;
-  created_at: string | Date;
-  user: {
-    name: string | null;
-  };
-}
-
 export interface Image {
   id: number;
   url: string;
@@ -40,24 +13,4 @@ export interface Comment {
     image?: string | null;
   };
   replies?: Comment[];
-}
-export interface LoginState {
-  success?: boolean;
-  message?: string;
-  errors?: {
-    email?: string[];
-    password?: string[];
-  };
-}
-export interface CreateAccountState {
-  formError?: string;
-  fieldErrors?: {
-    name?: string[];
-    email?: string[];
-    password?: string[];
-    confirmPassword?: string[];
-  };
-  message?: string;
-  success?: boolean;
-  redirect?: string;
 }

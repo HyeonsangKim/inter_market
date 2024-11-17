@@ -3,21 +3,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { InitialPosts } from "@/app/user/community/page";
-import { regions } from "@/app/utils/address-info";
 import { RegionFilter, SearchBar } from "../CommonSearch";
-import { format } from "date-fns";
 import { getMorePosts } from "@/app/user/community/action";
-
-interface PostListProps {
-  initialPosts: InitialPosts;
-  initialLocation: {
-    province: string;
-    city?: string;
-    district: string;
-  };
-  isLoggedIn?: boolean;
-}
+import { PostItem } from "./PostItem";
+import { PostListProps } from "@/app/types/props";
+import { InitialPosts } from "@/app/types/common";
 
 export default function PostList({
   initialPosts,
@@ -125,10 +115,10 @@ export default function PostList({
         {isLoggedIn ? (
           <Link
             href="/user/community/create"
-            className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+            className="flex items-center btn-custom"
           >
             <Plus size={20} className="mr-2" />
-            New Post
+            New
           </Link>
         ) : (
           <></>
@@ -148,18 +138,9 @@ export default function PostList({
           <Link
             key={post.id}
             href={`/user/community/${post.id}`}
-            className="text-xl font-semibold hover:shadow-lg transition"
+            className="block"
           >
-            <div className="border p-4 rounded">
-              {post.title}
-              <p className="text-gray-600">
-                {post.description?.substring(0, 100)}...
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                writer: {post.user.name} | date:{" "}
-                {format(new Date(post.created_at), "dd/MM/yyyy")}
-              </p>
-            </div>
+            <PostItem post={post} />
           </Link>
         ))}
       </div>

@@ -9,7 +9,6 @@ import {
   LogIn,
 } from "lucide-react";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
-import UnreadBadge from "./UnreadCount";
 import { getUnreadMessagesCount } from "@/app/chats/actions";
 import { MobileNavLink, NavLink } from "./NavLink";
 import UnreadBadgeWithRealtime from "./UnreadBadgeWithRealtime";

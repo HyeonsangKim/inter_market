@@ -15,12 +15,9 @@ export function formatToWon(price: number) {
   return price.toLocaleString("ko-KR");
 }
 export const getDisplayAddress = (product: any) => {
-  console.log("asdp[aosdpaosp[kkpm");
-
   if (!product?.user?.province) {
     return "Unknown location"; // 기본값 처리
   }
-  console.log(product.user);
 
   const regionData = regions.find((r) => r.province === product.user.province);
   if (!regionData) {

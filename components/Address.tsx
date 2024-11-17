@@ -4,17 +4,7 @@ import { MapPin, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { regions } from "@/app/utils/address-info";
-
-interface Region {
-  province: string;
-  type: "metropolitan" | "province";
-  districts:
-    | string[]
-    | {
-        city: string;
-        areas: string[];
-      }[];
-}
+import { AddressProps } from "@/app/types/props";
 
 interface Address {
   province?: string | null;
@@ -26,16 +16,6 @@ interface Address {
 interface LocationProps {
   latitude: number;
   longitude: number;
-}
-
-interface AddressProps {
-  address: {
-    province?: string | null;
-    city?: string | null;
-    district?: string | null;
-    fullAddress?: string | null;
-  } | null;
-  userId: string | null;
 }
 
 export default function AddressInfo({ address, userId }: AddressProps) {

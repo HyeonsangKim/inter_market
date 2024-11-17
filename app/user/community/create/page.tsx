@@ -77,10 +77,10 @@ export default function CreatePostPage() {
             disabled={isLoading}
           ></textarea>
         </div>
-
+        {error && <div className="error">{error}</div>}
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300"
+          className="w-full btn-custom"
           disabled={isLoading}
         >
           {isLoading ? (
