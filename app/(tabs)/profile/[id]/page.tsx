@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
 import { ProfileForm } from "@/components/ProfileForm";
 import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
 
 async function getMyPosts(userId: string) {
   const posts = await db.post.findMany({
@@ -69,10 +70,7 @@ async function getMyProducts(userId: string) {
     },
   });
 
-  return products.map((product) => ({
-    ...product,
-    firstPhoto: product.photos[0]?.url || null,
-  }));
+  return products;
 }
 async function getProfile(userId: string) {
   const currentUser = await db.user.findUnique({
@@ -96,13 +94,13 @@ async function getProfile(userId: string) {
 export default async function Profile({ params }: { params: { id: string } }) {
   const userId = params.id;
   const user = await getProfile(userId);
+  if (!user) {
+    redirect("/404"); // 또는 다른 페이지
+  }
   const products = await getMyProducts(user!.id);
   const posts = await getMyPosts(user!.id);
   const session = await getCurrentUser();
-  let currentUser = false;
-  if (session!.id === userId) {
-    currentUser = true;
-  }
+  const currentUser = session?.id === userId;
 
   return (
     <ProfileForm

@@ -19,6 +19,7 @@ export interface Image {
 }
 export interface BaseUser {
   id: string;
+  email: string | null;
   name: string | null;
   image: string | null;
   province: string | null;

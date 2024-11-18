@@ -214,14 +214,16 @@ export default function ChatMessagesList({
                       <p className="font-semibold">
                         {item?.users[1]?.name || "User"}
                       </p>
-                      {!item?.messages?.[0].isRead && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
-                      )}
+                      {item?.messages?.[0]?.isRead !== undefined &&
+                        !item?.messages[0].isRead && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
+                        )}
                     </div>
 
                     <p
                       className={`text-sm ${
-                        !item?.messages?.[0].isRead
+                        item?.messages?.[0]?.isRead !== undefined &&
+                        !item?.messages[0].isRead
                           ? "font-semibold text-black"
                           : "text-gray-500"
                       }`}
@@ -258,14 +260,16 @@ export default function ChatMessagesList({
                     <p className="font-semibold">
                       {item?.users[1]?.name || "User"}
                     </p>
-                    {!item?.messages?.[0].isRead && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
-                    )}
+                    {item?.messages?.[0]?.isRead !== undefined &&
+                      !item?.messages[0].isRead && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" />
+                      )}
                   </div>
 
                   <p
                     className={`text-sm ${
-                      !item?.messages?.[0].isRead
+                      item?.messages?.[0]?.isRead !== undefined &&
+                      !item?.messages[0].isRead
                         ? "font-semibold text-black"
                         : "text-gray-500"
                     }`}

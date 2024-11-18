@@ -24,18 +24,19 @@ export function ProductItem({ product }: ProductItemProps) {
 
   return (
     <Link href={`/user/marketplace/products/${id}`} className="group">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
         <div className="flex flex-col">
           {/* 이미지 */}
-          <div className="relative w-full aspect-[4/3] flex-shrink-0">
+          <div className="relative w-full aspect-[4/3] flex-shrink-0 overflow-hidden">
+            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
             <Image
               src={photos[0]?.url || "/placeholder.png"}
               alt={title}
               fill
               sizes="100vw"
-              className={`object-cover ${
-                !soldout && "group-hover:scale-105"
-              } transition-transform duration-300`}
+              className={`object-cover transform duration-700 ease-out ${
+                !soldout && "group-hover:scale-110"
+              }`}
             />
             {soldout && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -45,7 +46,7 @@ export function ProductItem({ product }: ProductItemProps) {
           </div>
 
           {/* 텍스트 콘텐츠 */}
-          <div className="p-3">
+          <div className="p-3 group-hover:bg-gray-50 transition-colors duration-300">
             <h3 className="text-lg font-semibold mb-1 line-clamp-1">{title}</h3>
             {description && (
               <p className="text-gray-600 text-sm mb-1 line-clamp-2">

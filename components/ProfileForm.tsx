@@ -1,40 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { Edit, Mail, FileText, ShoppingBag } from "lucide-react";
+import { Edit, Mail, FileText, ShoppingBag, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "./buttons/CustomButton";
 import { Logout } from "./buttons/ClientButton";
 import { format } from "date-fns";
+import { Post, Product } from "@/app/types/common";
+import { createChatRoom } from "@/lib/chat";
 
-type User = {
-  image: string | null;
+interface BaseUser {
   id: string;
-  name: string | null;
-  created_at: Date;
   email: string | null;
+  name: string | null;
+  image: string | null;
   province: string | null;
-  city?: string | null;
+  city: string | null;
   district: string | null;
-} | null;
-
-interface Post {
-  id: string | number;
-  title: string;
-  description: string | null;
-  created_at: string | Date;
-  user: User;
+  created_at: Date;
 }
 
-interface Product {
-  id: string | number;
-  title: string;
-  description: string;
-  price: number;
-  firstPhoto: string | null;
-  created_at: string | Date;
-  user: User;
+interface ProfileFormProps {
+  userData: BaseUser;
+  posts?: Post[];
+  products?: Product[];
+  currentUser: boolean;
 }
 
 export function ProfileForm({
@@ -42,25 +33,22 @@ export function ProfileForm({
   posts,
   products,
   currentUser,
-}: {
-  userData: User;
-  posts?: Post[];
-  products?: Product[];
-  currentUser: boolean;
-}) {
+}: ProfileFormProps) {
   const [activeTab, setActiveTab] = useState<"posts" | "products">("posts");
 
   const postsCount = posts?.length ?? 0;
   const productsCount = products?.length ?? 0;
-
+  const handleChatStart = async () => {
+    await createChatRoom(userData.id);
+  };
   return (
     <div className="container space-y-8">
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-6">
           <div className="flex flex-col sm:flex-row items-center">
             <Image
-              width={112}
-              height={112}
+              width={256}
+              height={256}
               className="size-28 sm:size-32 rounded-full object-cover"
               src={userData?.image || "/img/default.jpg"}
               alt={userData?.name || "User avatar"}
@@ -80,7 +68,7 @@ export function ProfileForm({
           </div>
 
           <div className="mt-6 flex justify-end space-x-4">
-            {currentUser && (
+            {currentUser ? (
               <>
                 <Logout />
                 <Link href={`/profile/edit/${userData?.id}/`}>
@@ -90,6 +78,14 @@ export function ProfileForm({
                   </Button>
                 </Link>
               </>
+            ) : (
+              <Button
+                onClick={handleChatStart}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-indigo-200 transition-all duration-300 flex items-center gap-2 px-6 py-2.5 rounded-full"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Chat with {userData.name}
+              </Button>
             )}
           </div>
         </div>
@@ -160,7 +156,9 @@ export function ProfileForm({
                         width={300}
                         height={200}
                         className="w-full h-48 object-cover"
-                        src={product.firstPhoto || "/placeholder-product.jpg"}
+                        src={
+                          product.photos[0].url || "/placeholder-product.jpg"
+                        }
                         alt={product.title}
                       />
                       <div className="p-4">

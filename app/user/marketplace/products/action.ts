@@ -75,6 +75,7 @@ export async function getMoreProducts(
         user: {
           select: {
             id: true,
+            email: true,
             name: true,
             image: true,
             province: true,
@@ -92,9 +93,12 @@ export async function getMoreProducts(
     }),
     db.product.count({ where }),
   ]);
-
+  const productsWithLikeCount = products.map((product) => ({
+    ...product,
+    likeCount: product._count.likes, // _count.likes를 likeCount로 매핑
+  }));
   return {
-    products,
+    products: productsWithLikeCount,
     hasMore: skip + ITEMS_PER_PAGE < totalCount,
     totalCount,
   };

@@ -69,6 +69,7 @@ export async function getMorePosts(
           select: {
             id: true,
             name: true,
+            email: true,
             image: true,
             province: true,
             city: true,

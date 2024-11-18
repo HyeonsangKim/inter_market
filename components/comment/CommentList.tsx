@@ -98,9 +98,11 @@ export function CommentItem({
         <div className="flex-grow">
           {/* 헤더: 이름과 날짜 */}
           <div className="flex items-center justify-between mb-2">
-            <span className="font-medium text-gray-900">
-              {comment.user.name}
-            </span>
+            <Link href={`/profile/${comment.user.id}`}>
+              <span className="font-medium text-gray-900">
+                {comment.user.name}
+              </span>
+            </Link>
             <span className="text-sm text-gray-500">
               {format(new Date(comment.created_at), "yyyy.MM.dd")}
             </span>

@@ -96,6 +96,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const initialMessages = await getMessages(params.id);
   const session = await getCurrentUser();
   let chatList = await getMessageRooms(session!.id);
+
   chatList = chatList.map((chat) => {
     const sortedMessages = chat.messages.sort(
       (a, b) =>
@@ -112,6 +113,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
       unreadCount: unreadMessages.length,
     };
   });
+
   const currentUser = room.users.find((user) => user.id === session!.id)!;
   const otherUser = room.users.find((user) => user.id !== session!.id)!;
 
