@@ -53,6 +53,50 @@ export const regions = [
     ],
   },
   {
+    province: "Daegu",
+    type: "metropolitan",
+    districts: [
+      "Dalseo-gu",
+      "Dalseong-gun",
+      "Dong-gu",
+      "Nam-gu",
+      "Buk-gu",
+      "Seo-gu",
+      "Suseong-gu",
+      "Jung-gu",
+    ],
+  },
+  {
+    province: "Incheon",
+    type: "metropolitan",
+    districts: [
+      "Ganghwa-gun",
+      "Gyeyang-gu",
+      "Namdong-gu",
+      "Dong-gu",
+      "Bupyeong-gu",
+      "Seo-gu",
+      "Yeonsu-gu",
+      "Michuhol-gu",
+      "Jung-gu",
+    ],
+  },
+  {
+    province: "Gwangju",
+    type: "metropolitan",
+    districts: ["Buk-gu", "Dong-gu", "Gwangsan-gu", "Nam-gu", "Seo-gu"],
+  },
+  {
+    province: "Daejeon",
+    type: "metropolitan",
+    districts: ["Daedeok-gu", "Dong-gu", "Seo-gu", "Yuseong-gu", "Jung-gu"],
+  },
+  {
+    province: "Ulsan",
+    type: "metropolitan",
+    districts: ["Nam-gu", "Dong-gu", "Buk-gu", "Ulju-gun", "Jung-gu"],
+  },
+  {
     province: "Gyeonggi",
     type: "province",
     districts: [
@@ -125,6 +169,22 @@ export const regions = [
       { city: "Yeongwol-gun", areas: [] },
       { city: "Hongcheon-gun", areas: [] },
       { city: "Inje-gun", areas: [] },
+    ],
+  },
+  {
+    province: "Chungcheongbuk",
+    type: "province",
+    districts: [
+      { city: "Cheongju", areas: ["Sangdang-gu", "Heungdeok-gu"] },
+      { city: "Chungju", areas: [] },
+      { city: "Jecheon", areas: [] },
+      { city: "Boeun-gun", areas: [] },
+      { city: "Okcheon-gun", areas: [] },
+      { city: "Yeongdong-gun", areas: [] },
+      { city: "Goesan-gun", areas: [] },
+      { city: "Jeungpyeong-gun", areas: [] },
+      { city: "Eumseong-gun", areas: [] },
+      { city: "Danyang-gun", areas: [] },
     ],
   },
 ];
