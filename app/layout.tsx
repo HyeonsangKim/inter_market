@@ -3,7 +3,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
 const inter = Inter({ subsets: ["latin"] });
-
+export const metadata: Metadata = {
+  title: "Interagora",
+  description: "Inter Agora",
+};
 export const dynamic = "force-dynamic";
 export default function RootLayout({
   children,
