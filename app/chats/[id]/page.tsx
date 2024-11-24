@@ -4,7 +4,7 @@ import type { ChatRoom, Message, User } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { getMessageRooms, markMessagesAsRead } from "../actions";
 import { getCurrentUser } from "@/app/utils/supabase/get-user";
-
+export const dynamic = "force-dynamic";
 type RoomWithUsers = ChatRoom & {
   users: Pick<User, "id" | "name" | "image">[];
   messages?: Message[];

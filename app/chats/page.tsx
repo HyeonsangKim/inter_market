@@ -3,7 +3,7 @@ import { ChatRoom, Message, User } from "@prisma/client";
 import { ChatItem } from "@/components/ChatItem";
 import { getCurrentUser } from "../utils/supabase/get-user";
 import Footer from "@/components/CustomFooter";
-
+export const dynamic = "force-dynamic";
 export type ChatRoomWithUsersAndMessages = ChatRoom & {
   users: User[];
   messages: (Message & {
