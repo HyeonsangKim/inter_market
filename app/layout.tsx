@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Interagora",
   description: "Inter Agora",
 };
-export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{
