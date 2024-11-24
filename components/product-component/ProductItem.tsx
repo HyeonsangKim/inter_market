@@ -30,7 +30,7 @@ export function ProductItem({ product }: ProductItemProps) {
           <div className="relative w-full aspect-[4/3] flex-shrink-0 overflow-hidden">
             <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
             <Image
-              src={photos[0]?.url || "/placeholder.png"}
+              src={photos[0]?.url || "/img/default.jpg"}
               alt={title}
               fill
               sizes="100vw"
